@@ -1,52 +1,62 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
+import { 
+  BrainCircuit, 
+  BookOpen, 
+  FileText, 
+  Briefcase, 
+  Bot, 
+  TrendingUp, 
+  Rocket, 
+  LayoutDashboard 
+} from "lucide-react";
 
 const features = [
   {
-    icon: "🧠",
+    icon: BrainCircuit,
     title: "Career Path Guidance",
     description: "Discover personalized career paths based on your skills and interests.",
     path: "/career-path"
   },
   {
-    icon: "📚",
+    icon: BookOpen,
     title: "Skill Gap Analyzer",
     description: "Identify missing skills and get personalized learning recommendations.",
     path: "/skill-gap"
   },
   {
-    icon: "📄",
+    icon: FileText,
     title: "Resume Optimizer",
     description: "Improve your resume with AI-powered suggestions and tips.",
     path: "/resume-optimizer"
   },
   {
-    icon: "💼",
+    icon: Briefcase,
     title: "Job Matching",
     description: "Find jobs that match your profile with personalized recommendations.",
     path: "/job-matching"
   },
   {
-    icon: "🤖",
+    icon: Bot,
     title: "AI Career Coach",
     description: "Get personalized career advice and guidance from our AI assistant.",
     path: "/dashboard"
   },
   {
-    icon: "📈",
+    icon: TrendingUp,
     title: "Market Trends",
     description: "Stay updated with the latest market trends and industry insights.",
     path: "/market-trends"
   },
   {
-    icon: "🚀",
+    icon: Rocket,
     title: "Entrepreneurship Advisor",
     description: "Get guidance on starting your own business or freelance career.",
     path: "/entrepreneurship"
   },
   {
-    icon: "📊",
+    icon: LayoutDashboard,
     title: "Dashboard",
     description: "Track your career progress and goals in one centralized place.",
     path: "/dashboard"
@@ -84,8 +94,8 @@ const Home = () => {
                 <div className="relative block w-full bg-white rounded-lg overflow-hidden">
                   <img 
                     className="w-full"
-                    src="https://images.unsplash.com/photo-1573497491765-dccce02b29df?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Person looking at career options on a computer" 
+                    src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                    alt="Professional data analytics dashboard" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-800 mix-blend-multiply opacity-30"></div>
                   <Button
