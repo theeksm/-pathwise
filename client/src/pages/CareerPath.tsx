@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,11 +34,43 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import SkillButton from "@/components/SkillButton";
+
+// Define skill categories
+const skillCategories = [
+  {
+    id: "tech",
+    name: "Tech & Data",
+    icon: "💻",
+    skills: ["Python", "HTML/CSS", "JavaScript", "SQL", "Java", "C++", "Git/GitHub", "Data Analysis", "Machine Learning", "Excel", "Power BI"]
+  },
+  {
+    id: "business",
+    name: "Business & Marketing",
+    icon: "📈",
+    skills: ["Market Research", "SEO", "Accounting", "Google Ads", "Email Marketing", "Social Media Management", "Content Writing", "Public Speaking", "Business Strategy", "Financial Modeling", "Microsoft Excel"]
+  },
+  {
+    id: "creative",
+    name: "Creative & Design",
+    icon: "🎨",
+    skills: ["Graphic Design", "Adobe Photoshop", "Adobe Illustrator", "Canva", "Video Editing", "Animation", "Branding"]
+  },
+  {
+    id: "soft",
+    name: "Soft & Transferable Skills",
+    icon: "🧠",
+    skills: ["Critical Thinking", "Problem Solving", "Teamwork", "Leadership", "Communication", "Time Management", "Adaptability", "Attention to Detail", "Project Management"]
+  },
+  {
+    id: "admin",
+    name: "Admin & Office",
+    icon: "🏢",
+    skills: ["Microsoft Word", "Microsoft PowerPoint", "Google Docs", "Calendar Management", "Data Entry", "Report Writing", "Email Communication"]
+  }
+];
 
 const formSchema = z.object({
-  skills: z.string().min(2, {
-    message: "Please enter at least one skill",
-  }),
   interests: z.string().min(2, {
     message: "Please enter at least one interest",
   }),
@@ -56,6 +88,7 @@ const CareerPath = () => {
   const { toast } = useToast();
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const { data: user } = useQuery({
     queryKey: ['/api/auth/user'],
@@ -68,15 +101,29 @@ const CareerPath = () => {
     throwOnError: false,
   });
 
+  // Initialize selected skills when user profile loads
+  useEffect(() => {
+    if (userProfile?.skills && userProfile.skills.length > 0 && selectedSkills.length === 0) {
+      setSelectedSkills(userProfile.skills);
+    }
+  }, [userProfile]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      skills: userProfile?.skills?.join(', ') || "",
       interests: userProfile?.interests?.join(', ') || "",
       educationLevel: userProfile?.educationLevel || "",
       experience: userProfile?.experience || "",
     },
   });
+
+  const toggleSkill = (skill: string) => {
+    if (selectedSkills.includes(skill)) {
+      setSelectedSkills(selectedSkills.filter(s => s !== skill));
+    } else {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
+  };
 
   const careerMutation = useMutation({
     mutationFn: async (data: {
@@ -139,15 +186,23 @@ const CareerPath = () => {
       return;
     }
 
+    if (selectedSkills.length === 0) {
+      toast({
+        title: "No skills selected",
+        description: "Please select at least one skill you have",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     // Parse comma-separated values into arrays
-    const skills = data.skills.split(',').map(s => s.trim()).filter(s => s);
     const interests = data.interests.split(',').map(s => s.trim()).filter(s => s);
     
     // Save profile data
     saveProfileMutation.mutate({
-      skills,
+      skills: selectedSkills,
       interests,
       educationLevel: data.educationLevel,
       experience: data.experience,
@@ -155,7 +210,7 @@ const CareerPath = () => {
     
     // Generate career recommendations
     careerMutation.mutate({
-      skills,
+      skills: selectedSkills,
       interests,
       educationLevel: data.educationLevel,
       experience: data.experience,
@@ -205,25 +260,39 @@ const CareerPath = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="skills"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your skills</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="e.g. Python, Marketing, Design... (comma-separated)"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        List the skills you've acquired through work, education, or personal projects
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Your skills
+                    </label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Select skills you've acquired through work, education, or personal projects
+                    </p>
+                    <div className="space-y-4 mt-2">
+                      {skillCategories.map((category) => (
+                        <div key={category.id} className="space-y-2">
+                          <h3 className="text-sm font-medium text-gray-900">
+                            <span className="mr-2">{category.icon}</span>
+                            {category.name}
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                            {category.skills.map((skill) => (
+                              <SkillButton
+                                key={skill}
+                                name={skill}
+                                selected={selectedSkills.includes(skill)}
+                                onClick={() => toggleSkill(skill)}
+                              />
+                            ))}
+                            <Button variant="outline" className="px-4 py-2 rounded-full text-sm font-medium">
+                              + Add more
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 
                 <FormField
                   control={form.control}
