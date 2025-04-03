@@ -2,7 +2,8 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
-import { zValidator } from "./lib/zValidator";
+// Using imported zValidator has naming conflicts with our local function
+// import { zValidator } from "./lib/zValidator";
 import { 
   insertUserSchema, 
   insertCareerSchema,
@@ -79,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Auth routes
-  app.post("/api/auth/register", zValidator("body", insertUserSchema), async (req, res) => {
+  app.post("/api/auth/register", routeZValidator("body", insertUserSchema), async (req, res) => {
     try {
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
@@ -208,7 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(skills);
   });
 
-  app.post("/api/skills", isAuthenticated, zValidator("body", insertSkillSchema), async (req, res) => {
+  app.post("/api/skills", isAuthenticated, routeZValidator("body", insertSkillSchema), async (req, res) => {
     try {
       const skill = await storage.createSkill(req.body);
       res.status(201).json(skill);
@@ -333,7 +334,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(resume);
   });
 
-  app.post("/api/resumes", isAuthenticated, zValidator("body", insertResumeSchema), async (req, res) => {
+  app.post("/api/resumes", isAuthenticated, routeZValidator("body", insertResumeSchema), async (req, res) => {
     try {
       const resume = await storage.createResume(req.body);
       res.status(201).json(resume);
@@ -493,7 +494,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(chat);
   });
 
-  app.post("/api/chats", isAuthenticated, zValidator("body", insertChatSchema), async (req, res) => {
+  app.post("/api/chats", isAuthenticated, routeZValidator("body", insertChatSchema), async (req, res) => {
     try {
       const chat = await storage.createChat(req.body);
       res.status(201).json(chat);
@@ -579,7 +580,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 }
 
 // Utility function for zod validation
-function zValidator(type: "body" | "params" | "query", schema: z.ZodSchema<any>) {
+function routeZValidator(type: "body" | "params" | "query", schema: z.ZodSchema<any>) {
   return (req: Request, res: Response, next: Function) => {
     try {
       req[type] = schema.parse(req[type]);

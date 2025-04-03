@@ -209,91 +209,92 @@ const SkillGap = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Skill Gap Analyzer</CardTitle>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList>
-                <TabsTrigger value="manual" className="px-4 py-2">
-                  Manual input
-                </TabsTrigger>
-                <TabsTrigger value="resume" className="px-4 py-2">
-                  Upload Resume
-                </TabsTrigger>
-                <TabsTrigger value="linkedin" className="px-4 py-2">
-                  Import LinkedIn
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
         </CardHeader>
         <CardContent>
-          <TabsContent value="manual" className="space-y-8">
-            {skillCategories.map((category) => (
-              <div key={category.id} className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900">
-                  <span className="mr-2">{category.icon}</span>
-                  {category.name}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {category.skills.map((skill) => (
-                    <SkillButton
-                      key={skill}
-                      name={skill}
-                      selected={selectedSkills.includes(skill)}
-                      onClick={() => toggleSkill(skill)}
-                    />
-                  ))}
-                  <Button variant="outline" className="px-4 py-2 rounded-full text-sm font-medium">
-                    + Add more
-                  </Button>
-                </div>
-              </div>
-            ))}
-
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="targetCareer"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-lg font-medium">Your target career</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Type your target here" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isAnalyzing}
-                >
-                  {isAnalyzing ? "Analyzing skills..." : "Generate the results"}
-                </Button>
-              </form>
-            </Form>
-          </TabsContent>
-          
-          <TabsContent value="resume">
-            <div className="py-12 text-center">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">Upload your resume for automatic skill detection</h3>
-              <p className="text-gray-500 mb-6">Supported formats: PDF, DOCX, TXT (Coming soon)</p>
-              <Button variant="outline" className="mx-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="mb-6">
+              <TabsTrigger value="manual" className="px-4 py-2">
+                Manual input
+              </TabsTrigger>
+              <TabsTrigger value="resume" className="px-4 py-2">
                 Upload Resume
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="linkedin">
-            <div className="py-12 text-center">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">Connect your LinkedIn profile</h3>
-              <p className="text-gray-500 mb-6">We'll analyze your profile to detect your skills (Coming soon)</p>
-              <Button variant="outline" className="mx-auto">
-                Connect LinkedIn
-              </Button>
-            </div>
-          </TabsContent>
+              </TabsTrigger>
+              <TabsTrigger value="linkedin" className="px-4 py-2">
+                Import LinkedIn
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="manual" className="space-y-8">
+              {skillCategories.map((category) => (
+                <div key={category.id} className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">
+                    <span className="mr-2">{category.icon}</span>
+                    {category.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill) => (
+                      <SkillButton
+                        key={skill}
+                        name={skill}
+                        selected={selectedSkills.includes(skill)}
+                        onClick={() => toggleSkill(skill)}
+                      />
+                    ))}
+                    <Button variant="outline" className="px-4 py-2 rounded-full text-sm font-medium">
+                      + Add more
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="targetCareer"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-lg font-medium">Your target career</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Type your target here" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isAnalyzing}
+                  >
+                    {isAnalyzing ? "Analyzing skills..." : "Generate the results"}
+                  </Button>
+                </form>
+              </Form>
+            </TabsContent>
+            
+            <TabsContent value="resume">
+              <div className="py-12 text-center">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">Upload your resume for automatic skill detection</h3>
+                <p className="text-gray-500 mb-6">Supported formats: PDF, DOCX, TXT (Coming soon)</p>
+                <Button variant="outline" className="mx-auto">
+                  Upload Resume
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="linkedin">
+              <div className="py-12 text-center">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">Connect your LinkedIn profile</h3>
+                <p className="text-gray-500 mb-6">We'll analyze your profile to detect your skills (Coming soon)</p>
+                <Button variant="outline" className="mx-auto">
+                  Connect LinkedIn
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
