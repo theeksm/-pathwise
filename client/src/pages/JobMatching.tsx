@@ -1,0 +1,488 @@
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Briefcase, Building, DollarSign, MapPin, BookmarkPlus, Send, Filter } from "lucide-react";
+
+const formSchema = z.object({
+  skills: z.string().min(2, {
+    message: "Please enter at least one skill",
+  }),
+  experience: z.string().optional(),
+  location: z.string().optional(),
+  remote: z.boolean().optional(),
+  minSalary: z.string().optional(),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+const JobMatching = () => {
+  const { toast } = useToast();
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
+  const [isMatching, setIsMatching] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+
+  const { data: user } = useQuery({
+    queryKey: ['/api/auth/user'],
+    throwOnError: false,
+  });
+
+  const { data: userProfile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ['/api/user'],
+    enabled: !!user,
+    throwOnError: false,
+  });
+
+  const { data: userSkills, isLoading: isSkillsLoading } = useQuery({
+    queryKey: ['/api/skills'],
+    enabled: !!user,
+    throwOnError: false,
+  });
+
+  const { data: savedJobs, isLoading: isSavedJobsLoading } = useQuery({
+    queryKey: ['/api/jobs', { saved: true }],
+    enabled: !!user,
+    throwOnError: false,
+  });
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      skills: "",
+      experience: "",
+      location: "",
+      remote: false,
+      minSalary: "",
+    },
+  });
+
+  const jobMatchMutation = useMutation({
+    mutationFn: async (data: {
+      userSkills: string[];
+      userExperience?: string;
+      preferences?: {
+        location?: string;
+        remote?: boolean;
+        minSalary?: number;
+      };
+    }) => {
+      const res = await apiRequest("POST", "/api/jobs/match", data);
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setJobs(data);
+      setFilteredJobs(data);
+      queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
+      toast({
+        title: "Job matching complete",
+        description: `Found ${data.length} jobs that match your profile!`,
+      });
+      setIsMatching(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error matching jobs",
+        description: error.message || "Please try again later",
+        variant: "destructive",
+      });
+      setIsMatching(false);
+    },
+  });
+
+  const saveJobMutation = useMutation({
+    mutationFn: async ({ jobId, isSaved }: { jobId: number; isSaved: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/jobs/${jobId}`, { isSaved });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/jobs', { saved: true }] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error saving job",
+        description: error.message || "Please try again later",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to use this feature",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsMatching(true);
+    
+    // Parse skills comma-separated values into arrays
+    const skills = data.skills.split(',').map(s => s.trim()).filter(s => s);
+    
+    // Prepare preferences object
+    const preferences: {
+      location?: string;
+      remote?: boolean;
+      minSalary?: number;
+    } = {};
+    
+    if (data.location) preferences.location = data.location;
+    if (data.remote !== undefined) preferences.remote = data.remote;
+    if (data.minSalary) preferences.minSalary = parseInt(data.minSalary);
+    
+    jobMatchMutation.mutate({
+      userSkills: skills,
+      userExperience: data.experience,
+      preferences: Object.keys(preferences).length > 0 ? preferences : undefined
+    });
+  };
+
+  const toggleSaveJob = (jobId: number, currentlySaved: boolean) => {
+    saveJobMutation.mutate({
+      jobId,
+      isSaved: !currentlySaved
+    });
+
+    // Optimistic update for better UX
+    const updatedJobs = jobs.map(job => 
+      job.id === jobId ? { ...job, isSaved: !job.isSaved } : job
+    );
+    setJobs(updatedJobs);
+    setFilteredJobs(updatedJobs);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === 'all') {
+      setFilteredJobs(jobs);
+    } else if (value === 'saved') {
+      setFilteredJobs(jobs.filter(job => job.isSaved));
+    }
+  };
+
+  // Fill form with user's existing skills when they load
+  const initializeForm = () => {
+    if (userSkills && userSkills.length > 0 && !form.getValues("skills")) {
+      const skillsValue = userSkills
+        .filter(skill => !skill.isMissing)
+        .map(skill => skill.skillName)
+        .join(', ');
+      form.setValue("skills", skillsValue);
+    }
+    
+    if (userProfile) {
+      if (userProfile.experience) form.setValue("experience", userProfile.experience);
+    }
+  };
+
+  // Call initialization when user data loads
+  if (userSkills && userProfile && form.getValues("skills") === "") {
+    initializeForm();
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[600px] px-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sign in to match with jobs</h2>
+        <p className="text-gray-600 mb-8 text-center">
+          You need to be logged in to find jobs that match your skills and preferences
+        </p>
+        <div className="flex gap-4">
+          <Button asChild>
+            <a href="/login">Log in</a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/signup">Sign up</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const isLoading = isProfileLoading || isSkillsLoading || isSavedJobsLoading;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          Find Your Perfect Career Match
+        </h1>
+        <p className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">
+          Discover jobs that align with your skills, experience, and preferences
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Job Matching Criteria</CardTitle>
+            <CardDescription>
+              Tell us about your skills and preferences to find matching jobs
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="skills"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your skills</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g. Python, Marketing, React... (comma-separated)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        List your key skills to find matching jobs
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="experience"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Experience level</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your experience level" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Entry-level">Entry-level</SelectItem>
+                          <SelectItem value="Mid-level">Mid-level</SelectItem>
+                          <SelectItem value="Senior">Senior</SelectItem>
+                          <SelectItem value="Manager">Manager</SelectItem>
+                          <SelectItem value="Director">Director</SelectItem>
+                          <SelectItem value="Executive">Executive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Separator />
+                
+                <p className="text-sm font-medium">Preferences (optional)</p>
+                
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. New York, Remote, etc." 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="remote"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Remote only</FormLabel>
+                        <FormDescription>
+                          Show only remote positions
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="minSalary"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Minimum salary (annual)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="e.g. 50000" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isMatching}
+                >
+                  {isMatching ? "Finding matches..." : "Find Matching Jobs"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        <div className="md:col-span-2">
+          <Card>
+            <CardHeader className="bg-primary-50">
+              <div className="flex justify-between items-center">
+                <CardTitle>Job Matches</CardTitle>
+                <Tabs value={activeTab} onValueChange={handleTabChange}>
+                  <TabsList>
+                    <TabsTrigger value="all">All</TabsTrigger>
+                    <TabsTrigger value="saved">Saved</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              <CardDescription>
+                Jobs that match your skills and preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              {isLoading || isMatching ? (
+                <div className="space-y-6">
+                  <Skeleton className="h-40 w-full" />
+                  <Skeleton className="h-40 w-full" />
+                  <Skeleton className="h-40 w-full" />
+                </div>
+              ) : filteredJobs.length > 0 ? (
+                <div className="space-y-6">
+                  {filteredJobs.map((job) => (
+                    <Card key={job.id} className="overflow-hidden">
+                      <div className="relative">
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{job.jobTitle}</h3>
+                              <div className="flex items-center mt-1 text-gray-700">
+                                <Building className="h-4 w-4 mr-1" />
+                                <span className="text-sm">{job.company}</span>
+                              </div>
+                            </div>
+                            <Badge className="bg-primary-100 text-primary-800 border-0">
+                              {job.matchPercentage}% Match
+                            </Badge>
+                          </div>
+
+                          <p className="mt-4 text-sm text-gray-600">{job.description}</p>
+
+                          <div className="flex flex-wrap gap-4 mt-4">
+                            <div className="flex items-center text-gray-700">
+                              <MapPin className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{job.location}</span>
+                            </div>
+                            <div className="flex items-center text-gray-700">
+                              <DollarSign className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{job.salary}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between mt-6">
+                            <Button
+                              variant={job.isSaved ? "outline" : "default"}
+                              size="sm"
+                              className="flex items-center gap-1"
+                              onClick={() => toggleSaveJob(job.id, job.isSaved)}
+                            >
+                              <BookmarkPlus className="h-4 w-4" />
+                              {job.isSaved ? "Saved" : "Save"}
+                            </Button>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="flex items-center gap-1"
+                              onClick={() => window.open(job.url || "#", "_blank")}
+                            >
+                              <Send className="h-4 w-4" />
+                              Apply
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Briefcase className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
+                  <p className="text-gray-600 max-w-md mb-6">
+                    Fill out your skills and preferences, then click "Find Matching Jobs" to discover opportunities that match your profile.
+                  </p>
+                  <img 
+                    src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" 
+                    alt="Job search" 
+                    className="rounded-lg w-64 h-auto opacity-50"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default JobMatching;
