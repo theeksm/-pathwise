@@ -14,9 +14,9 @@ const SkillButton = ({ name, selected = false, onClick, className }: SkillButton
       className={cn(
         "px-4 py-2 rounded-full text-sm font-medium",
         selected 
-          ? "bg-primary-100 text-primary-800" 
-          : "bg-gray-100 text-gray-800",
-        "hover:opacity-90 transition-opacity",
+          ? "bg-blue-200 text-blue-800 border border-blue-300" 
+          : "bg-gray-100 text-gray-800 border border-transparent",
+        "hover:opacity-90 transition-all",
         className
       )}
       onClick={onClick}
