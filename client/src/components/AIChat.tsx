@@ -142,7 +142,7 @@ const AIChat = () => {
     <div className="fixed bottom-4 right-4 z-40">
       {isChatOpen && (
         <div className="shadow-xl rounded-lg overflow-hidden w-80 md:w-96 bg-white border border-gray-200">
-          <div className="px-4 py-3 bg-primary-600 text-white flex items-center justify-between">
+          <div className="px-4 py-3 bg-yellow-500 text-black flex items-center justify-between">
             <div className="flex items-center">
               <Bot className="h-5 w-5" />
               <h3 className="ml-2 font-medium">AI Career Coach</h3>
@@ -150,7 +150,7 @@ const AIChat = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:text-primary-100"
+              className="bg-red-500 text-white hover:bg-red-600 rounded-full p-1"
               onClick={toggleChat}
             >
               <X className="h-5 w-5" />
@@ -222,7 +222,7 @@ const AIChat = () => {
               <Button
                 type="submit"
                 size="icon"
-                className="ml-2 flex-shrink-0 bg-primary-600 rounded-full p-2 text-white"
+                className="ml-2 flex-shrink-0 bg-yellow-500 hover:bg-yellow-600 rounded-full p-2 text-black transition-colors"
                 disabled={!message.trim() || !user || sendMessageMutation.isPending}
               >
                 <SendHorizontal className="h-5 w-5" />
