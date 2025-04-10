@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +30,20 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import SkillButton from "@/components/SkillButton";
 import CourseCard from "@/components/CourseCard";
+import { 
+  MonitorSmartphone, 
+  TrendingUp, 
+  Palette, 
+  Brain, 
+  Building2,
+  Puzzle,
+  Target,
+  BarChart,
+  GraduationCap,
+  Clock,
+  BookOpen,
+  CheckCircle
+} from "lucide-react";
 
 const formSchema = z.object({
   targetCareer: z.string().min(2, {
@@ -44,31 +58,31 @@ const skillCategories = [
   {
     id: "tech",
     name: "Tech & Data",
-    icon: "💻",
+    icon: MonitorSmartphone,
     skills: ["Python", "HTML/CSS", "JavaScript", "SQL", "Java", "C++", "Git/GitHub", "Data Analysis", "Machine Learning", "Excel", "Power BI"]
   },
   {
     id: "business",
     name: "Business & Marketing",
-    icon: "📈",
+    icon: TrendingUp,
     skills: ["Market Research", "SEO", "Accounting", "Google Ads", "Email Marketing", "Social Media Management", "Content Writing", "Public Speaking", "Business Strategy", "Financial Modeling", "Microsoft Excel"]
   },
   {
     id: "creative",
     name: "Creative & Design",
-    icon: "🎨",
+    icon: Palette,
     skills: ["Graphic Design", "Adobe Photoshop", "Adobe Illustrator", "Canva", "Video Editing", "Animation", "Branding"]
   },
   {
     id: "soft",
     name: "Soft & Transferable Skills",
-    icon: "🧠",
+    icon: Brain,
     skills: ["Critical Thinking", "Problem Solving", "Teamwork", "Leadership", "Communication", "Time Management", "Adaptability", "Attention to Detail", "Project Management"]
   },
   {
     id: "admin",
     name: "Admin & Office",
-    icon: "🏢",
+    icon: Building2,
     skills: ["Microsoft Word", "Microsoft PowerPoint", "Google Docs", "Calendar Management", "Data Entry", "Report Writing", "Email Communication"]
   }
 ];
@@ -228,8 +242,10 @@ const SkillGap = () => {
             <TabsContent value="manual" className="space-y-8">
               {skillCategories.map((category) => (
                 <div key={category.id} className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    <span className="mr-2">{category.icon}</span>
+                  <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                    <span className="mr-2 text-primary-600">
+                      {React.createElement(category.icon, { size: 20, className: "stroke-[1.5]" })}
+                    </span>
                     {category.name}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -310,12 +326,27 @@ const SkillGap = () => {
             <CardContent className="p-6">
               <div className="space-y-8">
                 <div className="p-4 bg-primary-50 rounded-md">
-                  <h4 className="text-lg font-medium text-gray-900 mb-2">🧩 Summary</h4>
-                  <ul className="space-y-1 text-gray-700">
-                    <li>🎯 Career Goal: {results.targetCareer}</li>
-                    <li>📊 Missing Skills: {results.missingSkills.length} out of {results.currentSkills.length + results.missingSkills.length}</li>
-                    <li>📚 Courses Suggested: {results.recommendedCourses.length}</li>
-                    <li>📅 Estimated Learning Time: ~6–8 weeks</li>
+                  <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                    <Puzzle className="w-5 h-5 mr-1.5 text-primary-600" />
+                    <span>Summary</span>
+                  </h4>
+                  <ul className="space-y-1 text-gray-700 pl-7">
+                    <li className="flex items-start">
+                      <Target className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                      <span>Career Goal: {results.targetCareer}</span>
+                    </li>
+                    <li className="flex items-start">
+                      <BarChart className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                      <span>Missing Skills: {results.missingSkills.length} out of {results.currentSkills.length + results.missingSkills.length}</span>
+                    </li>
+                    <li className="flex items-start">
+                      <GraduationCap className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                      <span>Courses Suggested: {results.recommendedCourses.length}</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Clock className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                      <span>Estimated Learning Time: ~6–8 weeks</span>
+                    </li>
                   </ul>
                   <div className="mt-4 flex flex-wrap gap-4">
                     <Button variant="outline">Re-analyze Skills</Button>
@@ -324,7 +355,10 @@ const SkillGap = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">📊 Skill Gap Results Section</h4>
+                  <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <BarChart className="w-5 h-5 mr-1.5 text-primary-600" />
+                    <span>Skill Gap Results Section</span>
+                  </h4>
                   <div className="grid grid-cols-2 gap-8">
                     <div>
                       <h5 className="font-medium mb-4">Required for {results.targetCareer}</h5>
@@ -351,7 +385,10 @@ const SkillGap = () => {
 
                 <Separator />
 
-                <h4 className="text-lg font-medium text-gray-900">📘 Course Recommendation:</h4>
+                <h4 className="text-lg font-medium text-gray-900 flex items-center">
+                  <BookOpen className="w-5 h-5 mr-1.5 text-primary-600" />
+                  <span>Course Recommendation:</span>
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {results.recommendedCourses.map((course: any, index: number) => (
                     <CourseCard
@@ -381,7 +418,10 @@ const SkillGap = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>✅ Platform Breakdown</CardTitle>
+              <CardTitle className="flex items-center">
+                <CheckCircle className="w-5 h-5 mr-1.5 text-primary-600" />
+                <span>Platform Breakdown</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <h3 className="font-medium text-lg mb-2">What is {results.recommendedCourses[0]?.platform}?</h3>
@@ -394,12 +434,27 @@ const SkillGap = () => {
                 <li>Covers a wide range of subjects — tech, business, design, personal development, etc.</li>
               </ul>
               
-              <h3 className="font-medium text-lg mb-2">🎯 Key Benefits:</h3>
-              <ul className="list-disc pl-5 mb-6 space-y-1 text-gray-700">
-                <li>💸 Many courses are free to audit, with optional paid certificates</li>
-                <li>🏆 Courses often include real credentials from well-known universities</li>
-                <li>🕒 Courses are flexible and self-paced</li>
-                <li>✅ Some courses offer career certificates recognized by employers</li>
+              <h3 className="font-medium text-lg mb-2 flex items-center">
+                <Target className="w-5 h-5 mr-1.5 text-primary-600" />
+                <span>Key Benefits:</span>
+              </h3>
+              <ul className="pl-5 mb-6 space-y-1 text-gray-700">
+                <li className="flex items-start">
+                  <span className="mr-2 text-primary-600">$</span>
+                  <span>Many courses are free to audit, with optional paid certificates</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2 text-primary-600">🎓</span>
+                  <span>Courses often include real credentials from well-known universities</span>
+                </li>
+                <li className="flex items-start">
+                  <Clock className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                  <span>Courses are flexible and self-paced</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-4 h-4 mr-1.5 text-primary-600 mt-0.5 flex-shrink-0" />
+                  <span>Some courses offer career certificates recognized by employers</span>
+                </li>
               </ul>
               
               <div className="bg-gray-50 p-4 rounded-md mb-6">
