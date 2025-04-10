@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { MessageCircle, SendHorizontal, X } from "lucide-react";
+import { MessageCircle, SendHorizontal, X, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -144,7 +144,7 @@ const AIChat = () => {
         <div className="shadow-xl rounded-lg overflow-hidden w-80 md:w-96 bg-white border border-gray-200">
           <div className="px-4 py-3 bg-primary-600 text-white flex items-center justify-between">
             <div className="flex items-center">
-              <span className="text-xl">🤖</span>
+              <Bot className="h-5 w-5" />
               <h3 className="ml-2 font-medium">AI Career Coach</h3>
             </div>
             <Button
@@ -161,8 +161,8 @@ const AIChat = () => {
             {activeChat?.messages.map((msg, index) => (
               msg.role === "assistant" ? (
                 <div key={index} className="flex items-start mb-4">
-                  <div className="flex-shrink-0 bg-primary-600 rounded-full p-2">
-                    <span className="text-white text-sm">🤖</span>
+                  <div className="flex-shrink-0 bg-yellow-500 rounded-full p-2">
+                    <Bot className="h-4 w-4 text-black" />
                   </div>
                   <div className="ml-3 bg-white p-3 rounded-lg shadow-sm">
                     <p className="text-sm text-gray-800">{msg.content}</p>
@@ -241,9 +241,9 @@ const AIChat = () => {
       {!isChatOpen && (
         <Button
           onClick={toggleChat}
-          className="p-4 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 flex items-center justify-center transition-all"
+          className="p-4 bg-yellow-500 rounded-full shadow-xl hover:bg-yellow-600 flex items-center justify-center transition-all border-2 border-white animate-pulse hover:animate-none"
         >
-          <MessageCircle className="h-6 w-6 text-white" />
+          <MessageCircle className="h-6 w-6 text-black" />
         </Button>
       )}
     </div>
