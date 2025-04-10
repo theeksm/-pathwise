@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -191,18 +192,78 @@ const SkillGap = () => {
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[600px] px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sign in to analyze your skill gap</h2>
-        <p className="text-gray-600 mb-8 text-center">
-          You need to be logged in to identify missing skills and get personalized learning recommendations
-        </p>
-        <div className="flex gap-4">
-          <Button asChild>
-            <a href="/login">Log in</a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="/signup">Sign up</a>
-          </Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Mind the Gap — Build the Skills You Need
+          </h1>
+          <p className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">
+            See what skills you're missing for your dream job and get personalized learning suggestions
+          </p>
+        </div>
+        
+        {/* Feature presentation for non-logged-in users */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-10">
+          <div className="p-8">
+            <div className="flex justify-center mb-6">
+              <div className="text-primary-600 p-3 bg-primary-50 rounded-full">
+                <BookOpen className="h-10 w-10 stroke-[1.5]" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Skill Gap Analyzer</h2>
+            <p className="text-gray-600 mb-8 text-center max-w-2xl mx-auto">
+              Our AI-powered Skill Gap Analyzer helps you identify the exact skills you need to develop 
+              for your target career. Get personalized learning paths and course recommendations tailored to your needs.
+            </p>
+            
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-3 mb-8">
+              {skillCategories.map((category) => (
+                <div key={category.id} className="bg-white rounded-lg border p-5 flex items-start space-x-4">
+                  <div className="text-primary-600 flex-shrink-0">
+                    {React.createElement(category.icon, { size: 22, className: "stroke-[1.5]" })}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">{category.name}</h3>
+                    <p className="text-sm text-gray-500 mt-1">{category.skills.slice(0, 3).join(", ")} and more...</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <p className="text-gray-600 mb-6 font-medium">
+                Sign in to analyze your skills and get personalized recommendations
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Button asChild size="lg">
+                  <Link href="/login">Log in</Link>
+                </Button>
+                <Button variant="outline" asChild size="lg">
+                  <Link href="/signup">Sign up</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Example results preview */}
+        <div className="rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+          <div className="p-6">
+            <h3 className="text-lg font-medium text-gray-900 flex items-center mb-4">
+              <BarChart className="w-5 h-5 mr-1.5 text-primary-600" />
+              <span>Example Skill Gap Analysis</span>
+            </h3>
+            <p className="text-gray-600 mb-6 italic">
+              Here's an example of what your personalized skill gap analysis might look like
+            </p>
+            <div className="bg-white rounded-lg shadow p-4 opacity-70 pointer-events-none select-none">
+              <img 
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                alt="Example skill gap analysis" 
+                className="w-full h-auto rounded-lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
