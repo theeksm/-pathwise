@@ -138,8 +138,8 @@ const AIChatPage = () => {
       <h1 className="text-3xl font-bold mb-6 text-center">AI Career Coach</h1>
       <p className="text-center text-muted-foreground mb-8">Get personalized career advice and guidance from our AI assistant</p>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           <Card className="shadow-lg border-blue-200">
             <CardHeader className="bg-blue-400 text-white">
               <CardTitle className="flex items-center">
@@ -218,7 +218,7 @@ const AIChatPage = () => {
           </Card>
         </div>
         
-        <div className="md:col-span-1">
+        <div className="lg:col-span-1">
           <Card>
             <CardHeader>
               <CardTitle>Quick Questions</CardTitle>
@@ -229,11 +229,11 @@ const AIChatPage = () => {
                   <Button
                     key={index}
                     variant="outline"
-                    className="w-full justify-start h-auto py-3 text-left text-sm text-gray-800 hover:bg-gray-100"
+                    className="w-full justify-start h-auto py-2 px-3 text-left text-sm text-gray-800 hover:bg-gray-100 whitespace-normal break-words"
                     onClick={() => handleQuickQuestion(question)}
                     disabled={!user || sendMessageMutation.isPending}
                   >
-                    {question}
+                    <span className="line-clamp-2">{question}</span>
                   </Button>
                 ))}
               </div>
