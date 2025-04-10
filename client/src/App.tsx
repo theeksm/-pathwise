@@ -19,6 +19,7 @@ import MarketTrends from "@/pages/MarketTrends";
 import EntrepreneurshipAdvisor from "@/pages/EntrepreneurshipAdvisor";
 import Pricing from "@/pages/Pricing";
 import NotFound from "@/pages/not-found";
+import AIChatPage from "@/pages/AIChat";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
           <Route path="/market-trends" component={MarketTrends} />
           <Route path="/entrepreneurship" component={EntrepreneurshipAdvisor} />
           <Route path="/pricing" component={Pricing} />
+          <Route path="/ai-chat" component={AIChatPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

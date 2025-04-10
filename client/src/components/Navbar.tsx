@@ -31,7 +31,7 @@ const features = [
   { icon: BookOpen, name: "Skill Gap Analyzer", path: "/skill-gap" },
   { icon: FileText, name: "Resume Optimizer", path: "/resume-optimizer" },
   { icon: Briefcase, name: "Job Matching", path: "/job-matching" },
-  { icon: Bot, name: "AI Career Coach", path: "/dashboard" },
+  { icon: Bot, name: "AI Career Coach", path: "/ai-chat" },
   { icon: TrendingUp, name: "Market Trends", path: "/market-trends" },
   { icon: Rocket, name: "Entrepreneurship Advisor", path: "/entrepreneurship" },
   { icon: LayoutDashboard, name: "Dashboard", path: "/dashboard" },
