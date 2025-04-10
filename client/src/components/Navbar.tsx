@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, createElement } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -12,19 +12,29 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { 
+  Menu, 
+  BrainCircuit, 
+  BookOpen, 
+  FileText, 
+  Briefcase, 
+  Bot, 
+  TrendingUp, 
+  Rocket, 
+  LayoutDashboard 
+} from "lucide-react";
 import Logo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 
 const features = [
-  { icon: "🧠", name: "Career Path Guidance", path: "/career-path" },
-  { icon: "📚", name: "Skill Gap Analyzer", path: "/skill-gap" },
-  { icon: "📄", name: "Resume Optimizer", path: "/resume-optimizer" },
-  { icon: "💼", name: "Job Matching", path: "/job-matching" },
-  { icon: "🤖", name: "AI Career Coach", path: "/dashboard" },
-  { icon: "📈", name: "Market Trends", path: "/market-trends" },
-  { icon: "🚀", name: "Entrepreneurship Advisor", path: "/entrepreneurship" },
-  { icon: "📊", name: "Dashboard", path: "/dashboard" },
+  { icon: BrainCircuit, name: "Career Path Guidance", path: "/career-path" },
+  { icon: BookOpen, name: "Skill Gap Analyzer", path: "/skill-gap" },
+  { icon: FileText, name: "Resume Optimizer", path: "/resume-optimizer" },
+  { icon: Briefcase, name: "Job Matching", path: "/job-matching" },
+  { icon: Bot, name: "AI Career Coach", path: "/dashboard" },
+  { icon: TrendingUp, name: "Market Trends", path: "/market-trends" },
+  { icon: Rocket, name: "Entrepreneurship Advisor", path: "/entrepreneurship" },
+  { icon: LayoutDashboard, name: "Dashboard", path: "/dashboard" },
 ];
 
 const Navbar = () => {
@@ -83,8 +93,8 @@ const Navbar = () => {
                                   isActive(feature.path) && "bg-accent"
                                 )}
                               >
-                                <div className="text-base font-medium leading-none">
-                                  <span className="mr-2">{feature.icon}</span>
+                                <div className="text-base font-medium leading-none flex items-center">
+                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 stroke-[1.5]" })}
                                   {feature.name}
                                 </div>
                               </NavigationMenuLink>
@@ -175,8 +185,10 @@ const Navbar = () => {
                           ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
                           : "border-transparent text-gray-500"
                       )}>
-                        <span className="mr-2">{feature.icon}</span>
-                        {feature.name}
+                        <span className="flex items-center">
+                          {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 stroke-[1.5]" })}
+                          {feature.name}
+                        </span>
                       </a>
                     </Link>
                   ))}
