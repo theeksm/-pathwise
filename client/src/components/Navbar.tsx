@@ -96,39 +96,16 @@ const Navbar = () => {
               </Link>
               
               <div className="px-1 pt-1 relative">
-                <NavigationMenu>
-                  <NavigationMenuList>
-                    <NavigationMenuItem>
-                      <NavigationMenuTrigger 
-                        className={cn(
-                          "px-0 -mx-2 bg-transparent hover:bg-transparent focus:bg-transparent",
-                          isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
-                            ? "text-gray-900 dark:text-white border-primary-500 border-b-2"
-                            : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                        )}
-                      >
-                        Features
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                          {features.map((feature) => (
-                            <li key={feature.path}>
-                              <Link href={feature.path} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                                <div className="flex items-center gap-2">
-                                  {createElement(feature.icon, { className: "h-4 w-4 text-blue-700 dark:text-blue-400 stroke-[2]" })}
-                                  <span className="text-sm font-medium leading-none">{feature.name}</span>
-                                </div>
-                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                  {getFeatureDescription(feature.name)}
-                                </p>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  </NavigationMenuList>
-                </NavigationMenu>
+                <Link href="/career-path">
+                  <div className={cn(
+                    "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
+                    isActive("/career-path")
+                      ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
+                      : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  )}>
+                    Features
+                  </div>
+                </Link>
               </div>
               
               <Link href="/market-trends">
