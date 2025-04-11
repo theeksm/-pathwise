@@ -96,7 +96,7 @@ const Navbar = () => {
                                 )}
                               >
                                 <div className="text-base font-medium leading-none flex items-center">
-                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 dark:text-blue-400 stroke-[1.5]" })}
+                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-blue-700 dark:text-blue-400 stroke-[2]" })}
                                   {feature.name}
                                 </div>
                               </div>
@@ -192,7 +192,7 @@ const Navbar = () => {
                           : "border-transparent text-gray-500 dark:text-gray-300"
                       )}>
                         <span className="flex items-center">
-                          {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 dark:text-blue-400 stroke-[1.5]" })}
+                          {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-blue-700 dark:text-blue-400 stroke-[2]" })}
                           {feature.name}
                         </span>
                       </div>
