@@ -72,53 +72,19 @@ const Navbar = () => {
                 </div>
               </Link>
               
-              <NavigationMenu className="inline-flex relative">
-                <NavigationMenuList className="list-none p-0 m-0">
-                  <NavigationMenuItem className="relative inline-block">
-                    <NavigationMenuTrigger 
-                      style={{
-                        backgroundColor: "transparent", 
-                        boxShadow: "none", 
-                        border: "none",
-                        borderRadius: "0",
-                        margin: "0",
-                        padding: "0",
-                        height: "auto"
-                      }} 
-                      className={cn(
-                        "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer bg-transparent border-0 shadow-none",
-                        isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
-                          ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
-                          : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                      )}
-                    >
-                      Features
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="w-[400px] p-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          {features.map((feature) => (
-                            <Link key={feature.path} href={feature.path}>
-                              <div
-                                style={{border: "none", boxShadow: "none"}}
-                                className={cn(
-                                  "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 dark:hover:bg-gray-700",
-                                  isActive(feature.path) && "bg-gray-100 dark:bg-gray-700"
-                                )}
-                              >
-                                <div className="text-base font-medium leading-none flex items-center">
-                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-blue-700 dark:text-blue-400 stroke-[2]" })}
-                                  {feature.name}
-                                </div>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+              <div className="px-1 pt-1 relative">
+                <Link href={features[0].path}>
+                  <div className={cn(
+                      "inline-flex items-center text-sm font-medium cursor-pointer",
+                      isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
+                        ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
+                        : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                    )}
+                  >
+                    Features
+                  </div>
+                </Link>
+              </div>
               
               <Link href="/market-trends">
                 <div className={cn(

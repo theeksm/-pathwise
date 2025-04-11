@@ -173,24 +173,44 @@ h1, h2, h3, h4, h5, h6,
   --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Completely remove any styling from navigation menu trigger */
 [role="navigation"] button[data-state="open"],
 [role="navigation"] button[data-state="closed"] {
+  all: unset !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
   outline: none !important;
-  position: relative !important;
-  padding-inline: 1px !important;
-  padding-top: 4px !important;
   margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
   border-radius: 0 !important;
+  height: auto !important;
 }
 
+/* Remove the chevron icon and any contents within the button except text */
 [role="navigation"] button[data-state="open"] > span,
 [role="navigation"] button[data-state="closed"] > span,
 [role="navigation"] button[data-state="open"]::after,
-[role="navigation"] button[data-state="closed"]::after {
+[role="navigation"] button[data-state="closed"]::after,
+[role="navigation"] button[data-state="open"]::before,
+[role="navigation"] button[data-state="closed"]::before,
+[role="navigation"] button svg,
+[role="navigation"] button .chevron {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 [role="navigation"] button:hover {
