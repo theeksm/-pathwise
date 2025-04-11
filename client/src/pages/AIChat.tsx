@@ -64,9 +64,14 @@ const AIChatPage = () => {
     return newChat;
   };
   
+  // State for handling API errors
+  const [apiError, setApiError] = useState<string | null>(null);
+
   // Send a message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
+      setApiError(null); // Clear any previous errors
+
       if (!activeChat) {
         // Get or create a chat first
         const chat = await getOrCreateChat();
@@ -77,16 +82,32 @@ const AIChatPage = () => {
         }
         
         const res = await apiRequest("POST", `/api/chats/${chat.id}/message`, { content });
-        return res.json();
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to send message");
+        }
+        return data;
       } else {
         const res = await apiRequest("POST", `/api/chats/${activeChat.id}/message`, { content });
-        return res.json();
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to send message");
+        }
+        return data;
       }
     },
     onSuccess: (data) => {
       setActiveChat(data);
       setMessage("");
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
+    },
+    onError: (error: Error) => {
+      console.error("Error sending message:", error);
+      if (error.message.includes("API key")) {
+        setApiError("There was an issue with the AI service. Please try again later or contact support.");
+      } else {
+        setApiError("Failed to send your message. Please try again.");
+      }
     }
   });
   
