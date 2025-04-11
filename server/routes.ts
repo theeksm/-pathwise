@@ -417,6 +417,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           salary: job.salary,
           location: job.location,
           url: job.url,
+          matchReasons: job.matchReasons || [],
+          requiredSkills: job.requiredSkills || [],
+          userSkillMatch: job.userSkillMatch || [],
+          skillGaps: job.skillGaps || [],
+          growthPotential: job.growthPotential || '',
+          industryTrends: job.industryTrends || '',
+          remoteType: job.remoteType || 'on-site',
           isSaved: false
         });
         savedJobs.push(savedJob);
@@ -529,7 +536,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       };
       
-      const messages = [...chat.messages, userMessage];
+      // Ensure chat.messages is always an array
+      const currentMessages = Array.isArray(chat.messages) ? chat.messages : [];
+      const messages = [...currentMessages, userMessage];
       
       // Get AI response
       const aiResponse = await generateChatResponse(
