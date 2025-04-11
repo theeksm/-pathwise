@@ -21,36 +21,91 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
-  const { data: user, isLoading: isUserLoading } = useQuery({
+  // Define types for expected data
+  interface User {
+    id: number;
+    username: string;
+    fullName?: string;
+    email: string;
+  }
+
+  interface Career {
+    id: number;
+    userId: number;
+    careerTitle: string;
+    description: string;
+    fitScore: number;
+    createdAt: string;
+  }
+
+  interface Skill {
+    id: number;
+    userId: number;
+    skillName: string;
+    category: string;
+    proficiency?: number;
+    isMissing: boolean;
+    createdAt: string;
+  }
+
+  interface Resume {
+    id: number;
+    userId: number;
+    content: string;
+    optimizedContent?: string;
+    createdAt: string;
+  }
+
+  interface Job {
+    id: number;
+    userId: number;
+    jobTitle: string;
+    company: string;
+    description: string;
+    matchPercentage: number;
+    isSaved: boolean;
+    createdAt: string;
+  }
+
+  interface LearningPath {
+    id: number;
+    userId: number;
+    title: string;
+    description: string;
+    steps: string[];
+    createdAt: string;
+  }
+
+  const { data: user, isLoading: isUserLoading } = useQuery<User>({
     queryKey: ['/api/auth/user'],
     throwOnError: false,
   });
 
-  const { data: careers, isLoading: isCareersLoading } = useQuery({
+  const { data: careers, isLoading: isCareersLoading } = useQuery<Career[]>({
     queryKey: ['/api/careers'],
     enabled: !!user,
     throwOnError: false,
   });
 
-  const { data: skills, isLoading: isSkillsLoading } = useQuery({
+  const { data: skills, isLoading: isSkillsLoading } = useQuery<Skill[]>({
     queryKey: ['/api/skills'],
     enabled: !!user,
     throwOnError: false,
   });
 
-  const { data: resumes, isLoading: isResumesLoading } = useQuery({
+  const { data: resumes, isLoading: isResumesLoading } = useQuery<Resume[]>({
     queryKey: ['/api/resumes'],
     enabled: !!user,
     throwOnError: false,
   });
 
-  const { data: jobs, isLoading: isJobsLoading } = useQuery({
+  const { data: jobs, isLoading: isJobsLoading } = useQuery<Job[]>({
     queryKey: ['/api/jobs'],
     enabled: !!user,
     throwOnError: false,
   });
 
-  const { data: learningPaths, isLoading: isLearningPathsLoading } = useQuery({
+  const { data: learningPaths, isLoading: isLearningPathsLoading } = useQuery<LearningPath[]>({
     queryKey: ['/api/learning-paths'],
     enabled: !!user,
     throwOnError: false,
