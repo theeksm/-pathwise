@@ -80,7 +80,11 @@ const Home = () => {
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0 home-hero">
                 <Link href="/career-path">
-                  <Button className="px-5 py-3 text-base font-semibold bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 btn-cta shadow-md" size="lg">
+                  <Button 
+                    style={{backgroundColor: "#1d4ed8", color: "white"}} 
+                    className="px-5 py-3 text-base font-semibold shadow-md hover:bg-blue-800" 
+                    size="lg"
+                  >
                     Start My Career Journey
                   </Button>
                 </Link>
