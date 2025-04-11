@@ -39,6 +39,29 @@ const features = [
 ];
 
 const Navbar = () => {
+  // Helper function to get feature descriptions for the dropdown menu
+  const getFeatureDescription = (featureName: string): string => {
+    switch (featureName) {
+      case "Career Path Guidance":
+        return "Discover personalized career paths based on your skills, interests, and goals.";
+      case "Skill Gap Analyzer":
+        return "Identify missing skills needed for your target career and get course recommendations.";
+      case "Resume Optimizer":
+        return "Get AI-powered suggestions to improve your resume and increase interview chances.";
+      case "Job Matching":
+        return "Find job opportunities that match your skills and experience with personalized scores.";
+      case "AI Career Coach":
+        return "Chat with our AI career coach for personalized guidance and advice.";
+      case "Market Trends":
+        return "Stay updated with the latest market trends and industry insights.";
+      case "Entrepreneurship Advisor":
+        return "Get guidance on starting your own business and entrepreneurial opportunities.";
+      case "Dashboard":
+        return "View your career progress, learning paths, and personalized recommendations.";
+      default:
+        return "Explore our AI-powered tools to advance your career.";
+    }
+  };
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -73,17 +96,39 @@ const Navbar = () => {
               </Link>
               
               <div className="px-1 pt-1 relative">
-                <Link href={features[0].path}>
-                  <div className={cn(
-                      "inline-flex items-center text-sm font-medium cursor-pointer",
-                      isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
-                        ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
-                        : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                    )}
-                  >
-                    Features
-                  </div>
-                </Link>
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger 
+                        className={cn(
+                          "px-0 -mx-2 bg-transparent hover:bg-transparent focus:bg-transparent",
+                          isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
+                            ? "text-gray-900 dark:text-white border-primary-500 border-b-2"
+                            : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                        )}
+                      >
+                        Features
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                          {features.map((feature) => (
+                            <li key={feature.path}>
+                              <Link href={feature.path} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                                <div className="flex items-center gap-2">
+                                  {createElement(feature.icon, { className: "h-4 w-4 text-blue-700 dark:text-blue-400 stroke-[2]" })}
+                                  <span className="text-sm font-medium leading-none">{feature.name}</span>
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                  {getFeatureDescription(feature.name)}
+                                </p>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
               </div>
               
               <Link href="/market-trends">
