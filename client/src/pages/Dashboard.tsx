@@ -111,79 +111,91 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="pt-0">
               <ul className="space-y-2">
-                <li>
-                  <Link href="/career-path">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <Brain className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Career Path Finder</span>
-                      <Button variant="ghost" size="sm" className="ml-auto">View</Button>
-                    </div>
-                  </Link>
+                {/* Using standard <li> elements with onClick handlers instead of nested Link components */}
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/career-path"}
+                >
+                  <Brain className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Career Path Finder</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-auto"
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      window.location.href = "/career-path";
+                    }}
+                  >
+                    View
+                  </Button>
                 </li>
-                <li>
-                  <Link href="/skill-gap">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <BookOpen className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Skill Gap Analyzer</span>
-                      <Button variant="ghost" size="sm" className="ml-auto">Update</Button>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/skill-gap"}
+                >
+                  <BookOpen className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Skill Gap Analyzer</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-auto"
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      window.location.href = "/skill-gap";
+                    }}
+                  >
+                    Update
+                  </Button>
                 </li>
-                <li>
-                  <Link href="/resume-optimizer">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <FileText className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Resume Optimizer</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/resume-optimizer"}
+                >
+                  <FileText className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Resume Optimizer</span>
                 </li>
-                <li>
-                  <Link href="/job-matching">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <Briefcase className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Job Matches</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/job-matching"}
+                >
+                  <Briefcase className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Job Matches</span>
                 </li>
-                <li>
-                  <Link href="/ai-chat">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <Bot className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>AI Career Coach</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/ai-chat"}
+                >
+                  <Bot className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>AI Career Coach</span>
                 </li>
-                <li>
-                  <Link href="/market-trends">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <TrendingUp className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Market Trends</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/market-trends"}
+                >
+                  <TrendingUp className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Market Trends</span>
                 </li>
-                <li>
-                  <Link href="/entrepreneurship">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <Rocket className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Entrepreneurship Advisor</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/entrepreneurship"}
+                >
+                  <Rocket className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Entrepreneurship Advisor</span>
                 </li>
-                <li>
-                  <Link href="/dashboard">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <LayoutDashboard className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Career Plan Dashboard</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/dashboard"}
+                >
+                  <LayoutDashboard className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Career Plan Dashboard</span>
                 </li>
-                <li>
-                  <Link href="/profile">
-                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-                      <Settings className="mr-3 h-5 w-5 text-primary-500" />
-                      <span>Profile & Preferences</span>
-                    </div>
-                  </Link>
+                <li 
+                  className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => window.location.href = "/profile"}
+                >
+                  <Settings className="mr-3 h-5 w-5 text-primary-500" />
+                  <span>Profile & Preferences</span>
                 </li>
               </ul>
             </CardContent>
