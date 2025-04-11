@@ -95,7 +95,7 @@ const Navbar = () => {
                                 )}
                               >
                                 <div className="text-base font-medium leading-none flex items-center">
-                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 stroke-[1.5]" })}
+                                  {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 dark:text-blue-400 stroke-[1.5]" })}
                                   {feature.name}
                                 </div>
                               </NavigationMenuLink>
@@ -137,19 +137,19 @@ const Navbar = () => {
             
             {user ? (
               <Link href="/dashboard">
-                <Button variant="outline" className="text-gray-700">
+                <Button variant="outline" className="text-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
                   Dashboard
                 </Button>
               </Link>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="text-gray-500">
+                  <Button variant="ghost" className="text-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
                     Log in
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">
                     Sign up
                   </Button>
                 </Link>
@@ -160,24 +160,26 @@ const Navbar = () => {
           <div className="flex items-center sm:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-500">
+                <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-300 dark:hover:bg-gray-700">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <SheetContent side="left" className="w-[300px] sm:w-[400px] dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex flex-col py-4">
                   <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
                     <div className={cn(
                       "px-4 py-2 text-base font-medium cursor-pointer",
-                      isActive("/") ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" : "border-transparent text-gray-500"
+                      isActive("/") 
+                        ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700 dark:bg-gray-700 dark:text-white dark:border-blue-500" 
+                        : "border-transparent text-gray-500 dark:text-gray-300"
                     )}>
                       Home
                     </div>
                   </Link>
                   
                   <div className="mt-4 mb-2">
-                    <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider">Features</h3>
+                    <h3 className="px-4 text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Features</h3>
                   </div>
                   
                   {features.map((feature) => (
@@ -185,11 +187,11 @@ const Navbar = () => {
                       <div className={cn(
                         "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive(feature.path) 
-                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
-                          : "border-transparent text-gray-500"
+                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700 dark:bg-gray-700 dark:text-white dark:border-blue-500" 
+                          : "border-transparent text-gray-500 dark:text-gray-300"
                       )}>
                         <span className="flex items-center">
-                          {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 stroke-[1.5]" })}
+                          {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 dark:text-blue-400 stroke-[1.5]" })}
                           {feature.name}
                         </span>
                       </div>
@@ -201,8 +203,8 @@ const Navbar = () => {
                       <div className={cn(
                         "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive("/market-trends") 
-                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
-                          : "border-transparent text-gray-500"
+                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700 dark:bg-gray-700 dark:text-white dark:border-blue-500" 
+                          : "border-transparent text-gray-500 dark:text-gray-300"
                       )}>
                         Market Trends
                       </div>
@@ -212,31 +214,31 @@ const Navbar = () => {
                       <div className={cn(
                         "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive("/pricing") 
-                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
-                          : "border-transparent text-gray-500"
+                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700 dark:bg-gray-700 dark:text-white dark:border-blue-500" 
+                          : "border-transparent text-gray-500 dark:text-gray-300"
                       )}>
                         Pricing
                       </div>
                     </Link>
                   </div>
                   
-                  <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div className="px-4 mb-4 flex items-center">
-                      <span className="text-sm font-medium text-gray-500 mr-4">Theme</span>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-300 mr-4">Theme</span>
                       <ThemeToggle />
                     </div>
                     
                     {user ? (
                       <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Button className="w-full">Dashboard</Button>
+                        <Button className="w-full dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Dashboard</Button>
                       </Link>
                     ) : (
                       <div className="flex flex-col space-y-3 px-4">
                         <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button variant="outline" className="w-full">Log in</Button>
+                          <Button variant="outline" className="w-full dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">Log in</Button>
                         </Link>
                         <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md">Sign up</Button>
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">Sign up</Button>
                         </Link>
                       </div>
                     )}
