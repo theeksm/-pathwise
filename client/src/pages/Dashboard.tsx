@@ -113,76 +113,76 @@ const Dashboard = () => {
               <ul className="space-y-2">
                 <li>
                   <Link href="/career-path">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <Brain className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Career Path Finder</span>
                       <Button variant="ghost" size="sm" className="ml-auto">View</Button>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/skill-gap">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <BookOpen className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Skill Gap Analyzer</span>
                       <Button variant="ghost" size="sm" className="ml-auto">Update</Button>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/resume-optimizer">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <FileText className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Resume Optimizer</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/job-matching">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <Briefcase className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Job Matches</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#ai-coach">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                  <Link href="/ai-chat">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <Bot className="mr-3 h-5 w-5 text-primary-500" />
                       <span>AI Career Coach</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/market-trends">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <TrendingUp className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Market Trends</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/entrepreneurship">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <Rocket className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Entrepreneurship Advisor</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/dashboard">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <LayoutDashboard className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Career Plan Dashboard</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/profile">
-                    <a className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                    <div className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
                       <Settings className="mr-3 h-5 w-5 text-primary-500" />
                       <span>Profile & Preferences</span>
-                    </a>
+                    </div>
                   </Link>
                 </li>
               </ul>
@@ -222,9 +222,9 @@ const Dashboard = () => {
                       </ul>
                     ) : (
                       <Link href="/career-path">
-                        <a className="text-primary-600 hover:underline text-sm">
+                        <span className="text-primary-600 hover:underline text-sm cursor-pointer">
                           Click here to fill in your information
-                        </a>
+                        </span>
                       </Link>
                     )}
                   </CardContent>
@@ -277,16 +277,16 @@ const Dashboard = () => {
                           ))}
                         </ul>
                         <Link href="/job-matching">
-                          <a className="text-primary-600 hover:underline text-xs mt-2 inline-block">
+                          <span className="text-primary-600 hover:underline text-xs mt-2 inline-block cursor-pointer">
                             Read more
-                          </a>
+                          </span>
                         </Link>
                       </>
                     ) : (
                       <Link href="/job-matching">
-                        <a className="text-primary-600 hover:underline text-sm">
+                        <span className="text-primary-600 hover:underline text-sm cursor-pointer">
                           Find matching jobs
-                        </a>
+                        </span>
                       </Link>
                     )}
                   </CardContent>
