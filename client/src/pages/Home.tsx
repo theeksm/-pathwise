@@ -78,9 +78,9 @@ const Home = () => {
               <p className="mt-3 text-base text-gray-500 dark:text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                 Let smart tech guide you to the right career
               </p>
-              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0 home-hero">
                 <Link href="/career-path">
-                  <Button className="px-5 py-3 text-base dark:bg-blue-600 dark:hover:bg-blue-700" size="lg">
+                  <Button className="px-5 py-3 text-base font-semibold bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 btn-cta shadow-md" size="lg">
                     Start My Career Journey
                   </Button>
                 </Link>

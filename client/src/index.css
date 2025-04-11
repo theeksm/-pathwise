@@ -199,6 +199,41 @@ button.bg-primary-600:hover,
   background-color: #2563eb !important;
 }
 
+/* Special contrast buttons for calls to action */
+.btn-cta,
+a[href="/signup"] .bg-blue-600,
+button.bg-blue-700,
+.home-hero .bg-blue-600 {
+  background-color: #1e40af !important; /* Darker blue for better contrast */
+  color: white !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-cta:hover,
+a[href="/signup"] .bg-blue-600:hover,
+button.bg-blue-700:hover,
+.home-hero .bg-blue-600:hover {
+  background-color: #1e3a8a !important; /* Even darker on hover */
+  transform: translateY(-1px);
+}
+
+.dark .btn-cta,
+.dark a[href="/signup"] .bg-blue-600,
+.dark button.bg-blue-700,
+.dark .home-hero .bg-blue-600 {
+  background-color: #2563eb !important; /* Brighter blue in dark mode */
+  color: white !important;
+}
+
+.dark .btn-cta:hover,
+.dark a[href="/signup"] .bg-blue-600:hover,
+.dark button.bg-blue-700:hover,
+.dark .home-hero .bg-blue-600:hover {
+  background-color: #3b82f6 !important; /* Lighter on hover for dark mode */
+  transform: translateY(-1px);
+}
+
 /* Secondary/outline buttons */
 .btn-outline, 
 button[class*="outline"], 

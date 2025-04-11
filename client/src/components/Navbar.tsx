@@ -149,7 +149,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">
+                  <Button className="bg-blue-700 hover:bg-blue-800 text-white font-medium shadow-md dark:bg-blue-600 dark:hover:bg-blue-700 btn-cta">
                     Sign up
                   </Button>
                 </Link>
@@ -238,7 +238,7 @@ const Navbar = () => {
                           <Button variant="outline" className="w-full dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">Log in</Button>
                         </Link>
                         <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">Sign up</Button>
+                          <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium shadow-md dark:bg-blue-600 dark:hover:bg-blue-700 btn-cta">Sign up</Button>
                         </Link>
                       </div>
                     )}
