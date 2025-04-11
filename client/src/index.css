@@ -151,3 +151,107 @@
 .dark [role="navigation"] [data-radix-menu-content] .text-base {
   color: #f3f4f6 !important;
 }
+
+/* Global button styling for consistent appearance in both themes */
+button, 
+.btn, 
+[type="button"], 
+[type="submit"], 
+[type="reset"] {
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 200ms;
+}
+
+/* Primary buttons (blue) */
+.btn-primary, 
+button.bg-blue-600, 
+button.bg-primary-600,
+.bg-blue-600,
+.bg-primary-600 {
+  background-color: #2563eb !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.btn-primary:hover, 
+button.bg-blue-600:hover, 
+button.bg-primary-600:hover,
+.bg-blue-600:hover,
+.bg-primary-600:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.dark .btn-primary, 
+.dark button.bg-blue-600, 
+.dark button.bg-primary-600,
+.dark .bg-blue-600,
+.dark .bg-primary-600 {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.dark .btn-primary:hover, 
+.dark button.bg-blue-600:hover, 
+.dark button.bg-primary-600:hover,
+.dark .bg-blue-600:hover,
+.dark .bg-primary-600:hover {
+  background-color: #2563eb !important;
+}
+
+/* Secondary/outline buttons */
+.btn-outline, 
+button[class*="outline"], 
+[class*="outline"] {
+  border: 1px solid #d1d5db !important;
+  background-color: transparent !important;
+}
+
+.btn-outline:hover, 
+button[class*="outline"]:hover, 
+[class*="outline"]:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.dark .btn-outline, 
+.dark button[class*="outline"], 
+.dark [class*="outline"] {
+  border-color: #4b5563 !important;
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .btn-outline:hover, 
+.dark button[class*="outline"]:hover, 
+.dark [class*="outline"]:hover {
+  background-color: #374151 !important;
+}
+
+/* Ghost buttons */
+.btn-ghost, 
+button[class*="ghost"], 
+[class*="ghost"] {
+  background-color: transparent !important;
+  color: #6b7280 !important;
+}
+
+.btn-ghost:hover, 
+button[class*="ghost"]:hover, 
+[class*="ghost"]:hover {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.dark .btn-ghost, 
+.dark button[class*="ghost"], 
+.dark [class*="ghost"] {
+  background-color: transparent !important;
+  color: #d1d5db !important;
+}
+
+.dark .btn-ghost:hover, 
+.dark button[class*="ghost"]:hover, 
+.dark [class*="ghost"]:hover {
+  background-color: #374151 !important;
+  color: white !important;
+}

@@ -1,10 +1,11 @@
 import { Link } from "wouter";
 import Logo from "@/assets/logo";
-import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white">
+    <footer className="bg-gray-800 text-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
@@ -15,6 +16,13 @@ const Footer = () => {
             <p className="mt-2 text-sm text-gray-300">
               AI-powered career guidance platform that helps you navigate your professional journey with confidence.
             </p>
+            <div className="mt-6">
+              <Link href="/contact">
+                <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">
+                  Contact Us
+                </Button>
+              </Link>
+            </div>
           </div>
           
           <div>
@@ -43,13 +51,21 @@ const Footer = () => {
           
           <div>
             <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
-              Company
+              Contact Info
             </h3>
-            <ul className="mt-4 space-y-2">
-              <li><Link href="/about" className="text-base text-gray-400 hover:text-white">About</Link></li>
-              <li><Link href="/pricing" className="text-base text-gray-400 hover:text-white">Pricing</Link></li>
-              <li><Link href="/privacy" className="text-base text-gray-400 hover:text-white">Privacy Policy</Link></li>
-              <li><Link href="/contact" className="text-base text-gray-400 hover:text-white">Contact Us</Link></li>
+            <ul className="mt-4 space-y-3">
+              <li className="flex items-start">
+                <Mail className="h-5 w-5 text-blue-400 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-400">support@pathwise.example.com</span>
+              </li>
+              <li className="flex items-start">
+                <Phone className="h-5 w-5 text-blue-400 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-400">(123) 456-7890</span>
+              </li>
+              <li className="flex items-start">
+                <MapPin className="h-5 w-5 text-blue-400 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-400">123 Career Avenue, Suite 200<br />San Francisco, CA 94107</span>
+              </li>
             </ul>
           </div>
         </div>
