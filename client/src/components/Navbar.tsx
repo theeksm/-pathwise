@@ -146,7 +146,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-primary-600 hover:bg-primary-700 text-white">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md">
                     Sign up
                   </Button>
                 </Link>
@@ -228,7 +228,7 @@ const Navbar = () => {
                           <Button variant="outline" className="w-full">Log in</Button>
                         </Link>
                         <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button className="w-full">Sign up</Button>
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md">Sign up</Button>
                         </Link>
                       </div>
                     )}
