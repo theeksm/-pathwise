@@ -25,7 +25,14 @@ const AIChatPage = () => {
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
-  const { data: user } = useQuery({
+  // Define the user interface
+  interface User {
+    id: number;
+    username: string;
+    email: string;
+  }
+
+  const { data: user } = useQuery<User>({
     queryKey: ['/api/auth/user'],
     retry: false,
     refetchOnWindowFocus: false,
@@ -33,14 +40,14 @@ const AIChatPage = () => {
   });
   
   // Query the active chat for the user
-  const { data: chats, isLoading: isChatsLoading } = useQuery({
+  const { data: chats, isLoading: isChatsLoading } = useQuery<Chat[]>({
     queryKey: ['/api/chats'],
     enabled: !!user,
     throwOnError: false
   });
   
   // Get or create a chat
-  const getOrCreateChat = async () => {
+  const getOrCreateChat = async (): Promise<Chat | null> => {
     if (!user) return null;
     
     // If user has chats, use the most recent one
@@ -49,7 +56,7 @@ const AIChatPage = () => {
     }
     
     // Otherwise, create a new chat
-    const initialMessage = {
+    const initialMessage: Message = {
       role: "assistant",
       content: "Hi there! I'm your AI Career Coach. How can I help with your career journey today?",
       timestamp: new Date().toISOString()
@@ -61,7 +68,7 @@ const AIChatPage = () => {
     });
     
     const newChat = await res.json();
-    return newChat;
+    return newChat as Chat;
   };
   
   // State for handling API errors
@@ -211,6 +218,21 @@ const AIChatPage = () => {
               </ScrollArea>
               
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
+                {apiError && (
+                  <div className="mb-3 p-3 text-sm bg-red-50 border border-red-200 text-red-700 rounded-md">
+                    <p className="font-medium mb-1">Error</p>
+                    <p>{apiError}</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-2 text-xs bg-white hover:bg-gray-50"
+                      onClick={() => setApiError(null)}
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                )}
+              
                 <div className="flex items-center">
                   <Input
                     value={message}
@@ -228,6 +250,12 @@ const AIChatPage = () => {
                     <SendHorizontal className="h-5 w-5" />
                   </Button>
                 </div>
+                
+                {sendMessageMutation.isPending && (
+                  <p className="mt-2 text-xs text-center text-gray-500">
+                    Sending message...
+                  </p>
+                )}
                 
                 {!user && (
                   <p className="mt-2 text-xs text-center text-gray-500">
