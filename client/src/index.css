@@ -178,10 +178,27 @@ h1, h2, h3, h4, h5, h6,
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
+  outline: none !important;
+  position: relative !important;
+  padding-inline: 1px !important;
+  padding-top: 4px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+[role="navigation"] button[data-state="open"] > span,
+[role="navigation"] button[data-state="closed"] > span,
+[role="navigation"] button[data-state="open"]::after,
+[role="navigation"] button[data-state="closed"]::after {
+  display: none !important;
 }
 
 [role="navigation"] button:hover {
   background-color: transparent !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  margin-top: 0.25rem !important;
 }
 
 [role="navigation"] [data-radix-menu-content] {
