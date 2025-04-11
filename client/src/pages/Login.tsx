@@ -72,16 +72,16 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4 py-12">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-12">
+      <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center dark:text-white">Welcome Back</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {error && (
-                <div className="bg-red-50 p-3 rounded-md text-red-500 text-sm">
+                <div className="bg-red-50 dark:bg-red-950/30 p-3 rounded-md text-red-500 dark:text-red-400 text-sm">
                   {error}
                 </div>
               )}
@@ -116,27 +116,27 @@ const Login = () => {
               
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full dark:bg-blue-600 dark:hover:bg-blue-700"
                 disabled={loginMutation.isPending}
               >
                 {loginMutation.isPending ? "Logging in..." : "Continue"}
               </Button>
               
-              <div className="text-center text-sm">
+              <div className="text-center text-sm dark:text-gray-300">
                 Don't have an account?{" "}
-                <Button variant="link" className="p-0" onClick={() => setLocation("/signup")}>
+                <Button variant="link" className="p-0 dark:text-blue-400" onClick={() => setLocation("/signup")}>
                   Sign up
                 </Button>
               </div>
               
               <div className="relative my-6">
-                <Separator />
+                <Separator className="dark:bg-gray-700" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="bg-card px-2 text-muted-foreground text-sm">OR</span>
+                  <span className="bg-card dark:bg-gray-800 px-2 text-muted-foreground dark:text-gray-400 text-sm">OR</span>
                 </div>
               </div>
               
-              <Button variant="outline" className="w-full" type="button">
+              <Button variant="outline" className="w-full dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700" type="button">
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -159,7 +159,7 @@ const Login = () => {
                 Continue with Google
               </Button>
               
-              <Button variant="outline" className="w-full" type="button">
+              <Button variant="outline" className="w-full dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700" type="button">
                 <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
