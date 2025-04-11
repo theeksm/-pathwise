@@ -76,7 +76,7 @@ const Navbar = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className={cn(
-                      "h-auto px-1 pt-1 font-medium",
+                      "h-auto px-1 pt-1 font-medium bg-transparent",
                       isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
                         ? "text-gray-900 dark:text-white"
                         : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
