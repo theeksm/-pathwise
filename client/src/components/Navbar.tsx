@@ -72,15 +72,26 @@ const Navbar = () => {
                 </div>
               </Link>
               
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger style={{backgroundColor: "transparent", boxShadow: "none", border: "none"}} className={cn(
-                      "h-auto px-1 pt-1 font-medium",
-                      isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
-                        ? "text-gray-900 dark:text-white"
-                        : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                    )}>
+              <NavigationMenu className="inline-flex relative">
+                <NavigationMenuList className="list-none p-0 m-0">
+                  <NavigationMenuItem className="relative inline-block">
+                    <NavigationMenuTrigger 
+                      style={{
+                        backgroundColor: "transparent", 
+                        boxShadow: "none", 
+                        border: "none",
+                        borderRadius: "0",
+                        margin: "0",
+                        padding: "0",
+                        height: "auto"
+                      }} 
+                      className={cn(
+                        "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer bg-transparent border-0 shadow-none",
+                        isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
+                          ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
+                          : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                      )}
+                    >
                       Features
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
