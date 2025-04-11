@@ -29,6 +29,27 @@ import {
 } from "recharts";
 import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw } from "lucide-react";
 
+// Define interfaces for stock data
+interface StockDataPoint {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+interface StockData {
+  symbol: string;
+  name?: string;
+  currency: string;
+  price?: number;
+  change?: number;
+  changePercent?: number;
+  timeSeries?: StockDataPoint[];
+  error?: string;
+}
+
 // Career trends data (would come from API in production)
 const careerTrends = [
   { 
@@ -121,7 +142,7 @@ const MarketTrends = () => {
   const [searchSymbol, setSearchSymbol] = useState("MSFT");
   const [stockChartData, setStockChartData] = useState<any[]>([]);
 
-  const { data: stockData, isLoading, isError, error, refetch } = useQuery({
+  const { data: stockData, isLoading, isError, error, refetch } = useQuery<StockData>({
     queryKey: ['/api/market-trends/stocks', stockSymbol],
     refetchOnWindowFocus: false,
     retry: 1,
@@ -406,6 +427,23 @@ const MarketTrends = () => {
                     <Skeleton className="h-8 w-full" />
                     <Skeleton className="h-64 w-full" />
                   </div>
+                ) : stockData && stockData.error ? (
+                  <div className="flex flex-col items-center justify-center h-64 p-6 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="text-red-600 mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Unable to load stock data</h3>
+                    <p className="text-red-600 text-center mb-4">{stockData.error}</p>
+                    <p className="text-sm text-gray-600 text-center mb-4">
+                      This could be due to an invalid API key, reaching API request limits, or an invalid stock symbol.
+                    </p>
+                    <Button variant="outline" onClick={() => refetch()}>
+                      <RefreshCcw className="h-4 w-4 mr-2" />
+                      Try Again
+                    </Button>
+                  </div>
                 ) : stockData ? (
                   <div>
                     <div className="flex justify-between items-center mb-6">
@@ -455,6 +493,22 @@ const MarketTrends = () => {
                         </div>
                       )}
                     </div>
+                  </div>
+                ) : isError ? (
+                  <div className="flex flex-col items-center justify-center h-64 p-6 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="text-red-600 mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Failed to fetch stock data</h3>
+                    <p className="text-sm text-gray-600 text-center mb-4">
+                      An error occurred while fetching the data. Please check your connection and try again.
+                    </p>
+                    <Button variant="outline" onClick={() => refetch()}>
+                      <RefreshCcw className="h-4 w-4 mr-2" />
+                      Try Again
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-64">
