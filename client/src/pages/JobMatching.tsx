@@ -37,7 +37,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, Building, DollarSign, MapPin, BookmarkPlus, Send, Filter } from "lucide-react";
+import { 
+  Briefcase, 
+  Building, 
+  DollarSign, 
+  MapPin, 
+  BookmarkPlus, 
+  Send, 
+  Filter, 
+  TrendingUp, 
+  CheckCircle, 
+  AlertCircle, 
+  LucideIcon,
+  GraduationCap,
+  Laptop,
+  Home,
+  Building2
+} from "lucide-react";
 
 const formSchema = z.object({
   skills: z.string().min(2, {
@@ -53,23 +69,57 @@ type FormData = z.infer<typeof formSchema>;
 
 const JobMatching = () => {
   const { toast } = useToast();
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<JobMatch[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<JobMatch[]>([]);
   const [isMatching, setIsMatching] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+
+  // Define interfaces for TypeScript type safety
+  interface UserSkill {
+    id: number;
+    skillName: string;
+    category: string;
+    proficiency?: number;
+    isMissing: boolean;
+  }
+
+  interface UserProfile {
+    id: number;
+    experience?: string;
+    [key: string]: any;
+  }
+  
+  interface JobMatch {
+    id: number;
+    jobTitle: string;
+    company: string;
+    description: string;
+    matchPercentage: number;
+    salary: string;
+    location: string;
+    url?: string;
+    isSaved?: boolean;
+    matchReasons?: string[];
+    requiredSkills?: string[];
+    userSkillMatch?: string[];
+    skillGaps?: string[];
+    growthPotential?: string;
+    industryTrends?: string;
+    remoteType?: 'remote' | 'hybrid' | 'on-site';
+  }
 
   const { data: user } = useQuery({
     queryKey: ['/api/auth/user'],
     throwOnError: false,
   });
 
-  const { data: userProfile, isLoading: isProfileLoading } = useQuery({
+  const { data: userProfile, isLoading: isProfileLoading } = useQuery<UserProfile>({
     queryKey: ['/api/user'],
     enabled: !!user,
     throwOnError: false,
   });
 
-  const { data: userSkills, isLoading: isSkillsLoading } = useQuery({
+  const { data: userSkills, isLoading: isSkillsLoading } = useQuery<UserSkill[]>({
     queryKey: ['/api/skills'],
     enabled: !!user,
     throwOnError: false,
@@ -412,6 +462,7 @@ const JobMatching = () => {
                     <Card key={job.id} className="overflow-hidden">
                       <div className="relative">
                         <CardContent className="p-6">
+                          {/* Header with job title, company and match percentage */}
                           <div className="flex justify-between items-start">
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900">{job.jobTitle}</h3>
@@ -425,8 +476,10 @@ const JobMatching = () => {
                             </Badge>
                           </div>
 
+                          {/* Job description */}
                           <p className="mt-4 text-sm text-gray-600">{job.description}</p>
 
+                          {/* Job details (location, salary, remote type) */}
                           <div className="flex flex-wrap gap-4 mt-4">
                             <div className="flex items-center text-gray-700">
                               <MapPin className="h-4 w-4 mr-1" />
@@ -436,8 +489,123 @@ const JobMatching = () => {
                               <DollarSign className="h-4 w-4 mr-1" />
                               <span className="text-sm">{job.salary}</span>
                             </div>
+                            {job.remoteType && (
+                              <div className="flex items-center text-gray-700">
+                                {job.remoteType === 'remote' ? (
+                                  <Home className="h-4 w-4 mr-1" />
+                                ) : job.remoteType === 'hybrid' ? (
+                                  <Laptop className="h-4 w-4 mr-1" />
+                                ) : (
+                                  <Building2 className="h-4 w-4 mr-1" />
+                                )}
+                                <span className="text-sm capitalize">{job.remoteType}</span>
+                              </div>
+                            )}
                           </div>
 
+                          {/* Expandable sections for detailed job information */}
+                          {(job.matchReasons?.length > 0 || job.requiredSkills?.length > 0 || 
+                            job.userSkillMatch?.length > 0 || job.skillGaps?.length > 0 || 
+                            job.growthPotential || job.industryTrends) && (
+                            <div className="mt-5">
+                              <Tabs defaultValue="match">
+                                <TabsList className="w-full">
+                                  <TabsTrigger value="match" className="flex-1">Why It's a Match</TabsTrigger>
+                                  <TabsTrigger value="skills" className="flex-1">Skills Analysis</TabsTrigger>
+                                  <TabsTrigger value="growth" className="flex-1">Growth & Trends</TabsTrigger>
+                                </TabsList>
+                                
+                                {/* Tab 1: Match Reasons */}
+                                <TabsContent value="match" className="pt-4">
+                                  {job.matchReasons?.length > 0 ? (
+                                    <div className="space-y-2">
+                                      <h4 className="text-sm font-medium text-gray-900">Why this job matches your profile:</h4>
+                                      <ul className="list-disc pl-5 space-y-1">
+                                        {job.matchReasons.map((reason, idx) => (
+                                          <li key={idx} className="text-sm text-gray-600">{reason}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  ) : (
+                                    <p className="text-sm text-gray-500 italic">No specific match information available</p>
+                                  )}
+                                </TabsContent>
+                                
+                                {/* Tab 2: Skills Analysis */}
+                                <TabsContent value="skills" className="pt-4">
+                                  <div className="space-y-4">
+                                    {job.requiredSkills?.length > 0 && (
+                                      <div>
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">Required Skills:</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                          {job.requiredSkills.map((skill, idx) => (
+                                            <Badge key={idx} variant="outline" className="bg-gray-50">
+                                              {skill}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {job.userSkillMatch?.length > 0 && (
+                                      <div>
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">Your Matching Skills:</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                          {job.userSkillMatch.map((skill, idx) => (
+                                            <Badge key={idx} variant="outline" className="bg-green-50 border-green-200 text-green-700">
+                                              <CheckCircle className="h-3 w-3 mr-1" />
+                                              {skill}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {job.skillGaps?.length > 0 && (
+                                      <div>
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">Skills to Develop:</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                          {job.skillGaps.map((skill, idx) => (
+                                            <Badge key={idx} variant="outline" className="bg-amber-50 border-amber-200 text-amber-700">
+                                              <GraduationCap className="h-3 w-3 mr-1" />
+                                              {skill}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </TabsContent>
+                                
+                                {/* Tab 3: Growth Potential & Industry Trends */}
+                                <TabsContent value="growth" className="pt-4">
+                                  <div className="space-y-4">
+                                    {job.growthPotential && (
+                                      <div>
+                                        <div className="flex items-center mb-2">
+                                          <TrendingUp className="h-4 w-4 mr-2 text-primary-600" />
+                                          <h4 className="text-sm font-medium text-gray-900">Growth Potential</h4>
+                                        </div>
+                                        <p className="text-sm text-gray-600">{job.growthPotential}</p>
+                                      </div>
+                                    )}
+                                    
+                                    {job.industryTrends && (
+                                      <div>
+                                        <div className="flex items-center mb-2">
+                                          <AlertCircle className="h-4 w-4 mr-2 text-primary-600" />
+                                          <h4 className="text-sm font-medium text-gray-900">Industry Trends</h4>
+                                        </div>
+                                        <p className="text-sm text-gray-600">{job.industryTrends}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </TabsContent>
+                              </Tabs>
+                            </div>
+                          )}
+
+                          {/* Action buttons */}
                           <div className="flex items-center justify-between mt-6">
                             <Button
                               variant={job.isSaved ? "outline" : "default"}
