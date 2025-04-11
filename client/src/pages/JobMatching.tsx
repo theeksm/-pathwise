@@ -67,6 +67,28 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+// Define JobMatch interface before it's used
+interface JobMatch {
+  id: number;
+  userId: number;
+  jobTitle: string;
+  company: string;
+  description: string;
+  matchPercentage: number;
+  salary: string;
+  location: string;
+  isSaved: boolean;
+  createdAt: string;
+  url?: string;
+  matchReasons?: string[];
+  requiredSkills?: string[];
+  userSkillMatch?: string[];
+  skillGaps?: string[];
+  growthPotential?: string;
+  industryTrends?: string;
+  remoteType?: 'remote' | 'hybrid' | 'on-site';
+}
+
 const JobMatching = () => {
   const { toast } = useToast();
   const [jobs, setJobs] = useState<JobMatch[]>([]);
@@ -87,25 +109,6 @@ const JobMatching = () => {
     id: number;
     experience?: string;
     [key: string]: any;
-  }
-  
-  interface JobMatch {
-    id: number;
-    jobTitle: string;
-    company: string;
-    description: string;
-    matchPercentage: number;
-    salary: string;
-    location: string;
-    url?: string;
-    isSaved?: boolean;
-    matchReasons?: string[];
-    requiredSkills?: string[];
-    userSkillMatch?: string[];
-    skillGaps?: string[];
-    growthPotential?: string;
-    industryTrends?: string;
-    remoteType?: 'remote' | 'hybrid' | 'on-site';
   }
 
   const { data: user } = useQuery({
@@ -504,8 +507,10 @@ const JobMatching = () => {
                           </div>
 
                           {/* Expandable sections for detailed job information */}
-                          {(job.matchReasons?.length > 0 || job.requiredSkills?.length > 0 || 
-                            job.userSkillMatch?.length > 0 || job.skillGaps?.length > 0 || 
+                          {(job.matchReasons && job.matchReasons.length > 0 || 
+                            job.requiredSkills && job.requiredSkills.length > 0 || 
+                            job.userSkillMatch && job.userSkillMatch.length > 0 || 
+                            job.skillGaps && job.skillGaps.length > 0 || 
                             job.growthPotential || job.industryTrends) && (
                             <div className="mt-5">
                               <Tabs defaultValue="match">
@@ -517,11 +522,11 @@ const JobMatching = () => {
                                 
                                 {/* Tab 1: Match Reasons */}
                                 <TabsContent value="match" className="pt-4">
-                                  {job.matchReasons?.length > 0 ? (
+                                  {job.matchReasons && job.matchReasons.length > 0 ? (
                                     <div className="space-y-2">
                                       <h4 className="text-sm font-medium text-gray-900">Why this job matches your profile:</h4>
                                       <ul className="list-disc pl-5 space-y-1">
-                                        {job.matchReasons.map((reason, idx) => (
+                                        {job.matchReasons && job.matchReasons.map((reason, idx) => (
                                           <li key={idx} className="text-sm text-gray-600">{reason}</li>
                                         ))}
                                       </ul>
@@ -534,11 +539,11 @@ const JobMatching = () => {
                                 {/* Tab 2: Skills Analysis */}
                                 <TabsContent value="skills" className="pt-4">
                                   <div className="space-y-4">
-                                    {job.requiredSkills?.length > 0 && (
+                                    {job.requiredSkills && job.requiredSkills.length > 0 && (
                                       <div>
                                         <h4 className="text-sm font-medium text-gray-900 mb-2">Required Skills:</h4>
                                         <div className="flex flex-wrap gap-2">
-                                          {job.requiredSkills.map((skill, idx) => (
+                                          {job.requiredSkills && job.requiredSkills.map((skill, idx) => (
                                             <Badge key={idx} variant="outline" className="bg-gray-50">
                                               {skill}
                                             </Badge>
@@ -547,11 +552,11 @@ const JobMatching = () => {
                                       </div>
                                     )}
                                     
-                                    {job.userSkillMatch?.length > 0 && (
+                                    {job.userSkillMatch && job.userSkillMatch.length > 0 && (
                                       <div>
                                         <h4 className="text-sm font-medium text-gray-900 mb-2">Your Matching Skills:</h4>
                                         <div className="flex flex-wrap gap-2">
-                                          {job.userSkillMatch.map((skill, idx) => (
+                                          {job.userSkillMatch && job.userSkillMatch.map((skill, idx) => (
                                             <Badge key={idx} variant="outline" className="bg-green-50 border-green-200 text-green-700">
                                               <CheckCircle className="h-3 w-3 mr-1" />
                                               {skill}
@@ -561,11 +566,11 @@ const JobMatching = () => {
                                       </div>
                                     )}
                                     
-                                    {job.skillGaps?.length > 0 && (
+                                    {job.skillGaps && job.skillGaps.length > 0 && (
                                       <div>
                                         <h4 className="text-sm font-medium text-gray-900 mb-2">Skills to Develop:</h4>
                                         <div className="flex flex-wrap gap-2">
-                                          {job.skillGaps.map((skill, idx) => (
+                                          {job.skillGaps && job.skillGaps.map((skill, idx) => (
                                             <Badge key={idx} variant="outline" className="bg-amber-50 border-amber-200 text-amber-700">
                                               <GraduationCap className="h-3 w-3 mr-1" />
                                               {skill}
@@ -608,13 +613,13 @@ const JobMatching = () => {
                           {/* Action buttons */}
                           <div className="flex items-center justify-between mt-6">
                             <Button
-                              variant={job.isSaved ? "outline" : "default"}
+                              variant={job.isSaved === true ? "outline" : "default"}
                               size="sm"
                               className="flex items-center gap-1"
-                              onClick={() => toggleSaveJob(job.id, job.isSaved)}
+                              onClick={() => toggleSaveJob(job.id, job.isSaved === true)}
                             >
                               <BookmarkPlus className="h-4 w-4" />
-                              {job.isSaved ? "Saved" : "Save"}
+                              {job.isSaved === true ? "Saved" : "Save"}
                             </Button>
                             <Button
                               variant="default"
