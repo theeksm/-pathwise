@@ -14,7 +14,7 @@ import {
   insertChatSchema
 } from "@shared/schema";
 import { generateCareerRecommendations, analyzeSkillGap, optimizeResume, matchJobs, generateChatResponse } from "./lib/openai";
-import { getStockData } from "./lib/stockAPI";
+import { getStockData, StockAPIError, StockAPIErrorType } from "./lib/stockAPI";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -571,15 +571,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const symbol = req.query.symbol as string;
     
     if (!symbol) {
-      return res.status(400).json({ message: "Symbol parameter is required" });
+      return res.status(400).json({ 
+        message: "Symbol parameter is required",
+        errorType: "validation_error"
+      });
     }
     
     try {
       const stockData = await getStockData(symbol);
+      
+      // If the stockData contains an error, return a more specific status code based on the error
+      if (stockData.error) {
+        let statusCode = 500;
+        let errorType = "unknown_error";
+        
+        // Determine appropriate status code based on error message
+        if (stockData.error.includes("API configuration") || stockData.error.includes("API key")) {
+          statusCode = 503; // Service Unavailable
+          errorType = "api_configuration_error";
+        } else if (stockData.error.includes("Invalid stock symbol")) {
+          statusCode = 400; // Bad Request
+          errorType = "invalid_symbol";
+        } else if (stockData.error.includes("temporarily busy") || stockData.error.includes("rate limit")) {
+          statusCode = 429; // Too Many Requests
+          errorType = "rate_limit_exceeded";
+        } else if (stockData.error.includes("service is currently unavailable")) {
+          statusCode = 503; // Service Unavailable
+          errorType = "service_unavailable";
+        } else if (stockData.error.includes("Network error")) {
+          statusCode = 502; // Bad Gateway
+          errorType = "network_error";
+        } else if (stockData.error.includes("No data available")) {
+          statusCode = 404; // Not Found
+          errorType = "no_data_found";
+        }
+        
+        // Return error with appropriate status code
+        return res.status(statusCode).json({
+          message: stockData.error,
+          symbol: stockData.symbol,
+          errorType: errorType
+        });
+      }
+      
       res.json(stockData);
     } catch (error) {
       console.error("Error fetching stock data:", error);
-      res.status(500).json({ message: "Error fetching stock data", error });
+      
+      if (error instanceof StockAPIError) {
+        // Map error type to HTTP status code
+        let statusCode = 500;
+        
+        switch (error.type) {
+          case StockAPIErrorType.API_KEY_MISSING:
+          case StockAPIErrorType.API_KEY_INVALID:
+            statusCode = 503; // Service Unavailable
+            break;
+          case StockAPIErrorType.INVALID_SYMBOL:
+            statusCode = 400; // Bad Request
+            break;
+          case StockAPIErrorType.RATE_LIMIT_EXCEEDED:
+            statusCode = 429; // Too Many Requests
+            break;
+          case StockAPIErrorType.SERVICE_UNAVAILABLE:
+            statusCode = 503; // Service Unavailable
+            break;
+          case StockAPIErrorType.NETWORK_ERROR:
+            statusCode = 502; // Bad Gateway
+            break;
+        }
+        
+        return res.status(statusCode).json({
+          message: error.message,
+          errorType: error.type
+        });
+      }
+      
+      res.status(500).json({ 
+        message: "Error fetching stock data", 
+        errorType: "unknown_error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
