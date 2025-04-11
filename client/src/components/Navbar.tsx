@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Logo from "@/assets/logo";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const features = [
   { icon: BrainCircuit, name: "Career Path Guidance", path: "/career-path" },
@@ -132,6 +133,8 @@ const Navbar = () => {
           </div>
           
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+            <ThemeToggle />
+            
             {user ? (
               <Link href="/dashboard">
                 <Button variant="outline" className="text-gray-700">
@@ -218,6 +221,11 @@ const Navbar = () => {
                   </div>
                   
                   <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="px-4 mb-4 flex items-center">
+                      <span className="text-sm font-medium text-gray-500 mr-4">Theme</span>
+                      <ThemeToggle />
+                    </div>
+                    
                     {user ? (
                       <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                         <Button className="w-full">Dashboard</Button>
