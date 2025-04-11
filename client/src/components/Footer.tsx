@@ -18,7 +18,7 @@ const Footer = () => {
             </p>
             <div className="mt-6">
               <Link href="/contact">
-                <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-md dark:bg-blue-500 dark:hover:bg-blue-600">
+                <Button style={{backgroundColor: "#2563eb", color: "white"}} className="shadow-md border-0 font-medium">
                   Contact Us
                 </Button>
               </Link>
