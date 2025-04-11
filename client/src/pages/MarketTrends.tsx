@@ -121,9 +121,10 @@ const MarketTrends = () => {
   const [searchSymbol, setSearchSymbol] = useState("MSFT");
   const [stockChartData, setStockChartData] = useState<any[]>([]);
 
-  const { data: stockData, isLoading, refetch } = useQuery({
+  const { data: stockData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['/api/market-trends/stocks', stockSymbol],
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   useEffect(() => {

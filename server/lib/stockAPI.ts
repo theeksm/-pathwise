@@ -1,7 +1,13 @@
 import fetch from "node-fetch";
 
-const API_KEY = process.env.ALPHA_VANTAGE_API_KEY || "YTVFI0595ZIA6X90";
+// Get Alpha Vantage API key from environment variables
+const API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 const BASE_URL = "https://www.alphavantage.co/query";
+
+// Check if API key is available
+if (!API_KEY) {
+  console.warn("WARNING: ALPHA_VANTAGE_API_KEY environment variable is not set. Stock data API will not work properly.");
+}
 
 interface StockDataPoint {
   date: string;
@@ -40,12 +46,39 @@ export async function getStockData(symbol: string): Promise<StockData> {
     const overviewResponse = await fetch(overviewUrl);
     const overviewData = await overviewResponse.json();
     
-    // Check for errors
-    if (quoteData["Error Message"] || timeSeriesData["Error Message"] || overviewData["Error Message"]) {
+    // Check for all possible error messages from Alpha Vantage API
+    if (quoteData["Error Message"] || 
+        timeSeriesData["Error Message"] || 
+        overviewData["Error Message"] ||
+        quoteData["Information"] ||
+        timeSeriesData["Information"] ||
+        overviewData["Information"] ||
+        quoteData["Note"] ||
+        timeSeriesData["Note"] ||
+        overviewData["Note"]) {
+      
       return {
         symbol,
         currency: "USD",
-        error: quoteData["Error Message"] || timeSeriesData["Error Message"] || overviewData["Error Message"]
+        error: quoteData["Error Message"] || 
+               timeSeriesData["Error Message"] || 
+               overviewData["Error Message"] ||
+               quoteData["Information"] ||
+               timeSeriesData["Information"] ||
+               overviewData["Information"] ||
+               quoteData["Note"] ||
+               timeSeriesData["Note"] ||
+               overviewData["Note"] ||
+               "API limit reached or invalid API key"
+      };
+    }
+    
+    // Verify we have actual data
+    if (!quoteData["Global Quote"] || Object.keys(quoteData["Global Quote"]).length === 0) {
+      return {
+        symbol,
+        currency: "USD",
+        error: "No data available for this symbol"
       };
     }
     
