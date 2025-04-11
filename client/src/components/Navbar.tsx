@@ -75,8 +75,8 @@ const Navbar = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className={cn(
-                      "h-auto px-1 pt-1 font-medium bg-transparent",
+                    <NavigationMenuTrigger style={{backgroundColor: "transparent", boxShadow: "none", border: "none"}} className={cn(
+                      "h-auto px-1 pt-1 font-medium",
                       isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
                         ? "text-gray-900 dark:text-white"
                         : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -88,17 +88,18 @@ const Navbar = () => {
                         <div className="grid grid-cols-2 gap-2">
                           {features.map((feature) => (
                             <Link key={feature.path} href={feature.path}>
-                              <NavigationMenuLink
+                              <div
+                                style={{border: "none", boxShadow: "none"}}
                                 className={cn(
-                                  "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                                  isActive(feature.path) && "bg-accent"
+                                  "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 dark:hover:bg-gray-700",
+                                  isActive(feature.path) && "bg-gray-100 dark:bg-gray-700"
                                 )}
                               >
                                 <div className="text-base font-medium leading-none flex items-center">
                                   {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 dark:text-blue-400 stroke-[1.5]" })}
                                   {feature.name}
                                 </div>
-                              </NavigationMenuLink>
+                              </div>
                             </Link>
                           ))}
                         </div>

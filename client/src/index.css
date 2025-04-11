@@ -129,14 +129,41 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Fix for navigation menu in dark mode */
-.dark [data-radix-popper-content-wrapper] {
-  --shadow-color: rgba(0, 0, 0, 0.3);
+/* Fix for navigation menu in both light and dark mode */
+[data-radix-popper-content-wrapper] {
+  --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-.dark [role="navigation"] button[data-state="open"],
-.dark [role="navigation"] button[data-state="closed"] {
+[role="navigation"] button[data-state="open"],
+[role="navigation"] button[data-state="closed"] {
   background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+[role="navigation"] button:hover {
+  background-color: transparent !important;
+}
+
+[role="navigation"] [data-radix-menu-content] {
+  background-color: white !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+}
+
+[role="navigation"] [data-radix-menu-content] div {
+  color: #374151 !important;
+}
+
+[role="navigation"] [data-radix-menu-content] .text-base {
+  color: #374151 !important;
+}
+
+/* Dark mode overrides */
+.dark [data-radix-popper-content-wrapper] {
+  --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
 .dark [role="navigation"] [data-radix-menu-content] {
