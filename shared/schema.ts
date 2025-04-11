@@ -60,6 +60,13 @@ export const jobs = pgTable("jobs", {
   salary: text("salary"),
   location: text("location"),
   url: text("url"),
+  matchReasons: jsonb("match_reasons").$type<string[]>(),
+  requiredSkills: jsonb("required_skills").$type<string[]>(),
+  userSkillMatch: jsonb("user_skill_match").$type<string[]>(),
+  skillGaps: jsonb("skill_gaps").$type<string[]>(),
+  growthPotential: text("growth_potential"),
+  industryTrends: text("industry_trends"),
+  remoteType: text("remote_type"),
   isSaved: boolean("is_saved").default(false),
   createdAt: timestamp("created_at").defaultNow()
 });
