@@ -62,14 +62,14 @@ const Navbar = () => {
             </Link>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link href="/">
-                <a className={cn(
-                  "inline-flex items-center px-1 pt-1 text-sm font-medium",
+                <div className={cn(
+                  "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
                   isActive("/") 
                     ? "border-primary-500 border-b-2 text-gray-900" 
                     : "text-gray-500 hover:text-gray-900"
                 )}>
                   Home
-                </a>
+                </div>
               </Link>
               
               <NavigationMenu>
@@ -109,25 +109,25 @@ const Navbar = () => {
               </NavigationMenu>
               
               <Link href="/market-trends">
-                <a className={cn(
-                  "inline-flex items-center px-1 pt-1 text-sm font-medium",
+                <div className={cn(
+                  "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
                   isActive("/market-trends")
                     ? "border-primary-500 border-b-2 text-gray-900"
                     : "text-gray-500 hover:text-gray-900"
                 )}>
                   Market Trends
-                </a>
+                </div>
               </Link>
               
               <Link href="/pricing">
-                <a className={cn(
-                  "inline-flex items-center px-1 pt-1 text-sm font-medium",
+                <div className={cn(
+                  "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
                   isActive("/pricing")
                     ? "border-primary-500 border-b-2 text-gray-900"
                     : "text-gray-500 hover:text-gray-900"
                 )}>
                   Pricing
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -168,12 +168,12 @@ const Navbar = () => {
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col py-4">
                   <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                    <a className={cn(
-                      "px-4 py-2 text-base font-medium",
+                    <div className={cn(
+                      "px-4 py-2 text-base font-medium cursor-pointer",
                       isActive("/") ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" : "border-transparent text-gray-500"
                     )}>
                       Home
-                    </a>
+                    </div>
                   </Link>
                   
                   <div className="mt-4 mb-2">
@@ -182,8 +182,8 @@ const Navbar = () => {
                   
                   {features.map((feature) => (
                     <Link key={feature.path} href={feature.path} onClick={() => setIsMobileMenuOpen(false)}>
-                      <a className={cn(
-                        "px-4 py-2 text-base font-medium",
+                      <div className={cn(
+                        "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive(feature.path) 
                           ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
                           : "border-transparent text-gray-500"
@@ -192,31 +192,31 @@ const Navbar = () => {
                           {createElement(feature.icon, { className: "h-4 w-4 mr-2 text-primary-600 stroke-[1.5]" })}
                           {feature.name}
                         </span>
-                      </a>
+                      </div>
                     </Link>
                   ))}
                   
                   <div className="mt-4">
                     <Link href="/market-trends" onClick={() => setIsMobileMenuOpen(false)}>
-                      <a className={cn(
-                        "px-4 py-2 text-base font-medium",
+                      <div className={cn(
+                        "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive("/market-trends") 
                           ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
                           : "border-transparent text-gray-500"
                       )}>
                         Market Trends
-                      </a>
+                      </div>
                     </Link>
                     
                     <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)}>
-                      <a className={cn(
-                        "px-4 py-2 text-base font-medium",
+                      <div className={cn(
+                        "px-4 py-2 text-base font-medium cursor-pointer",
                         isActive("/pricing") 
                           ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700" 
                           : "border-transparent text-gray-500"
                       )}>
                         Pricing
-                      </a>
+                      </div>
                     </Link>
                   </div>
                   
