@@ -419,7 +419,7 @@ const Dashboard = () => {
                   <div className="space-y-4">
                     <div>
                       <h4 className="text-sm font-medium mb-2">Shows current skills</h4>
-                      {skills?.filter(s => !s.isMissing)?.length > 0 ? (
+                      {skills && skills.filter(s => !s.isMissing).length > 0 ? (
                         <ul className="space-y-1 pl-4 list-disc">
                           {skills
                             .filter(s => !s.isMissing)
@@ -437,7 +437,7 @@ const Dashboard = () => {
 
                     <div>
                       <h4 className="text-sm font-medium mb-2">Target skills</h4>
-                      {skills?.filter(s => s.isMissing)?.length > 0 ? (
+                      {skills && skills.filter(s => s.isMissing).length > 0 ? (
                         <ul className="space-y-1 pl-4 list-disc">
                           {skills
                             .filter(s => s.isMissing)
