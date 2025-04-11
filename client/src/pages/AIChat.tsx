@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Bot, SendHorizontal } from "lucide-react";
+import { Bot, SendHorizontal, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   role: string;
@@ -71,13 +73,83 @@ const AIChatPage = () => {
     return newChat as Chat;
   };
   
-  // State for handling API errors
+  // Advanced error handling states
   const [apiError, setApiError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<'api-key' | 'rate-limit' | 'service' | 'network' | 'unknown' | null>(null);
+  const [retryAttempts, setRetryAttempts] = useState(0);
+  const { toast } = useToast();
+  
+  // Reset error states when component mounts or user changes
+  useEffect(() => {
+    setApiError(null);
+    setErrorType(null);
+    setRetryAttempts(0);
+  }, [user]);
 
-  // Send a message mutation
+  // Enhanced error handling for the chat system
+  const classifyError = (error: Error): { message: string; type: 'api-key' | 'rate-limit' | 'service' | 'network' | 'unknown' } => {
+    const errorMsg = error.message.toLowerCase();
+    
+    if (errorMsg.includes('api key') || errorMsg.includes('invalid key') || errorMsg.includes('expired key')) {
+      return {
+        message: "There's an issue with our AI service configuration. Our team has been notified.",
+        type: 'api-key'
+      };
+    } else if (errorMsg.includes('rate limit') || errorMsg.includes('too many requests')) {
+      return {
+        message: "We're experiencing high demand. Please try again in a moment.",
+        type: 'rate-limit'
+      };
+    } else if (errorMsg.includes('service') || errorMsg.includes('unavailable')) {
+      return {
+        message: "Our AI service is temporarily unavailable. Please try again later.",
+        type: 'service'
+      };
+    } else if (errorMsg.includes('network') || errorMsg.includes('connection')) {
+      return {
+        message: "Network connection issue. Please check your internet connection and try again.",
+        type: 'network'
+      };
+    } else {
+      return {
+        message: "An unexpected error occurred. Please try again or contact support if the problem persists.",
+        type: 'unknown'
+      };
+    }
+  };
+
+  // Handle automatic retry for specific error types
+  const handleRetry = () => {
+    if (message.trim() && retryAttempts < 3) {
+      setRetryAttempts(prev => prev + 1);
+      setApiError(null);
+      setErrorType(null);
+      toast({
+        title: "Retrying...",
+        description: "Attempting to send your message again.",
+        duration: 3000
+      });
+      
+      // Small delay before retry to prevent hammering the API
+      setTimeout(() => {
+        sendMessageMutation.mutate(message);
+      }, 1000);
+    } else if (retryAttempts >= 3) {
+      toast({
+        title: "Multiple failures",
+        description: "We're having trouble connecting to our AI service. Please try again later.",
+        variant: "destructive",
+        duration: 5000
+      });
+    }
+  };
+
+  // Send a message mutation with enhanced error handling
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      setApiError(null); // Clear any previous errors
+      // Clear any previous errors
+      setApiError(null);
+      setErrorType(null);
 
       if (!activeChat) {
         // Get or create a chat first
@@ -106,14 +178,28 @@ const AIChatPage = () => {
     onSuccess: (data) => {
       setActiveChat(data);
       setMessage("");
+      setRetryAttempts(0); // Reset retry counter on success
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
     },
     onError: (error: Error) => {
       console.error("Error sending message:", error);
-      if (error.message.includes("API key")) {
-        setApiError("There was an issue with the AI service. Please try again later or contact support.");
-      } else {
-        setApiError("Failed to send your message. Please try again.");
+      
+      // Classify the error for better handling
+      const { message, type } = classifyError(error);
+      setApiError(message);
+      setErrorType(type);
+      
+      // Auto-retry for rate limit errors
+      if (type === 'rate-limit' && retryAttempts < 2) {
+        toast({
+          title: "Service busy",
+          description: "We'll automatically retry in a moment...",
+          duration: 3000
+        });
+        
+        setTimeout(() => {
+          handleRetry();
+        }, 3000);
       }
     }
   });
@@ -219,18 +305,39 @@ const AIChatPage = () => {
               
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
                 {apiError && (
-                  <div className="mb-3 p-3 text-sm bg-red-50 border border-red-200 text-red-700 rounded-md">
-                    <p className="font-medium mb-1">Error</p>
-                    <p>{apiError}</p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="mt-2 text-xs bg-white hover:bg-gray-50"
-                      onClick={() => setApiError(null)}
-                    >
-                      Dismiss
-                    </Button>
-                  </div>
+                  <Alert variant="destructive" className="mb-3">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="text-sm">
+                      {errorType === 'api-key' ? 'Configuration Issue' : 
+                       errorType === 'rate-limit' ? 'Service Busy' :
+                       errorType === 'service' ? 'Service Unavailable' :
+                       errorType === 'network' ? 'Network Error' : 'Error'}
+                    </AlertTitle>
+                    <AlertDescription className="text-sm mt-1">{apiError}</AlertDescription>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        className="bg-red-100 text-red-800 hover:bg-red-200 hover:text-red-900"
+                        onClick={() => {setApiError(null); setErrorType(null);}}
+                      >
+                        Dismiss
+                      </Button>
+                      
+                      {(errorType === 'rate-limit' || errorType === 'network' || errorType === 'unknown') && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="border-red-200 text-red-800 hover:bg-red-50"
+                          onClick={handleRetry}
+                          disabled={retryAttempts >= 3}
+                        >
+                          <RefreshCw className="h-3 w-3 mr-1" />
+                          Retry {retryAttempts > 0 ? `(${retryAttempts}/3)` : ''}
+                        </Button>
+                      )}
+                    </div>
+                  </Alert>
                 )}
               
                 <div className="flex items-center">
