@@ -18,6 +18,7 @@ import JobMatching from "@/pages/JobMatching";
 import MarketTrends from "@/pages/MarketTrends";
 import EntrepreneurshipAdvisor from "@/pages/EntrepreneurshipAdvisor";
 import Pricing from "@/pages/Pricing";
+import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import AIChatPage from "@/pages/AIChat";
 
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/entrepreneurship" component={EntrepreneurshipAdvisor} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/ai-chat" component={AIChatPage} />
+          <Route path="/contact" component={Contact} />
           <Route component={NotFound} />
         </Switch>
       </main>
