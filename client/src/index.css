@@ -128,3 +128,26 @@
 .dark .shadow-md {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
+
+/* Fix for navigation menu in dark mode */
+.dark [data-radix-popper-content-wrapper] {
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+.dark [role="navigation"] button[data-state="open"],
+.dark [role="navigation"] button[data-state="closed"] {
+  background-color: transparent !important;
+}
+
+.dark [role="navigation"] [data-radix-menu-content] {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark [role="navigation"] [data-radix-menu-content] div {
+  color: #f3f4f6 !important;
+}
+
+.dark [role="navigation"] [data-radix-menu-content] .text-base {
+  color: #f3f4f6 !important;
+}
