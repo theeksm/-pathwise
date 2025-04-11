@@ -15,7 +15,7 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 40% 36%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
@@ -57,6 +57,41 @@
   }
 }
 
+/* Light mode improvements for better contrast */
+body {
+  color: #111827;
+}
+
+nav {
+  background-color: white;
+  border-color: #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.text-gray-500 {
+  color: #4b5563 !important; /* Darker gray for better contrast */
+}
+
+.text-gray-600 {
+  color: #374151 !important;
+}
+
+.text-gray-400 {
+  color: #4b5563 !important; /* Darker version for contrast */
+}
+
+/* Icon improvements for light mode */
+svg, .svg-icon, [stroke] {
+  stroke-width: 2px;
+  color: #374151;
+}
+
+/* Headers and titles in light mode */
+h1, h2, h3, h4, h5, h6,
+.font-bold, .font-semibold, .font-medium {
+  color: #111827 !important;
+}
+
 /* Dark mode specific overrides for better contrast */
 .dark body {
   background-color: #121212;
@@ -84,6 +119,10 @@
 .dark .text-gray-800,
 .dark .text-gray-900 {
   color: #f3f4f6 !important;
+}
+
+.dark svg, .dark .svg-icon, .dark [stroke] {
+  color: #d1d5db;
 }
 
 .dark button.bg-blue-600,
