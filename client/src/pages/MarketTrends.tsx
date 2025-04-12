@@ -146,6 +146,16 @@ const MarketTrends = () => {
     queryKey: ['/api/market-trends/stocks', stockSymbol],
     refetchOnWindowFocus: false,
     retry: 1,
+    enabled: !!stockSymbol,
+    // Add the query parameter in the URL
+    queryFn: async () => {
+      const response = await fetch(`/api/market-trends/stocks?symbol=${stockSymbol}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch stock data');
+      }
+      return response.json();
+    },
   });
 
   useEffect(() => {
