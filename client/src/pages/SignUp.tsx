@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +37,9 @@ const SignUp = () => {
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   
+  // Use our custom auth hook
+  const { user, registerMutation } = useAuth();
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,32 +49,27 @@ const SignUp = () => {
     },
   });
   
-  const registerMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      const res = await apiRequest("POST", "/api/auth/register", data);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
       toast({
-        title: "Account created",
-        description: "Welcome to PathWise! Your account has been created successfully.",
+        title: "Already logged in",
+        description: "You are already logged in to PathWise.",
       });
       setLocation("/dashboard");
-    },
-    onError: (error: any) => {
-      setError(error.message || "Error creating account. Please try again.");
-      toast({
-        title: "Registration failed",
-        description: error.message || "Error creating account. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    }
+  }, [user, setLocation, toast]);
   
   const onSubmit = (data: FormData) => {
     setError(null);
-    registerMutation.mutate(data);
+    registerMutation.mutate(data, {
+      onSuccess: () => {
+        setLocation("/dashboard");
+      },
+      onError: (error: Error) => {
+        setError(error.message || "Error creating account. Please try again.");
+      }
+    });
   };
 
   return (
