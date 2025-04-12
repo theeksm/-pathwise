@@ -97,7 +97,16 @@ const Home = () => {
               <div className="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md">
                 <div className="relative block w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                   <img 
-                    className="w-full relative z-10 opacity-100 dark:opacity-80 dark:contrast-125 dark:brightness-90"
+                    className="w-full relative z-10 object-cover opacity-100 !visible"
+                    style={{
+                      filter: 'contrast(120%) brightness(100%)',
+                      display: 'block',
+                      visibility: 'visible !important',
+                      opacity: '1 !important',
+                      pointerEvents: 'auto',
+                      height: '300px',
+                      objectFit: 'cover'
+                    }}
                     src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
                     alt="Professional data analytics dashboard" 
                   />
