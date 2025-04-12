@@ -7,11 +7,18 @@
     visibility: visible !important;
     opacity: 1 !important;
     filter: contrast(125%) brightness(90%);
-    background-color: transparent !important;
+    background-color: rgba(31, 41, 55, 0.2) !important;
+    background-blend-mode: normal;
     mix-blend-mode: normal;
     display: block !important;
     position: relative;
     z-index: 10;
+  }
+  
+  .dark .dark-mode-image {
+    filter: contrast(120%) brightness(100%);
+    background-blend-mode: screen;
+    background-color: rgba(31, 41, 55, 0.3) !important;
   }
 }
 
