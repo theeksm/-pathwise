@@ -704,7 +704,7 @@ const JobMatching = () => {
                                     {job.careerProgression && (job.careerProgression.nextRoles?.length > 0 || job.careerProgression.timelineEstimate) && (
                                       <div className="mt-5 p-4 bg-green-50 rounded-md border border-green-100">
                                         <div className="flex items-center mb-3">
-                                          <MapIcon className="h-4 w-4 mr-2 text-green-700" />
+                                          <AreaChart className="h-4 w-4 mr-2 text-green-700" />
                                           <h4 className="text-sm font-medium text-green-800">Career Progression Path</h4>
                                         </div>
                                         
