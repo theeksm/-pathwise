@@ -95,18 +95,16 @@ const Navbar = () => {
                 </div>
               </Link>
               
-              <div className="px-1 pt-1 relative">
-                <Link href="/career-path">
-                  <div className={cn(
-                    "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
-                    isActive("/career-path")
-                      ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
-                      : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                  )}>
-                    Features
-                  </div>
-                </Link>
-              </div>
+              <Link href="/career-path">
+                <div className={cn(
+                  "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
+                  isActive("/career-path")
+                    ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
+                    : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                )}>
+                  Features
+                </div>
+              </Link>
               
               <Link href="/market-trends">
                 <div className={cn(
