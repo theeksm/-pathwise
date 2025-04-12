@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +34,9 @@ const Login = () => {
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   
+  // Use our auth hook which contains the login mutation
+  const { user, loginMutation } = useAuth();
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,32 +45,23 @@ const Login = () => {
     },
   });
   
-  const loginMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      const res = await apiRequest("POST", "/api/auth/login", data);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
-      toast({
-        title: "Login successful",
-        description: "Welcome back to PathWise!",
-      });
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
       setLocation("/dashboard");
-    },
-    onError: (error: any) => {
-      setError(error.message || "Invalid username or password");
-      toast({
-        title: "Login failed",
-        description: error.message || "Invalid username or password",
-        variant: "destructive",
-      });
-    },
-  });
+    }
+  }, [user, setLocation]);
   
   const onSubmit = (data: FormData) => {
     setError(null);
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        setLocation("/dashboard");
+      },
+      onError: (error: Error) => {
+        setError(error.message || "Invalid username or password");
+      }
+    });
   };
 
   return (
