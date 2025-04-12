@@ -26,7 +26,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up session middleware
   app.use(
     session({
-      cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 24 hours
+      cookie: { 
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        sameSite: 'lax'
+      },
       secret: process.env.SESSION_SECRET || "pathwise-secret",
       resave: false,
       saveUninitialized: false,
@@ -42,17 +47,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Configure passport to use local strategy
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy({ 
+      usernameField: 'username',
+      passwordField: 'password',
+      passReqToCallback: false
+    }, async (username, password, done) => {
       try {
+        console.log(`Attempting login for user: ${username}`);
         const user = await storage.getUserByUsername(username);
+        
         if (!user) {
+          console.log(`User not found: ${username}`);
           return done(null, false, { message: "Incorrect username" });
         }
+        
+        // Simple password comparison (for development only)
         if (user.password !== password) {
+          console.log(`Password mismatch for user: ${username}`);
           return done(null, false, { message: "Incorrect password" });
         }
+        
+        console.log(`Successful login for user: ${username} (id: ${user.id})`);
         return done(null, user);
       } catch (err) {
+        console.error("Authentication error:", err);
         return done(err);
       }
     })
