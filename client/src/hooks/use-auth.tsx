@@ -1,17 +1,13 @@
-import { createContext, ReactNode, useContext, useEffect } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import {
   useQuery,
   useMutation,
   UseMutationResult,
+  UseQueryResult
 } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
+import { type User } from "@shared/schema";
 
 type LoginData = {
   username: string;
@@ -28,9 +24,9 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<User, Error, LoginData>;
-  logoutMutation: UseMutationResult<void, Error, void>;
-  registerMutation: UseMutationResult<User, Error, RegisterData>;
+  loginMutation: UseMutationResult<any, Error, LoginData>;
+  logoutMutation: UseMutationResult<any, Error, void>;
+  registerMutation: UseMutationResult<any, Error, RegisterData>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -48,13 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    onError: (err: Error) => {
-      // Suppress 401 errors as they're expected when not logged in
-      if (err.message.includes('401')) {
-        console.log('User not authenticated');
-        return null;
-      }
-    }
+    gcTime: 0, // Don't cache failed requests
+    throwOnError: false
   });
 
   const loginMutation = useMutation({
