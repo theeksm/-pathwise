@@ -20,6 +20,37 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
 
+// Type alias for JobMatch from OpenAI responses
+type JobMatch = {
+  title: string;
+  company: string;
+  description: string;
+  matchPercentage: number;
+  matchTier?: string;
+  salary: string;
+  location: string;
+  url?: string;
+  matchReasons?: string[];
+  requiredSkills?: string[];
+  userSkillMatch?: string[];
+  skillGaps?: string[];
+  skillMatchCount?: number;
+  skillGapCount?: number;
+  growthPotential?: string;
+  industryTrends?: string;
+  remoteType?: 'remote' | 'hybrid' | 'on-site';
+  applicationStatus?: string;
+  developmentPlan?: {
+    prioritySkills: string[];
+    certifications: string[];
+    experienceBuilding: string[];
+  };
+  careerProgression?: {
+    nextRoles: string[];
+    timelineEstimate: string;
+  };
+};
+
 const SessionStore = MemoryStore(session);
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -432,6 +463,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           company: job.company,
           description: job.description,
           matchPercentage: job.matchPercentage,
+          matchTier: job.matchTier || '',
           salary: job.salary,
           location: job.location,
           url: job.url,
@@ -439,9 +471,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           requiredSkills: job.requiredSkills || [],
           userSkillMatch: job.userSkillMatch || [],
           skillGaps: job.skillGaps || [],
+          skillMatchCount: job.skillMatchCount || 0,
+          skillGapCount: job.skillGapCount || 0,
           growthPotential: job.growthPotential || '',
           industryTrends: job.industryTrends || '',
           remoteType: job.remoteType || 'on-site',
+          applicationStatus: job.applicationStatus || 'Not Applied',
+          developmentPlan: job.developmentPlan || {
+            prioritySkills: [],
+            certifications: [],
+            experienceBuilding: []
+          },
+          careerProgression: job.careerProgression || {
+            nextRoles: [],
+            timelineEstimate: ''
+          },
           isSaved: false
         });
         savedJobs.push(savedJob);
@@ -457,7 +501,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/jobs/:id", isAuthenticated, async (req, res) => {
     const jobId = parseInt(req.params.id);
     const updateSchema = z.object({
-      isSaved: z.boolean().optional()
+      isSaved: z.boolean().optional(),
+      applicationStatus: z.string().optional()
     });
     
     try {
