@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .dark-mode-image {
+    visibility: visible !important;
+    opacity: 1 !important;
+    filter: contrast(125%) brightness(90%);
+    background-color: transparent !important;
+    mix-blend-mode: normal;
+    display: block !important;
+    position: relative;
+    z-index: 10;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
