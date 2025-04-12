@@ -67,7 +67,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Define JobMatch interface before it's used
+// Define JobMatch interface with advanced matching features
 interface JobMatch {
   id: number;
   userId: number;
@@ -75,6 +75,7 @@ interface JobMatch {
   company: string;
   description: string;
   matchPercentage: number;
+  matchTier?: string; // 'Excellent Match', 'Strong Match', etc.
   salary: string;
   location: string;
   isSaved: boolean;
@@ -84,9 +85,21 @@ interface JobMatch {
   requiredSkills?: string[];
   userSkillMatch?: string[];
   skillGaps?: string[];
+  skillMatchCount?: number;
+  skillGapCount?: number;
   growthPotential?: string;
   industryTrends?: string;
   remoteType?: 'remote' | 'hybrid' | 'on-site';
+  applicationStatus?: string;
+  developmentPlan?: {
+    prioritySkills: string[];
+    certifications: string[];
+    experienceBuilding: string[];
+  };
+  careerProgression?: {
+    nextRoles: string[];
+    timelineEstimate: string;
+  };
 }
 
 const JobMatching = () => {
