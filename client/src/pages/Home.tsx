@@ -96,24 +96,18 @@ const Home = () => {
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div className="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md">
                 <div className="relative block w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-                  <img 
-                    className="w-full relative z-10 object-cover opacity-100 !visible"
+                  <div 
+                    className="w-full h-[300px] bg-cover bg-center dark-mode-image"
                     style={{
-                      filter: 'contrast(120%) brightness(100%)',
-                      display: 'block',
-                      visibility: 'visible !important',
-                      opacity: '1 !important',
-                      pointerEvents: 'auto',
-                      height: '300px',
-                      objectFit: 'cover'
+                      backgroundImage: "url('https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')"
                     }}
-                    src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
-                    alt="Professional data analytics dashboard" 
+                    role="img" 
+                    aria-label="Professional data analytics dashboard"
                   />
-                  <div className="absolute inset-0 z-20 bg-gradient-to-r from-primary-600 to-primary-800 mix-blend-multiply opacity-30 dark:mix-blend-soft-light dark:opacity-40"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-800 mix-blend-multiply opacity-30 dark:mix-blend-soft-light dark:opacity-40 pointer-events-none"></div>
                   <Button
-                    variant="ghost"
-                    className="absolute inset-0 z-30 w-full h-full flex items-center justify-center text-white hover:bg-transparent dark:hover:bg-gray-800/30"
+                    variant="ghost" 
+                    className="absolute inset-0 w-full h-full flex items-center justify-center text-white hover:bg-transparent dark:hover:bg-gray-800/30"
                   >
                     <svg className="h-12 w-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
