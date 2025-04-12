@@ -43,13 +43,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error,
     isLoading,
     refetch
-  } = useQuery<User>({
+  } = useQuery<User | null>({
     queryKey: ['/api/auth/user'],
     retry: false,
     refetchOnWindowFocus: false,
-    onError: () => {
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    onError: (err: Error) => {
       // Suppress 401 errors as they're expected when not logged in
-      return null;
+      if (err.message.includes('401')) {
+        console.log('User not authenticated');
+        return null;
+      }
     }
   });
 
@@ -121,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user: user || null,
+        user: user as User | null,
         isLoading,
         error,
         loginMutation,
