@@ -106,8 +106,16 @@ const AIChat = () => {
   
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
+    // Prevent default and stop propagation to ensure page doesn't scroll
+    e.stopPropagation();
+    
     if (message.trim()) {
       sendMessageMutation.mutate(message);
+      // Keep focus on the input field after sending
+      const inputElement = document.querySelector('.chat-input') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.focus();
+      }
     }
   };
   
@@ -216,7 +224,7 @@ const AIChat = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message here"
-                className="block w-full bg-gray-100 border-transparent rounded-md focus:border-primary-500 focus:bg-white focus:ring-0 text-sm"
+                className="chat-input block w-full bg-gray-100 border-transparent rounded-md focus:border-primary-500 focus:bg-white focus:ring-0 text-sm"
                 disabled={!user || sendMessageMutation.isPending}
               />
               <Button
