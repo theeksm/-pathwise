@@ -145,6 +145,68 @@ h1, h2, h3, h4, h5, h6,
   color: #d1d5db;
 }
 
+/* Improved dark mode text contrast */
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6,
+.dark .text-2xl,
+.dark .text-3xl,
+.dark .text-4xl,
+.dark .text-5xl,
+.dark .text-6xl,
+.dark .font-bold, 
+.dark .font-semibold, 
+.dark .font-medium,
+.dark .card-title,
+.dark [class*="title"],
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .text-blue-800,
+.dark .text-blue-900,
+.dark .text-primary-600,
+.dark .text-primary-700,
+.dark .text-primary-800,
+.dark .text-primary-900,
+.dark .text-indigo-600,
+.dark .text-indigo-700,
+.dark .text-indigo-800,
+.dark .text-indigo-900 {
+  color: white !important;
+}
+
+/* Additional contrast improvements for specific elements in dark mode */
+.dark .text-muted-foreground,
+.dark .text-slate-500,
+.dark .text-slate-600,
+.dark .text-slate-700,
+.dark .text-slate-800,
+.dark .text-neutral-500,
+.dark .text-neutral-600,
+.dark .text-neutral-700,
+.dark .text-neutral-800 {
+  color: #d1d5db !important;
+}
+
+.dark p, 
+.dark span, 
+.dark li, 
+.dark div:not([class*="bg-"]),
+.dark label {
+  color: #f3f4f6 !important;
+}
+
+.dark a:not(.btn):not([class*="bg-"]):not(.card-title):not([class*="button"]) {
+  color: #60a5fa !important; /* Light blue for links */
+}
+
+.dark a:hover:not(.btn):not([class*="bg-"]):not(.card-title):not([class*="button"]) {
+  color: #93c5fd !important; /* Lighter blue on hover */
+  text-decoration: underline;
+}
+
 .dark button.bg-blue-600,
 .dark .btn-primary,
 .dark .bg-primary-600 {
@@ -412,4 +474,214 @@ button[class*="ghost"]:hover,
 .dark [class*="ghost"]:hover {
   background-color: #374151 !important;
   color: white !important;
+}
+
+/* Job Matching page specific improvements for dark mode */
+.dark .match-tier,
+.dark .match-percentage,
+.dark .match-score,
+.dark .match-title,
+.dark .match-company,
+.dark .match-description,
+.dark .match-location,
+.dark .match-salary,
+.dark .skill-match,
+.dark .skill-gap,
+.dark .skill-count,
+.dark .career-progression,
+.dark .next-role,
+.dark .timeline,
+.dark .compatibility-score,
+.dark .growth-potential,
+.dark [class*="match-"] {
+  color: white !important;
+}
+
+.dark .match-tier-excellent,
+.dark .match-tier-strong,
+.dark .match-tier-good,
+.dark .match-tier-fair,
+.dark .match-tier-poor {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.dark .match-reasons li,
+.dark .required-skills li,
+.dark .user-skill-match li,
+.dark .skill-gaps li,
+.dark .priority-skills li,
+.dark .certifications li,
+.dark .experience-building li,
+.dark .next-roles li {
+  color: #f3f4f6 !important;
+}
+
+/* Progress indicators in dark mode */
+.dark .progress-bar,
+.dark .progress-track,
+.dark .progress-indicator,
+.dark progress,
+.dark [role="progressbar"] {
+  background-color: #374151 !important;
+}
+
+.dark .progress-value,
+.dark progress::-webkit-progress-value,
+.dark [role="progressbar"] > div {
+  background-color: #60a5fa !important;  /* Light blue for progress */
+}
+
+/* Shadcn components in dark mode */
+.dark .shadcn-card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .shadcn-card-title {
+  color: white !important;
+}
+
+.dark .shadcn-card-description {
+  color: #d1d5db !important;
+}
+
+.dark .shadcn-button {
+  color: white !important;
+}
+
+.dark .shadcn-accordion-item {
+  border-color: #374151 !important;
+}
+
+.dark .shadcn-accordion-trigger {
+  color: white !important;
+}
+
+.dark .shadcn-accordion-content {
+  color: #f3f4f6 !important;
+}
+
+.dark .shadcn-tabs-list {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .shadcn-tabs-trigger {
+  color: #d1d5db !important;
+}
+
+.dark .shadcn-tabs-trigger[data-state="active"] {
+  color: white !important;
+  background-color: #2563eb !important;
+}
+
+.dark .table {
+  border-color: #374151 !important;
+}
+
+.dark .table th,
+.dark .table td {
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+.dark .table thead th {
+  color: white !important;
+  background-color: #1f2937 !important;
+}
+
+.dark .table tbody tr:nth-child(even) {
+  background-color: rgba(31, 41, 55, 0.7) !important;
+}
+
+.dark .table tbody tr:hover {
+  background-color: rgba(37, 99, 235, 0.1) !important;
+}
+
+/* Standard shadcn UI components in dark mode */
+.dark [class*="Card"] {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark [class*="CardTitle"], 
+.dark [class*="card-title"] {
+  color: white !important;
+}
+
+.dark [class*="CardDescription"], 
+.dark [class*="card-description"] {
+  color: #d1d5db !important;
+}
+
+.dark [class*="Label"], 
+.dark [class*="label"] {
+  color: white !important;
+}
+
+.dark h3[class*="text-foreground"],
+.dark [class*="heading"],
+.dark [class*="CardHeader"] h3 {
+  color: white !important;
+}
+
+.dark [class*="Button"]:not([class*="ghost"]):not([class*="outline"]) {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.dark [class*="Button"][class*="ghost"] {
+  color: #d1d5db !important;
+}
+
+.dark [class*="Button"][class*="outline"] {
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+/* Fix any remaining text color issues */
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .text-blue-800,
+.dark .text-blue-900,
+.dark .text-indigo-600,
+.dark .text-indigo-700,
+.dark .text-indigo-800,
+.dark .text-indigo-900,
+.dark .text-violet-600,
+.dark .text-violet-700,
+.dark .text-violet-800,
+.dark .text-violet-900,
+.dark .text-primary-600,
+.dark .text-primary-700,
+.dark .text-primary-800,
+.dark .text-primary-900 {
+  color: #60a5fa !important; /* Light blue for better contrast */
+}
+
+/* Improve text in any potential dropdowns */
+.dark [role="menu"],
+.dark [role="listbox"],
+.dark [role="dialog"] {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark [role="menuitem"],
+.dark [role="option"] {
+  color: #f3f4f6 !important;
+}
+
+.dark [role="menuitem"]:hover,
+.dark [role="option"]:hover {
+  background-color: #374151 !important;
+}
+
+/* Ensure any tooltips have good contrast */
+.dark [role="tooltip"],
+.dark [data-radix-popper-content-wrapper] [role="tooltip"] {
+  background-color: #1f2937 !important;
+  color: white !important;
+  border-color: #374151 !important;
 }
