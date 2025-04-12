@@ -21,7 +21,8 @@ import {
   Bot, 
   TrendingUp, 
   Rocket, 
-  LayoutDashboard 
+  LayoutDashboard,
+  ChevronDown
 } from "lucide-react";
 import Logo from "@/assets/logo";
 import { cn } from "@/lib/utils";
@@ -95,16 +96,29 @@ const Navbar = () => {
                 </div>
               </Link>
               
-              <Link href="/career-path">
+              <div className="relative group">
                 <div className={cn(
                   "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
-                  isActive("/career-path")
+                  isActive(features.map(f => f.path).find(p => location.startsWith(p)) || "")
                     ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
                     : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 )}>
                   Features
+                  <ChevronDown className="ml-1 h-4 w-4 stroke-1 group-hover:rotate-180 transition-transform duration-200" />
                 </div>
-              </Link>
+                <div className="absolute left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                  <div className="py-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700">
+                    {features.map((feature) => (
+                      <Link key={feature.path} href={feature.path}>
+                        <div className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                          {createElement(feature.icon, { className: "mr-2 h-4 w-4 text-blue-700 dark:text-blue-400 stroke-[2]" })}
+                          {feature.name}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
               
               <Link href="/market-trends">
                 <div className={cn(
