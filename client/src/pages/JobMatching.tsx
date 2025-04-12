@@ -478,7 +478,7 @@ const JobMatching = () => {
                     <Card key={job.id} className="overflow-hidden">
                       <div className="relative">
                         <CardContent className="p-6">
-                          {/* Header with job title, company and match percentage */}
+                          {/* Header with job title, company, match percentage and match tier */}
                           <div className="flex justify-between items-start">
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900">{job.jobTitle}</h3>
@@ -487,9 +487,21 @@ const JobMatching = () => {
                                 <span className="text-sm">{job.company}</span>
                               </div>
                             </div>
-                            <Badge className="bg-primary-100 text-primary-800 border-0">
-                              {job.matchPercentage}% Match
-                            </Badge>
+                            <div className="flex flex-col items-end">
+                              <Badge 
+                                className={`border-0 ${
+                                  job.matchPercentage >= 85 ? "bg-green-100 text-green-800" : 
+                                  job.matchPercentage >= 70 ? "bg-blue-100 text-blue-800" : 
+                                  job.matchPercentage >= 50 ? "bg-amber-100 text-amber-800" : 
+                                  "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {job.matchPercentage}% Match
+                              </Badge>
+                              {job.matchTier && (
+                                <span className="text-xs text-gray-500 mt-1">{job.matchTier}</span>
+                              )}
+                            </div>
                           </div>
 
                           {/* Job description */}
@@ -552,6 +564,28 @@ const JobMatching = () => {
                                 {/* Tab 2: Skills Analysis */}
                                 <TabsContent value="skills" className="pt-4">
                                   <div className="space-y-4">
+                                    {/* Skill Match Visualization */}
+                                    <div className="mb-6">
+                                      <h4 className="text-sm font-medium text-gray-900 mb-3">Skill Compatibility</h4>
+                                      <div className="flex items-center gap-3">
+                                        <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                                          <div 
+                                            className="h-full bg-green-500 rounded-full"
+                                            style={{ 
+                                              width: `${
+                                                job.skillMatchCount && job.skillGapCount 
+                                                  ? (job.skillMatchCount / (job.skillMatchCount + job.skillGapCount) * 100) 
+                                                  : 0
+                                              }%` 
+                                            }}
+                                          ></div>
+                                        </div>
+                                        <div className="text-xs text-gray-600 whitespace-nowrap">
+                                          {job.skillMatchCount || 0} matched / {job.skillGapCount || 0} to develop
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
                                     {job.requiredSkills && job.requiredSkills.length > 0 && (
                                       <div>
                                         <h4 className="text-sm font-medium text-gray-900 mb-2">Required Skills:</h4>
@@ -592,6 +626,51 @@ const JobMatching = () => {
                                         </div>
                                       </div>
                                     )}
+                                    
+                                    {/* Development Plan */}
+                                    {job.developmentPlan && (job.developmentPlan.prioritySkills?.length > 0 || 
+                                                          job.developmentPlan.certifications?.length > 0 || 
+                                                          job.developmentPlan.experienceBuilding?.length > 0) && (
+                                      <div className="mt-5 p-3 bg-blue-50 rounded-md border border-blue-100">
+                                        <h4 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
+                                          <Lightbulb className="h-4 w-4 mr-1" />
+                                          Personalized Development Plan
+                                        </h4>
+                                        
+                                        {job.developmentPlan.prioritySkills?.length > 0 && (
+                                          <div className="mb-2">
+                                            <h5 className="text-xs font-medium text-blue-700">Priority Skills:</h5>
+                                            <ul className="list-disc pl-5 text-xs text-blue-600 mt-1">
+                                              {job.developmentPlan.prioritySkills.map((skill, idx) => (
+                                                <li key={idx}>{skill}</li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        
+                                        {job.developmentPlan.certifications?.length > 0 && (
+                                          <div className="mb-2">
+                                            <h5 className="text-xs font-medium text-blue-700">Recommended Certifications:</h5>
+                                            <ul className="list-disc pl-5 text-xs text-blue-600 mt-1">
+                                              {job.developmentPlan.certifications.map((cert, idx) => (
+                                                <li key={idx}>{cert}</li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        
+                                        {job.developmentPlan.experienceBuilding?.length > 0 && (
+                                          <div>
+                                            <h5 className="text-xs font-medium text-blue-700">Experience Building:</h5>
+                                            <ul className="list-disc pl-5 text-xs text-blue-600 mt-1">
+                                              {job.developmentPlan.experienceBuilding.map((exp, idx) => (
+                                                <li key={idx}>{exp}</li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
                                 </TabsContent>
                                 
@@ -615,6 +694,43 @@ const JobMatching = () => {
                                           <h4 className="text-sm font-medium text-gray-900">Industry Trends</h4>
                                         </div>
                                         <p className="text-sm text-gray-600">{job.industryTrends}</p>
+                                      </div>
+                                    )}
+                                    
+                                    {/* Career Progression Path */}
+                                    {job.careerProgression && (job.careerProgression.nextRoles?.length > 0 || job.careerProgression.timelineEstimate) && (
+                                      <div className="mt-5 p-4 bg-green-50 rounded-md border border-green-100">
+                                        <div className="flex items-center mb-3">
+                                          <Map className="h-4 w-4 mr-2 text-green-700" />
+                                          <h4 className="text-sm font-medium text-green-800">Career Progression Path</h4>
+                                        </div>
+                                        
+                                        {job.careerProgression.nextRoles?.length > 0 && (
+                                          <div className="mb-4">
+                                            <h5 className="text-xs font-medium text-green-700 mb-2">Future Career Path:</h5>
+                                            <div className="flex items-center relative">
+                                              <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center z-10">
+                                                <Briefcase className="h-4 w-4 text-green-700" />
+                                              </div>
+                                              <div className="h-0.5 bg-green-200 w-full absolute left-4 top-1/2 -translate-y-1/2"></div>
+                                              {job.careerProgression.nextRoles.map((role, idx) => (
+                                                <div key={idx} className="z-10 ml-4 first:ml-6">
+                                                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <ArrowUpRight className="h-4 w-4 text-green-700" />
+                                                  </div>
+                                                  <span className="text-xs text-green-700 block text-center mt-1 w-16 -ml-4">{role}</span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {job.careerProgression.timelineEstimate && (
+                                          <div className="ml-2">
+                                            <h5 className="text-xs font-medium text-green-700 mb-1">Estimated Timeline:</h5>
+                                            <p className="text-xs text-green-600">{job.careerProgression.timelineEstimate}</p>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
                                   </div>
