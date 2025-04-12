@@ -23,6 +23,8 @@ import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import AIChatPage from "@/pages/AIChat";
 
+import { ProtectedRoute } from "@/lib/protected-route";
+
 function Router() {
   return (
     <>
@@ -32,16 +34,19 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/career-path" component={CareerPath} />
-          <Route path="/skill-gap" component={SkillGap} />
-          <Route path="/resume-optimizer" component={ResumeOptimizer} />
-          <Route path="/job-matching" component={JobMatching} />
-          <Route path="/market-trends" component={MarketTrends} />
-          <Route path="/entrepreneurship" component={EntrepreneurshipAdvisor} />
           <Route path="/pricing" component={Pricing} />
-          <Route path="/ai-chat" component={AIChatPage} />
           <Route path="/contact" component={Contact} />
+          <Route path="/market-trends" component={MarketTrends} />
+          
+          {/* Protected routes - require authentication */}
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/career-path" component={CareerPath} />
+          <ProtectedRoute path="/skill-gap" component={SkillGap} />
+          <ProtectedRoute path="/resume-optimizer" component={ResumeOptimizer} />
+          <ProtectedRoute path="/job-matching" component={JobMatching} />
+          <ProtectedRoute path="/entrepreneurship" component={EntrepreneurshipAdvisor} />
+          <ProtectedRoute path="/ai-chat" component={AIChatPage} />
+          
           <Route component={NotFound} />
         </Switch>
       </main>

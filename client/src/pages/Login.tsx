@@ -48,9 +48,13 @@ const Login = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in to PathWise.",
+      });
       setLocation("/dashboard");
     }
-  }, [user, setLocation]);
+  }, [user, setLocation, toast]);
   
   const onSubmit = (data: FormData) => {
     setError(null);

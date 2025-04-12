@@ -45,7 +45,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 0, // Don't cache failed requests
-    throwOnError: false
+    throwOnError: false,
+    queryFn: async () => {
+      try {
+        const res = await fetch('/api/auth/user', {
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        if (res.status === 401) {
+          return null;
+        }
+        
+        if (!res.ok) {
+          throw new Error(`${res.status}: ${res.statusText}`);
+        }
+        
+        return await res.json();
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        return null;
+      }
+    }
   });
 
   const loginMutation = useMutation({
