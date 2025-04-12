@@ -57,6 +57,7 @@ export const jobs = pgTable("jobs", {
   company: text("company"),
   description: text("description"),
   matchPercentage: integer("match_percentage"),
+  matchTier: text("match_tier"),
   salary: text("salary"),
   location: text("location"),
   url: text("url"),
@@ -64,9 +65,21 @@ export const jobs = pgTable("jobs", {
   requiredSkills: jsonb("required_skills").$type<string[]>(),
   userSkillMatch: jsonb("user_skill_match").$type<string[]>(),
   skillGaps: jsonb("skill_gaps").$type<string[]>(),
+  skillMatchCount: integer("skill_match_count"),
+  skillGapCount: integer("skill_gap_count"),
   growthPotential: text("growth_potential"),
   industryTrends: text("industry_trends"),
   remoteType: text("remote_type"),
+  developmentPlan: jsonb("development_plan").$type<{
+    prioritySkills: string[],
+    certifications: string[],
+    experienceBuilding: string[]
+  }>(),
+  careerProgression: jsonb("career_progression").$type<{
+    nextRoles: string[],
+    timelineEstimate: string
+  }>(),
+  applicationStatus: text("application_status").default("Not Applied"),
   isSaved: boolean("is_saved").default(false),
   createdAt: timestamp("created_at").defaultNow()
 });
