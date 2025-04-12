@@ -1,6 +1,5 @@
 import { useState, createElement } from "react";
 import { Link, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -22,11 +21,14 @@ import {
   TrendingUp, 
   Rocket, 
   LayoutDashboard,
-  ChevronDown
+  ChevronDown,
+  LogOut,
+  User
 } from "lucide-react";
 import Logo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks/use-auth";
 
 const features = [
   { icon: BrainCircuit, name: "Career Path Guidance", path: "/career-path" },
@@ -63,15 +65,19 @@ const Navbar = () => {
         return "Explore our AI-powered tools to advance your career.";
     }
   };
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  const { data: user } = useQuery({
-    queryKey: ['/api/auth/user'],
-    retry: false,
-    refetchOnWindowFocus: false,
-    throwOnError: false
-  });
+  // Use our custom auth hook
+  const { user, logoutMutation } = useAuth();
+  
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        setLocation("/");
+      }
+    });
+  };
 
   const isActive = (path: string) => location === path;
 
@@ -148,11 +154,23 @@ const Navbar = () => {
             <ThemeToggle />
             
             {user ? (
-              <Link href="/dashboard">
-                <Button variant="outline" className="text-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
-                  Dashboard
+              <>
+                <Link href="/dashboard">
+                  <Button variant="outline" className="text-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
+                    <User className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleLogout} 
+                  className="text-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </Button>
-              </Link>
+              </>
             ) : (
               <>
                 <Link href="/login">
@@ -241,9 +259,26 @@ const Navbar = () => {
                     </div>
                     
                     {user ? (
-                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Button className="w-full dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Dashboard</Button>
-                      </Link>
+                      <div className="flex flex-col space-y-3 px-4">
+                        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Button className="w-full dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                            <User className="mr-2 h-4 w-4" />
+                            Dashboard
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            handleLogout();
+                          }} 
+                          className="w-full dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
+                          disabled={logoutMutation.isPending}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                        </Button>
+                      </div>
                     ) : (
                       <div className="flex flex-col space-y-3 px-4">
                         <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
