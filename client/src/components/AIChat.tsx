@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,11 +13,8 @@ const AIChat = () => {
   return (
     <div className="fixed bottom-4 right-4 z-40">
       {isChatOpen && (
-        <div className="shadow-xl rounded-lg overflow-hidden w-80 md:w-96 lg:w-[600px] bg-white border border-gray-200">
-          <div className="px-4 py-3 bg-blue-400 text-white flex items-center justify-between">
-            <div className="flex items-center">
-              <h3 className="ml-2 font-medium">Career Coach</h3>
-            </div>
+        <div className="shadow-xl rounded-lg overflow-hidden w-80 md:w-96 lg:w-[500px] bg-white border border-gray-200">
+          <div className="px-4 py-2 bg-blue-400 text-white flex justify-end items-center">
             <Button
               variant="ghost"
               size="icon"
