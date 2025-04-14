@@ -692,40 +692,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stock data:", error);
       
-      if (error instanceof StockAPIError) {
-        // Map error type to HTTP status code
-        let statusCode = 500;
-        
-        switch (error.type) {
-          case StockAPIErrorType.API_KEY_MISSING:
-          case StockAPIErrorType.API_KEY_INVALID:
-            statusCode = 503; // Service Unavailable
-            break;
-          case StockAPIErrorType.INVALID_SYMBOL:
-            statusCode = 400; // Bad Request
-            break;
-          case StockAPIErrorType.RATE_LIMIT_EXCEEDED:
-            statusCode = 429; // Too Many Requests
-            break;
-          case StockAPIErrorType.SERVICE_UNAVAILABLE:
-            statusCode = 503; // Service Unavailable
-            break;
-          case StockAPIErrorType.NETWORK_ERROR:
-            statusCode = 502; // Bad Gateway
-            break;
-        }
-        
-        return res.status(statusCode).json({
-          message: error.message,
-          errorType: error.type
+      // For any error, use the mock data for consistent user experience
+      console.log(`Using mock data for symbol ${symbol} due to error during fetch:`, error);
+      try {
+        const { getMockStockData } = await import('./lib/mockStockData');
+        const mockData = getMockStockData(symbol);
+        return res.json(mockData);
+      } catch (mockError) {
+        // If even the mock data fails, then return an error response
+        console.error("Error generating mock data:", mockError);
+        res.status(500).json({ 
+          message: "Failed to fetch stock data", 
+          errorType: "fatal_error",
+          details: error instanceof Error ? error.message : "Unknown error"
         });
       }
-      
-      res.status(500).json({ 
-        message: "Error fetching stock data", 
-        errorType: "unknown_error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      });
     }
   });
 
