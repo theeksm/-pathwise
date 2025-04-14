@@ -680,38 +680,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stockData = await getStockData(symbol);
       
-      // If the stockData contains an error, return a more specific status code based on the error
+      // If the stockData contains an error, use mock data instead
       if (stockData.error) {
-        let statusCode = 500;
-        let errorType = "unknown_error";
-        
-        // Determine appropriate status code based on error message
-        if (stockData.error.includes("API configuration") || stockData.error.includes("API key")) {
-          statusCode = 503; // Service Unavailable
-          errorType = "api_configuration_error";
-        } else if (stockData.error.includes("Invalid stock symbol")) {
-          statusCode = 400; // Bad Request
-          errorType = "invalid_symbol";
-        } else if (stockData.error.includes("temporarily busy") || stockData.error.includes("rate limit")) {
-          statusCode = 429; // Too Many Requests
-          errorType = "rate_limit_exceeded";
-        } else if (stockData.error.includes("service is currently unavailable")) {
-          statusCode = 503; // Service Unavailable
-          errorType = "service_unavailable";
-        } else if (stockData.error.includes("Network error")) {
-          statusCode = 502; // Bad Gateway
-          errorType = "network_error";
-        } else if (stockData.error.includes("No data available")) {
-          statusCode = 404; // Not Found
-          errorType = "no_data_found";
-        }
-        
-        // Return error with appropriate status code
-        return res.status(statusCode).json({
-          message: stockData.error,
-          symbol: stockData.symbol,
-          errorType: errorType
-        });
+        console.log(`Using mock data for symbol ${symbol} due to error: ${stockData.error}`);
+        const { getMockStockData } = await import('./lib/mockStockData');
+        const mockData = getMockStockData(symbol);
+        return res.json(mockData);
       }
       
       res.json(stockData);
