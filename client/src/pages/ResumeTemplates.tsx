@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Sparkles, Plus, X, FileText, Gift } from "lucide-react";
+import { Loader2, Download, Sparkles, Plus, X, FileText, Gift, CheckCircle, ArrowRight } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -1303,6 +1303,31 @@ const ResumeTemplates = () => {
                           Pro tip: Include a mix of technical skills, soft skills, and industry-specific knowledge.
                         </p>
                       </div>
+                      
+                      <div className="flex justify-between pt-4 border-t mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleTabChange("personal-info")}
+                          className="gap-2"
+                        >
+                          <ArrowRight className="h-4 w-4 rotate-180" />
+                          Back
+                        </Button>
+                        <div className="space-x-2">
+                          <Button
+                            variant="outline"
+                            onClick={handleSkipSection}
+                          >
+                            Skip
+                          </Button>
+                          <Button
+                            onClick={handleNextSection}
+                          >
+                            Next: Experience
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="experience" className="space-y-6 mt-4">
@@ -1434,6 +1459,31 @@ const ResumeTemplates = () => {
                         <Plus className="h-4 w-4 mr-1" />
                         Add Another Experience
                       </Button>
+                      
+                      <div className="flex justify-between pt-4 border-t mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleTabChange("skills")}
+                          className="gap-2"
+                        >
+                          <ArrowRight className="h-4 w-4 rotate-180" />
+                          Back
+                        </Button>
+                        <div className="space-x-2">
+                          <Button
+                            variant="outline"
+                            onClick={handleSkipSection}
+                          >
+                            Skip
+                          </Button>
+                          <Button
+                            onClick={handleNextSection}
+                          >
+                            Next: Education
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="education" className="space-y-6 mt-4">
@@ -1529,6 +1579,31 @@ const ResumeTemplates = () => {
                         <Plus className="h-4 w-4 mr-1" />
                         Add Another Education
                       </Button>
+                      
+                      <div className="flex justify-between pt-4 border-t mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleTabChange("experience")}
+                          className="gap-2"
+                        >
+                          <ArrowRight className="h-4 w-4 rotate-180" />
+                          Back
+                        </Button>
+                        <div className="space-x-2">
+                          <Button
+                            variant="outline"
+                            onClick={handleSkipSection}
+                          >
+                            Skip
+                          </Button>
+                          <Button
+                            onClick={handleNextSection}
+                          >
+                            Next: Projects
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="projects" className="space-y-6 mt-4">
@@ -1604,6 +1679,36 @@ const ResumeTemplates = () => {
                         <Plus className="h-4 w-4 mr-1" />
                         Add Another Project
                       </Button>
+                      
+                      <div className="flex justify-between pt-4 border-t mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleTabChange("education")}
+                          className="gap-2"
+                        >
+                          <ArrowRight className="h-4 w-4 rotate-180" />
+                          Back
+                        </Button>
+                        <div className="space-x-2">
+                          <Button
+                            variant="default"
+                            onClick={() => {
+                              validateSection("projects");
+                              // Mark section as completed
+                              setCompletedSections(prev => ({
+                                ...prev,
+                                "projects": true
+                              }));
+                              // Preview the resume
+                              setPreviewMode(true);
+                            }}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            Complete Resume
+                            <CheckCircle className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </TabsContent>
                   </Tabs>
                 </CardContent>
