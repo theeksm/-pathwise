@@ -784,7 +784,12 @@ const MarketTrends = () => {
                     {trendingStocks.map((stock, index) => (
                       <div key={index} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
                         <div className="font-medium">
-                          {stock.symbol} {stock.name && `(${stock.name})`}
+                          <a 
+                            href={`/stock/${stock.symbol}`}
+                            className="hover:text-primary-600 hover:underline transition-colors"
+                          >
+                            {stock.symbol} {stock.name && `(${stock.name})`}
+                          </a>
                         </div>
                         <div className="flex flex-col items-end">
                           <div className="font-medium">${stock.price?.toFixed(2)}</div>
