@@ -1426,6 +1426,7 @@ const ResumeTemplates = () => {
                         value="projects" 
                         className={`flex-1 ${accessibleTabs["projects"] ? "" : "opacity-50 cursor-not-allowed"}`}
                         data-state={completedSections["projects"] ? "completed" : ""}
+                        disabled={!accessibleTabs["projects"]}
                       >
                         <div className="flex items-center">
                           {completedSections["projects"] && (
