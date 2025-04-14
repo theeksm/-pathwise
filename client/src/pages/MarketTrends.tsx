@@ -187,10 +187,10 @@ const MarketTrends = () => {
       }
       return response.json();
     },
-    // These settings ensure real-time data with no caching
-    staleTime: 0, // Data is always considered stale (needs refresh)
-    gcTime: 0, // Don't cache data at all
-    refetchInterval: 5000 // Refresh every 5 seconds for real-time updates
+    // Reduce API request frequency to avoid hitting rate limits
+    staleTime: 60000, // Consider data fresh for 1 minute to reduce API calls
+    gcTime: 120000, // Keep in cache for 2 minutes
+    refetchInterval: 60000 // Refresh every 60 seconds for balance between real-time and rate limits
   });
 
   useEffect(() => {
