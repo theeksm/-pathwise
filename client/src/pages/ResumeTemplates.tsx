@@ -666,11 +666,13 @@ const ResumeTemplates = () => {
                     {formState.personalInfo.summary && (
                       <div className="mb-6">
                         <h2 className={`text-lg font-bold mb-2 ${
-                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400' : 
-                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase' : 
-                          'text-gray-900 dark:text-white'
+                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400 border-b border-purple-200 dark:border-purple-800 pb-1' : 
+                          selectedTemplate === 'student' ? 'text-green-700 dark:text-green-400 pl-2 border-l-4 border-green-500' :
+                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase border-b border-gray-300 dark:border-gray-700 pb-1' : 
+                          selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-400 pb-1 border-b border-red-200 dark:border-red-900' :
+                          'text-blue-700 dark:text-blue-400 pb-1 border-b border-blue-200 dark:border-blue-900'
                         }`}>Professional Summary</h2>
-                        <p className="dark:text-gray-300">{formState.personalInfo.summary}</p>
+                        <p className="dark:text-gray-300 leading-relaxed">{formState.personalInfo.summary}</p>
                       </div>
                     )}
 
@@ -678,9 +680,11 @@ const ResumeTemplates = () => {
                     {formState.skills.some(skill => skill.name.trim() !== '') && (
                       <div className="mb-6">
                         <h2 className={`text-lg font-bold mb-2 ${
-                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400' : 
-                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase' : 
-                          'text-gray-900 dark:text-white'
+                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400 border-b border-purple-200 dark:border-purple-800 pb-1' : 
+                          selectedTemplate === 'student' ? 'text-green-700 dark:text-green-400 pl-2 border-l-4 border-green-500' :
+                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase border-b border-gray-300 dark:border-gray-700 pb-1' : 
+                          selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-400 pb-1 border-b border-red-200 dark:border-red-900' :
+                          'text-blue-700 dark:text-blue-400 pb-1 border-b border-blue-200 dark:border-blue-900'
                         }`}>Skills</h2>
                         
                         <div className="flex flex-wrap gap-2">
@@ -708,26 +712,39 @@ const ResumeTemplates = () => {
                     {formState.experience.some(exp => exp.title.trim() !== '' || exp.company.trim() !== '') && (
                       <div className="mb-6">
                         <h2 className={`text-lg font-bold mb-2 ${
-                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400' : 
-                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase' : 
-                          'text-gray-900 dark:text-white'
+                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400 border-b border-purple-200 dark:border-purple-800 pb-1' : 
+                          selectedTemplate === 'student' ? 'text-green-700 dark:text-green-400 pl-2 border-l-4 border-green-500' :
+                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase border-b border-gray-300 dark:border-gray-700 pb-1' : 
+                          selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-400 pb-1 border-b border-red-200 dark:border-red-900' :
+                          'text-blue-700 dark:text-blue-400 pb-1 border-b border-blue-200 dark:border-blue-900'
                         }`}>Professional Experience</h2>
                         
                         {formState.experience.map((exp, index) => (
                           (exp.title.trim() !== '' || exp.company.trim() !== '') && (
-                            <div key={index} className="mb-4">
+                            <div key={index} className={`mb-4 ${
+                              selectedTemplate === 'creative' ? 'p-3 bg-purple-50 dark:bg-purple-950/20 rounded-md' : 
+                              selectedTemplate === 'student' ? 'p-3 border-l-2 border-green-500 pl-4' :
+                              selectedTemplate === 'executive' ? 'p-3 mb-4 border-b border-gray-200 dark:border-gray-700' : 
+                              selectedTemplate === 'career-changer' ? 'p-3 bg-red-50 dark:bg-red-950/20 rounded-md' :
+                              'p-3 border-l-2 border-blue-200 dark:border-blue-900 pl-4'
+                            }`}>
                               <div className="flex justify-between items-start">
                                 <div>
                                   <h3 className="font-bold dark:text-white">{exp.title || 'Position Title'}</h3>
-                                  <p className="text-gray-700 dark:text-gray-300">{exp.company || 'Company Name'}{exp.location ? `, ${exp.location}` : ''}</p>
+                                  <p className={`text-gray-700 dark:text-gray-300 ${
+                                    selectedTemplate === 'executive' ? 'font-medium' : ''
+                                  }`}>{exp.company || 'Company Name'}{exp.location ? `, ${exp.location}` : ''}</p>
                                 </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className={`text-sm text-gray-600 dark:text-gray-400 ${
+                                  selectedTemplate === 'executive' ? 'font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded' : 
+                                  selectedTemplate === 'creative' ? 'italic' : ''
+                                }`}>
                                   {exp.from || 'Start Date'} - {exp.current ? 'Present' : exp.to || 'End Date'}
                                 </p>
                               </div>
                               {exp.description && (
                                 <div 
-                                  className="mt-2 dark:text-gray-300"
+                                  className="mt-2 dark:text-gray-300 leading-relaxed"
                                   dangerouslySetInnerHTML={{ __html: exp.description.replace(/•/g, '<br/>•').replace(/\n/g, '<br/>') }}
                                 />
                               )}
@@ -741,24 +758,40 @@ const ResumeTemplates = () => {
                     {formState.education.some(edu => edu.degree.trim() !== '' || edu.institution.trim() !== '') && (
                       <div className="mb-6">
                         <h2 className={`text-lg font-bold mb-2 ${
-                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400' : 
-                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase' : 
-                          'text-gray-900 dark:text-white'
+                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400 border-b border-purple-200 dark:border-purple-800 pb-1' : 
+                          selectedTemplate === 'student' ? 'text-green-700 dark:text-green-400 pl-2 border-l-4 border-green-500' :
+                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase border-b border-gray-300 dark:border-gray-700 pb-1' : 
+                          selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-400 pb-1 border-b border-red-200 dark:border-red-900' :
+                          'text-blue-700 dark:text-blue-400 pb-1 border-b border-blue-200 dark:border-blue-900'
                         }`}>Education</h2>
                         
                         {formState.education.map((edu, index) => (
                           (edu.degree.trim() !== '' || edu.institution.trim() !== '') && (
-                            <div key={index} className="mb-4">
+                            <div key={index} className={`mb-4 ${
+                              selectedTemplate === 'creative' ? 'p-3 bg-purple-50 dark:bg-purple-950/20 rounded-md' : 
+                              selectedTemplate === 'student' ? 'p-3 border-l-2 border-green-500 pl-4' :
+                              selectedTemplate === 'executive' ? 'p-3 mb-4 border-b border-gray-200 dark:border-gray-700' : 
+                              selectedTemplate === 'career-changer' ? 'p-3 bg-red-50 dark:bg-red-950/20 rounded-md' :
+                              'p-3 border-l-2 border-blue-200 dark:border-blue-900 pl-4'
+                            }`}>
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <h3 className="font-bold dark:text-white">{edu.degree || 'Degree'}</h3>
-                                  <p className="text-gray-700 dark:text-gray-300">{edu.institution || 'Institution'}{edu.location ? `, ${edu.location}` : ''}</p>
+                                  <h3 className={`font-bold dark:text-white ${
+                                    selectedTemplate === 'student' ? 'text-lg' : ''
+                                  }`}>{edu.degree || 'Degree'}</h3>
+                                  <p className={`text-gray-700 dark:text-gray-300 ${
+                                    selectedTemplate === 'executive' ? 'font-medium' : 
+                                    selectedTemplate === 'student' ? 'font-semibold' : ''
+                                  }`}>{edu.institution || 'Institution'}{edu.location ? `, ${edu.location}` : ''}</p>
                                 </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className={`text-sm text-gray-600 dark:text-gray-400 ${
+                                  selectedTemplate === 'executive' ? 'font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded' : 
+                                  selectedTemplate === 'creative' ? 'italic' : ''
+                                }`}>
                                   {edu.from || 'Start Date'} - {edu.to || 'End Date'}
                                 </p>
                               </div>
-                              {edu.description && <p className="mt-2 dark:text-gray-300">{edu.description}</p>}
+                              {edu.description && <p className="mt-2 dark:text-gray-300 leading-relaxed">{edu.description}</p>}
                             </div>
                           )
                         ))}
@@ -769,33 +802,56 @@ const ResumeTemplates = () => {
                     {formState.projects.some(proj => proj.title.trim() !== '') && (
                       <div className="mb-6">
                         <h2 className={`text-lg font-bold mb-2 ${
-                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400' : 
-                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase' : 
-                          'text-gray-900 dark:text-white'
+                          selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-400 border-b border-purple-200 dark:border-purple-800 pb-1' : 
+                          selectedTemplate === 'student' ? 'text-green-700 dark:text-green-400 pl-2 border-l-4 border-green-500' :
+                          selectedTemplate === 'executive' ? 'text-gray-900 dark:text-white uppercase border-b border-gray-300 dark:border-gray-700 pb-1' : 
+                          selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-400 pb-1 border-b border-red-200 dark:border-red-900' :
+                          'text-blue-700 dark:text-blue-400 pb-1 border-b border-blue-200 dark:border-blue-900'
                         }`}>Projects</h2>
                         
                         {formState.projects.map((proj, index) => (
                           proj.title.trim() !== '' && (
-                            <div key={index} className="mb-4">
+                            <div key={index} className={`mb-4 ${
+                              selectedTemplate === 'creative' ? 'p-3 bg-purple-50 dark:bg-purple-950/20 rounded-md' : 
+                              selectedTemplate === 'student' ? 'p-3 border-l-2 border-green-500 pl-4' :
+                              selectedTemplate === 'executive' ? 'p-3 mb-4 border-b border-gray-200 dark:border-gray-700' : 
+                              selectedTemplate === 'career-changer' ? 'p-3 bg-red-50 dark:bg-red-950/20 rounded-md' :
+                              'p-3 border-l-2 border-blue-200 dark:border-blue-900 pl-4'
+                            }`}>
                               <div className="flex justify-between items-start">
-                                <h3 className="font-bold dark:text-white">{proj.title || 'Project Title'}</h3>
+                                <h3 className={`font-bold dark:text-white ${
+                                  selectedTemplate === 'creative' ? 'text-purple-800 dark:text-purple-300' : 
+                                  selectedTemplate === 'student' ? 'text-green-800 dark:text-green-300' : ''
+                                }`}>{proj.title || 'Project Title'}</h3>
                                 {proj.link && (
                                   <a 
                                     href={proj.link.startsWith('http') ? proj.link : `https://${proj.link}`} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                                    className={`text-sm hover:underline ${
+                                      selectedTemplate === 'creative' ? 'text-purple-600 dark:text-purple-400' :
+                                      selectedTemplate === 'student' ? 'text-green-600 dark:text-green-400' :
+                                      selectedTemplate === 'executive' ? 'text-gray-600 dark:text-gray-400 font-medium' :
+                                      selectedTemplate === 'career-changer' ? 'text-red-600 dark:text-red-400' :
+                                      'text-blue-600 dark:text-blue-400'
+                                    }`}
                                   >
                                     Project Link
                                   </a>
                                 )}
                               </div>
                               {proj.technologies && (
-                                <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                <p className={`text-sm mt-1 ${
+                                  selectedTemplate === 'creative' ? 'text-purple-700 dark:text-purple-300 font-medium' :
+                                  selectedTemplate === 'student' ? 'text-green-700 dark:text-green-300 font-medium' :
+                                  selectedTemplate === 'executive' ? 'text-gray-700 dark:text-gray-300 font-medium' :
+                                  selectedTemplate === 'career-changer' ? 'text-red-700 dark:text-red-300 font-medium' :
+                                  'text-blue-700 dark:text-blue-300 font-medium'
+                                }`}>
                                   Technologies: {proj.technologies}
                                 </p>
                               )}
-                              {proj.description && <p className="mt-2 dark:text-gray-300">{proj.description}</p>}
+                              {proj.description && <p className="mt-2 dark:text-gray-300 leading-relaxed">{proj.description}</p>}
                             </div>
                           )
                         ))}
