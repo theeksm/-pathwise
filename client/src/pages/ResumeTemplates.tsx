@@ -622,18 +622,23 @@ const ResumeTemplates = () => {
                 <CardContent className="pt-6">
                   <div 
                     id="resume-preview"
-                    className="border p-8 rounded-lg bg-white dark:bg-gray-900 min-h-[800px]"
-                    style={{ fontFamily: selectedTemplate === 'creative' ? 'Georgia, serif' : 'Arial, sans-serif' }}
+                    className="border p-8 rounded-lg bg-white dark:bg-gray-900 min-h-[800px] shadow-md overflow-auto"
+                    style={{ 
+                      fontFamily: RESUME_TYPES.find(t => t.id === selectedTemplate)?.fontFamily || 'Arial, sans-serif',
+                      backgroundColor: selectedTemplate === 'executive' ? '#fcfcfc' : 'white'
+                    }}
                   >
                     {/* Resume Header */}
                     <div className={`${
-                      selectedTemplate === 'creative' ? 'border-b-4' : 
-                      selectedTemplate === 'executive' ? 'bg-gray-100 dark:bg-gray-800 p-4 rounded' : 
-                      'border-b'
+                      selectedTemplate === 'creative' ? 'border-b-4 pb-4 relative overflow-hidden' : 
+                      selectedTemplate === 'student' ? 'border-b-2 pb-4 border-l-4 pl-4 rounded-l' :
+                      selectedTemplate === 'executive' ? 'bg-gray-100 dark:bg-gray-800 p-6 mb-8 rounded shadow-sm' : 
+                      selectedTemplate === 'career-changer' ? 'border-b-2 pb-4 mb-8 relative' :
+                      'border-b pb-4'
                     }`}
                     style={{ 
                       borderColor: RESUME_TYPES.find(t => t.id === selectedTemplate)?.color || '#2563eb',
-                      marginBottom: '1.5rem'
+                      marginBottom: selectedTemplate === 'executive' ? '2rem' : '1.5rem'
                     }}>
                       <h1 className="text-3xl font-bold mb-1 dark:text-white">{formState.personalInfo.fullName || 'Your Name'}</h1>
                       <p className="text-lg font-medium mb-3 dark:text-gray-300">{formState.personalInfo.title || 'Professional Title'}</p>
