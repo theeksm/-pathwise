@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -89,6 +89,7 @@ const CareerPath = () => {
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: user } = useQuery({
     queryKey: ['/api/auth/user'],
@@ -143,6 +144,13 @@ const CareerPath = () => {
         description: "We've found some career paths that match your profile!",
       });
       setIsLoading(false);
+      
+      // Scroll to results section
+      if (resultsRef.current) {
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
     },
     onError: (error: any) => {
       toast({
@@ -384,7 +392,7 @@ const CareerPath = () => {
           </form>
         </Form>
 
-        <div>
+        <div ref={resultsRef}>
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Career Recommendations</CardTitle>
