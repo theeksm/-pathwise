@@ -1721,7 +1721,7 @@ const ResumeTemplates = () => {
                                 <Label htmlFor={`exp-from-${index}`}>Start Date</Label>
                                 <Input
                                   id={`exp-from-${index}`}
-                                  placeholder="Aug 2018"
+                                  placeholder="Enter start date (e.g., Aug 2018)"
                                   value={exp.from}
                                   onChange={(e) => handleExperienceChange(index, 'from', e.target.value)}
                                 />
@@ -1730,7 +1730,7 @@ const ResumeTemplates = () => {
                                 <Label htmlFor={`exp-to-${index}`}>End Date</Label>
                                 <Input
                                   id={`exp-to-${index}`}
-                                  placeholder="Present"
+                                  placeholder="Enter end date (or 'Present')"
                                   value={exp.to}
                                   disabled={exp.current}
                                   onChange={(e) => handleExperienceChange(index, 'to', e.target.value)}
@@ -1868,7 +1868,7 @@ const ResumeTemplates = () => {
                                 <Label htmlFor={`edu-to-${index}`}>End Date</Label>
                                 <Input
                                   id={`edu-to-${index}`}
-                                  placeholder="May 2018"
+                                  placeholder="Enter end date (e.g., May 2018)"
                                   value={edu.to}
                                   onChange={(e) => handleEducationChange(index, 'to', e.target.value)}
                                 />
@@ -1951,7 +1951,7 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`proj-title-${index}`}>Project Title</Label>
                               <Input
                                 id={`proj-title-${index}`}
-                                placeholder="E-commerce Website"
+                                placeholder="Enter your project name"
                                 value={proj.title}
                                 onChange={(e) => handleProjectChange(index, 'title', e.target.value)}
                               />
@@ -1960,7 +1960,7 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`proj-tech-${index}`}>Technologies Used</Label>
                               <Input
                                 id={`proj-tech-${index}`}
-                                placeholder="React, Node.js, MongoDB"
+                                placeholder="Enter technologies used (comma-separated)"
                                 value={proj.technologies}
                                 onChange={(e) => handleProjectChange(index, 'technologies', e.target.value)}
                               />
@@ -1969,7 +1969,7 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`proj-link-${index}`}>Project Link (optional)</Label>
                               <Input
                                 id={`proj-link-${index}`}
-                                placeholder="https://github.com/username/project"
+                                placeholder="Add your project URL (e.g., GitHub, website)"
                                 value={proj.link}
                                 onChange={(e) => handleProjectChange(index, 'link', e.target.value)}
                               />
