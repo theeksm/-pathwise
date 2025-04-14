@@ -1487,22 +1487,25 @@ const ResumeTemplates = () => {
                             onChange={handlePersonalInfoChange}
                           />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 relative">
                           <Label htmlFor="location">Location</Label>
-                          <Input
-                            id="location"
-                            name="location"
-                            placeholder="New York, NY"
-                            value={formState.personalInfo.location}
-                            onChange={handlePersonalInfoChange}
-                          />
+                          <div className="relative">
+                            <Input
+                              id="location"
+                              name="location"
+                              placeholder="Type to search for a location"
+                              value={formState.personalInfo.location}
+                              onChange={handlePersonalInfoChange}
+                              autoComplete="off"
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="linkedin">LinkedIn URL (optional)</Label>
                           <Input
                             id="linkedin"
                             name="linkedin"
-                            placeholder="linkedin.com/in/username"
+                            placeholder="Enter your LinkedIn profile URL"
                             value={formState.personalInfo.linkedin}
                             onChange={handlePersonalInfoChange}
                           />
@@ -1512,7 +1515,7 @@ const ResumeTemplates = () => {
                           <Input
                             id="website"
                             name="website"
-                            placeholder="yourwebsite.com"
+                            placeholder="Enter your website URL"
                             value={formState.personalInfo.website}
                             onChange={handlePersonalInfoChange}
                           />
@@ -1687,7 +1690,7 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`exp-title-${index}`}>Job Title</Label>
                               <Input
                                 id={`exp-title-${index}`}
-                                placeholder="Senior Software Engineer"
+                                placeholder="Enter your job title"
                                 value={exp.title}
                                 onChange={(e) => handleExperienceChange(index, 'title', e.target.value)}
                               />
@@ -1696,19 +1699,22 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`exp-company-${index}`}>Company</Label>
                               <Input
                                 id={`exp-company-${index}`}
-                                placeholder="Acme Inc."
+                                placeholder="Enter your employer"
                                 value={exp.company}
                                 onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                               />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 relative">
                               <Label htmlFor={`exp-location-${index}`}>Location (optional)</Label>
-                              <Input
-                                id={`exp-location-${index}`}
-                                placeholder="New York, NY"
-                                value={exp.location}
-                                onChange={(e) => handleExperienceChange(index, 'location', e.target.value)}
-                              />
+                              <div className="relative">
+                                <Input
+                                  id={`exp-location-${index}`}
+                                  placeholder="Type to search for a location"
+                                  value={exp.location}
+                                  onChange={(e) => handleExperienceChange(index, 'location', e.target.value)}
+                                  autoComplete="off"
+                                />
+                              </div>
                             </div>
                             <div className="flex space-x-4">
                               <div className="space-y-2 flex-1">
@@ -1822,7 +1828,7 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`edu-degree-${index}`}>Degree/Certificate</Label>
                               <Input
                                 id={`edu-degree-${index}`}
-                                placeholder="Bachelor of Science in Computer Science"
+                                placeholder="Enter your degree or certificate name"
                                 value={edu.degree}
                                 onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
                               />
@@ -1831,26 +1837,29 @@ const ResumeTemplates = () => {
                               <Label htmlFor={`edu-institution-${index}`}>Institution</Label>
                               <Input
                                 id={`edu-institution-${index}`}
-                                placeholder="University of Technology"
+                                placeholder="Enter your school or institution name"
                                 value={edu.institution}
                                 onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
                               />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 relative">
                               <Label htmlFor={`edu-location-${index}`}>Location (optional)</Label>
-                              <Input
-                                id={`edu-location-${index}`}
-                                placeholder="Boston, MA"
-                                value={edu.location}
-                                onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
-                              />
+                              <div className="relative">
+                                <Input
+                                  id={`edu-location-${index}`}
+                                  placeholder="Type to search for a location"
+                                  value={edu.location}
+                                  onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
+                                  autoComplete="off"
+                                />
+                              </div>
                             </div>
                             <div className="flex space-x-4">
                               <div className="space-y-2 flex-1">
                                 <Label htmlFor={`edu-from-${index}`}>Start Date</Label>
                                 <Input
                                   id={`edu-from-${index}`}
-                                  placeholder="Sep 2014"
+                                  placeholder="Enter start date (e.g., Sep 2014)"
                                   value={edu.from}
                                   onChange={(e) => handleEducationChange(index, 'from', e.target.value)}
                                 />
