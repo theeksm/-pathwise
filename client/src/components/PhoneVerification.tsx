@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PhoneVerificationProps {
   confirmationResult: ConfirmationResult;
-  onVerificationComplete: () => void;
+  onVerificationComplete: (user: any) => void;
   onCancel: () => void;
 }
 
@@ -31,12 +31,12 @@ const PhoneVerification = ({
     setError(null);
 
     try {
-      await confirmationResult.confirm(verificationCode);
+      const userCredential = await confirmationResult.confirm(verificationCode);
       toast({
         title: "Verification successful",
         description: "Your phone number has been verified.",
       });
-      onVerificationComplete();
+      onVerificationComplete(userCredential.user);
     } catch (error: any) {
       setError(error.message || "Invalid verification code. Please try again.");
       toast({

@@ -96,23 +96,34 @@ const Login = () => {
       
       // Handle the user data from Firebase
       if (result && result.user) {
+        // Import dynamically to avoid circular dependencies
+        const { saveUserToFirestore } = await import("@/lib/firestore");
+        
+        // Prepare user data for Firestore
         const userData = {
-          // Extract user data to register with your backend if needed
-          name: result.user.displayName || "",
-          email: result.user.email || "",
-          photoURL: result.user.photoURL || "",
           uid: result.user.uid,
+          displayName: result.user.displayName,
+          email: result.user.email,
+          photoURL: result.user.photoURL,
+          phoneNumber: result.user.phoneNumber
         };
+        
+        // Save to Firestore
+        try {
+          await saveUserToFirestore(userData);
+        } catch (firestoreError) {
+          console.error("Error saving user to Firestore:", firestoreError);
+          // Continue with login even if Firestore fails
+        }
         
         console.log("User authenticated with Google:", userData);
         
         toast({
           title: "Login successful",
-          description: `Welcome ${userData.name || "back"}!`,
+          description: `Welcome ${userData.displayName || "back"}!`,
         });
         
-        // For now, we'll just navigate to dashboard
-        // Later we can integrate this with our backend
+        // Navigate to dashboard
         setLocation("/dashboard");
       }
       
@@ -235,10 +246,30 @@ const Login = () => {
   };
   
   // Phone verification completed handler
-  const handleVerificationComplete = () => {
+  const handleVerificationComplete = async (user: any) => {
     setConfirmationResult(null);
     setPhoneNumber("");
     setShowPhoneInput(false);
+    
+    // Import dynamically to avoid circular dependencies
+    const { saveUserToFirestore } = await import("@/lib/firestore");
+    
+    // Prepare user data for Firestore
+    const userData = {
+      uid: user.uid,
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      phoneNumber: user.phoneNumber
+    };
+    
+    // Save to Firestore
+    try {
+      await saveUserToFirestore(userData);
+    } catch (firestoreError) {
+      console.error("Error saving phone user to Firestore:", firestoreError);
+      // Continue with login even if Firestore fails
+    }
     
     toast({
       title: "Login successful",
