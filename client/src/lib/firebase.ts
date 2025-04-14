@@ -13,15 +13,29 @@ console.log("Firebase config initialized with:", {
   appIdAvailable: !!firebaseAppId
 });
 
+// Get auth domain from env
+const firebaseAuthDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+
 // Firebase configuration
 const firebaseConfig = {
   apiKey: firebaseApiKey,
-  authDomain: `${firebaseProjectId}.firebaseapp.com`,
+  authDomain: firebaseAuthDomain || `${firebaseProjectId}.firebaseapp.com`,
   projectId: firebaseProjectId,
   storageBucket: `${firebaseProjectId}.appspot.com`,
-  messagingSenderId: "000000000000", // This is a placeholder, will be auto-filled by Firebase
+  messagingSenderId: "764806761857", // This will be auto-filled by Firebase
   appId: firebaseAppId,
 };
+
+// Validate Firebase configuration
+if (!firebaseApiKey || !firebaseProjectId || !firebaseAppId) {
+  console.error("Firebase configuration is incomplete. Authentication features will not work.");
+  console.log("Missing values:", {
+    apiKey: !firebaseApiKey ? "missing" : "present",
+    projectId: !firebaseProjectId ? "missing" : "present",
+    appId: !firebaseAppId ? "missing" : "present",
+    authDomain: !firebaseAuthDomain ? "using default" : "present"
+  });
+}
 
 // Initialize Firebase (avoid duplicate initialization)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
