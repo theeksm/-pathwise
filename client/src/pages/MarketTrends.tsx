@@ -156,6 +156,27 @@ const automationRiskJobs = [
   { name: "Fast Food", risk: 85 },
 ];
 
+// Interface for news articles
+interface NewsArticle {
+  title: string;
+  description: string;
+  source: string;
+  url: string;
+  publishedAt: string;
+  content?: string;
+  imageUrl?: string;
+  category?: string;
+}
+
+// Interface for trending stocks
+interface TrendingStock {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+}
+
 const MarketTrends = () => {
   const { toast } = useToast();
   const [stockSymbol, setStockSymbol] = useState("MSFT");
@@ -172,6 +193,7 @@ const MarketTrends = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
+  // Query for stock data by symbol
   const { data: stockData, isLoading, isError, error, refetch } = useQuery<StockData, Error>({
     queryKey: ['/api/market-trends/stocks', stockSymbol],
     refetchOnWindowFocus: true,
@@ -191,6 +213,44 @@ const MarketTrends = () => {
     staleTime: 60000, // Consider data fresh for 1 minute to reduce API calls
     gcTime: 120000, // Keep in cache for 2 minutes
     refetchInterval: 60000 // Refresh every 60 seconds for balance between real-time and rate limits
+  });
+  
+  // Query for trending stocks
+  const { 
+    data: trendingStocks, 
+    isLoading: isLoadingTrending,
+    isError: isTrendingError
+  } = useQuery<TrendingStock[], Error>({
+    queryKey: ['/api/market-trends/trending-stocks'],
+    queryFn: async () => {
+      const response = await fetch('/api/market-trends/trending-stocks');
+      if (!response.ok) {
+        throw new Error('Failed to fetch trending stocks');
+      }
+      return response.json();
+    },
+    staleTime: 300000, // 5 minutes
+    gcTime: 600000, // 10 minutes
+    refetchInterval: 300000, // 5 minutes
+  });
+  
+  // Query for tech news
+  const {
+    data: techNews,
+    isLoading: isNewsLoading,
+    isError: isNewsError
+  } = useQuery<NewsArticle[], Error>({
+    queryKey: ['/api/news/tech'],
+    queryFn: async () => {
+      const response = await fetch('/api/news/tech');
+      if (!response.ok) {
+        throw new Error('Failed to fetch tech news');
+      }
+      return response.json();
+    },
+    staleTime: 900000, // 15 minutes
+    gcTime: 1800000, // 30 minutes
+    refetchInterval: 900000, // 15 minutes
   });
 
   useEffect(() => {
@@ -700,49 +760,53 @@ const MarketTrends = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Tech Sector Performance</CardTitle>
+                <CardTitle>Trending Stocks</CardTitle>
                 <CardDescription>
-                  Key tech companies and their recent performance
+                  Top performing stocks in the market
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                    <div className="font-medium">AAPL (Apple)</div>
-                    <div className="flex items-center text-green-600">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span>2.3%</span>
-                    </div>
+                {isLoadingTrending ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
                   </div>
-                  <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                    <div className="font-medium">MSFT (Microsoft)</div>
-                    <div className="flex items-center text-green-600">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span>1.8%</span>
-                    </div>
+                ) : isTrendingError ? (
+                  <div className="p-4 text-center text-red-500 bg-red-50 rounded-md">
+                    <p className="mb-2">Unable to load trending stocks</p>
+                    <p className="text-sm text-gray-600">Please try again later</p>
                   </div>
-                  <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                    <div className="font-medium">GOOGL (Alphabet)</div>
-                    <div className="flex items-center text-red-600">
-                      <TrendingDown className="h-4 w-4 mr-1" />
-                      <span>0.7%</span>
-                    </div>
+                ) : trendingStocks && trendingStocks.length > 0 ? (
+                  <div className="space-y-3">
+                    {trendingStocks.map((stock, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
+                        <div className="font-medium">
+                          {stock.symbol} {stock.name && `(${stock.name})`}
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <div className="font-medium">${stock.price?.toFixed(2)}</div>
+                          <div className={`flex items-center text-xs ${stock.change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {stock.change > 0 ? (
+                              <TrendingUp className="h-3 w-3 mr-1" />
+                            ) : (
+                              <TrendingDown className="h-3 w-3 mr-1" />
+                            )}
+                            <span>
+                              {stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                    <div className="font-medium">AMZN (Amazon)</div>
-                    <div className="flex items-center text-green-600">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span>1.2%</span>
-                    </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500">
+                    <p>No trending stocks available</p>
                   </div>
-                  <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                    <div className="font-medium">META (Meta)</div>
-                    <div className="flex items-center text-green-600">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span>3.1%</span>
-                    </div>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
