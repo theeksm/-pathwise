@@ -257,20 +257,41 @@ const ResumeTemplates = () => {
     // Check projects section
     const projectsValid = validateSection("projects").valid;
     
-    // Update completed sections
+    // Check if personal info has been edited by user (not just placeholders)
+    const personalInfoEdited = Object.values(editedFields.personalInfo).some(value => value);
+    
+    // Check if at least one skill has been edited
+    const skillsEdited = editedFields.skills.some(value => value);
+    
+    // Check if experience has at least one entry with edited fields
+    const experienceEdited = editedFields.experience.some(entry => 
+      Object.values(entry).some(value => value)
+    );
+    
+    // Check if education has at least one entry with edited fields
+    const educationEdited = editedFields.education.some(entry => 
+      Object.values(entry).some(value => value)
+    );
+    
+    // Check if projects has at least one entry with edited fields
+    const projectsEdited = editedFields.projects.some(entry => 
+      Object.values(entry).some(value => value)
+    );
+    
+    // Update completed sections - only if the section is valid AND has been edited by user
     setCompletedSections({
-      "personal-info": personalInfoValid,
-      "skills": skillsValid,
-      "experience": experienceValid,
-      "education": educationValid,
-      "projects": projectsValid
+      "personal-info": personalInfoValid && personalInfoEdited,
+      "skills": skillsValid && skillsEdited,
+      "experience": experienceValid, // Experience is optional, so we don't require edits
+      "education": educationValid,   // Education is optional, so we don't require edits
+      "projects": projectsValid      // Projects are optional, so we don't require edits
     });
     
-    // Update accessible tabs based on which sections are completed
-    if (personalInfoValid && !accessibleTabs["skills"]) {
+    // Update accessible tabs based on which sections are completed or have been edited
+    if ((personalInfoValid && personalInfoEdited) && !accessibleTabs["skills"]) {
       setAccessibleTabs(prev => ({ ...prev, "skills": true }));
     }
-    if (skillsValid && !accessibleTabs["experience"]) {
+    if ((skillsValid && skillsEdited) && !accessibleTabs["experience"]) {
       setAccessibleTabs(prev => ({ ...prev, "experience": true }));
     }
     if (experienceValid && !accessibleTabs["education"]) {
@@ -279,7 +300,7 @@ const ResumeTemplates = () => {
     if (educationValid && !accessibleTabs["projects"]) {
       setAccessibleTabs(prev => ({ ...prev, "projects": true }));
     }
-  }, [formState]);
+  }, [formState, editedFields]);
 
   // Handle input changes for personal information
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -484,6 +505,27 @@ const ResumeTemplates = () => {
       ...prev,
       projects: newProjects
     }));
+    
+    // Mark this project field as edited by the user
+    const newEditedProjects = [...editedFields.projects];
+    while (newEditedProjects.length <= index) {
+      newEditedProjects.push({ title: false, technologies: false, description: false, link: false });
+    }
+    newEditedProjects[index] = {
+      ...newEditedProjects[index],
+      [field]: true
+    };
+    
+    setEditedFields(prev => ({
+      ...prev,
+      projects: newEditedProjects
+    }));
+    
+    // Add visual feedback for edited field
+    const inputEl = document.getElementById(`project-${index}-${field}`);
+    if (inputEl) {
+      inputEl.classList.add('border-green-500');
+    }
   };
 
   // Add a new project field
@@ -562,6 +604,21 @@ const ResumeTemplates = () => {
           }
         }));
         
+        // Mark the summary as user-edited since it was generated with user input
+        setEditedFields(prev => ({
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            summary: true
+          }
+        }));
+        
+        // Add visual feedback for AI-generated content
+        const summaryEl = document.getElementById('summary');
+        if (summaryEl) {
+          summaryEl.classList.add('border-green-500');
+        }
+        
         toast({
           title: "Summary generated",
           description: "AI-suggested summary has been added to your resume."
@@ -638,23 +695,47 @@ const ResumeTemplates = () => {
     switch (section) {
       case "personal-info":
         const { fullName, title } = formState.personalInfo;
+        const { fullName: fullNameEdited, title: titleEdited } = editedFields.personalInfo;
+        
+        // First check if content exists
         if (!fullName.trim()) {
           return { valid: false, message: "Please provide your full name" };
         }
         if (!title.trim()) {
           return { valid: false, message: "Please provide your professional title" };
         }
+        
+        // Now check if user actually edited these fields rather than using placeholders
+        if (!fullNameEdited) {
+          return { valid: false, message: "Please edit your full name" };
+        }
+        if (!titleEdited) {
+          return { valid: false, message: "Please edit your professional title" };
+        }
+        
         return { valid: true };
       
       case "skills":
-        const hasSkill = formState.skills.some(skill => skill.name.trim() !== "");
-        if (!hasSkill) {
-          return { valid: false, message: "Please add at least one skill" };
+        const hasEditedSkill = formState.skills.some((skill, index) => 
+          skill.name.trim() !== "" && 
+          (index < editedFields.skills.length ? editedFields.skills[index] : false)
+        );
+        
+        if (!hasEditedSkill) {
+          return { valid: false, message: "Please add at least one skill that you've edited" };
         }
         return { valid: true };
       
       case "experience":
-        // Experience is optional but if provided, must have title and company
+        // Experience is optional
+        const hasAnyEditedExperience = formState.experience.some((exp, index) => {
+          if (index >= editedFields.experience.length) return false;
+          const fieldEdits = editedFields.experience[index];
+          return exp.title.trim() !== "" && exp.company.trim() !== "" && 
+                 (fieldEdits.title || fieldEdits.company || fieldEdits.description);
+        });
+        
+        // If any experience entry has title or company but not both, that's invalid
         const hasInvalidExperience = formState.experience.some(
           exp => (exp.title.trim() !== "" && exp.company.trim() === "") || 
                  (exp.title.trim() === "" && exp.company.trim() !== "")
@@ -663,10 +744,12 @@ const ResumeTemplates = () => {
         if (hasInvalidExperience) {
           return { valid: false, message: "Please complete both job title and company for each experience entry" };
         }
+        
+        // If no edited experience is found, that's okay - it's optional
         return { valid: true };
       
       case "education":
-        // Education is optional but if provided, must have degree and institution
+        // Education is optional
         const hasInvalidEducation = formState.education.some(
           edu => (edu.degree.trim() !== "" && edu.institution.trim() === "") || 
                  (edu.degree.trim() === "" && edu.institution.trim() !== "")
@@ -675,10 +758,12 @@ const ResumeTemplates = () => {
         if (hasInvalidEducation) {
           return { valid: false, message: "Please complete both degree and institution for each education entry" };
         }
+        
+        // Education is optional
         return { valid: true };
       
       case "projects":
-        // Projects are optional but if provided, must have a title
+        // Projects are optional
         const hasInvalidProject = formState.projects.some(
           proj => proj.title.trim() === "" && (proj.technologies.trim() !== "" || proj.description.trim() !== "")
         );
@@ -686,6 +771,8 @@ const ResumeTemplates = () => {
         if (hasInvalidProject) {
           return { valid: false, message: "Please provide a title for each project" };
         }
+        
+        // Projects are optional
         return { valid: true };
       
       default:
