@@ -4,6 +4,10 @@ import fetch from "node-fetch";
 const API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 const BASE_URL = "https://www.alphavantage.co/query";
 
+// Cache mechanism to reduce API calls
+const API_CACHE = new Map<string, { data: any, timestamp: number }>(); 
+const CACHE_DURATION = 86400000; // 24 hours in milliseconds
+
 // Error types for better classification and handling
 export enum StockAPIErrorType {
   API_KEY_MISSING = 'api_key_missing',
@@ -66,6 +70,16 @@ async function fetchStockEndpoint(url: string, endpointName: string): Promise<an
   try {
     validateApiKey();
     
+    // Check cache first to reduce API calls
+    const cacheKey = url;
+    const now = Date.now();
+    const cachedResult = API_CACHE.get(cacheKey);
+    
+    if (cachedResult && (now - cachedResult.timestamp < CACHE_DURATION)) {
+      console.log(`Using cached data for ${endpointName}`);
+      return cachedResult.data;
+    }
+    
     const response = await fetch(url);
     
     // Handle HTTP error statuses
@@ -126,6 +140,13 @@ async function fetchStockEndpoint(url: string, endpointName: string): Promise<an
       );
     }
     
+    // Cache the successful response
+    API_CACHE.set(cacheKey, {
+      data,
+      timestamp: Date.now()
+    });
+    console.log(`Caching data for ${endpointName}`);
+    
     return data;
   } catch (error) {
     // Re-throw StockAPIError instances
@@ -162,6 +183,15 @@ export async function getStockData(symbol: string): Promise<StockData> {
     
     // Clean and format the symbol
     const formattedSymbol = symbol.trim().toUpperCase();
+    
+    // Check for cached complete result
+    const cacheKey = `complete_stock_data_${formattedSymbol}`;
+    const cachedStockData = API_CACHE.get(cacheKey);
+    
+    if (cachedStockData && (Date.now() - cachedStockData.timestamp < CACHE_DURATION)) {
+      console.log(`Using cached complete stock data for ${formattedSymbol}`);
+      return cachedStockData.data as StockData;
+    }
     
     // Get stock quote
     const quoteUrl = `${BASE_URL}?function=GLOBAL_QUOTE&symbol=${formattedSymbol}&apikey=${API_KEY}`;
