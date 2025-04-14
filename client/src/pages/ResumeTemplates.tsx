@@ -186,6 +186,15 @@ const initialState: FormState = {
   }]
 };
 
+// Track which fields the user has actively edited to avoid counting placeholder values as "completed"
+interface EditedFieldsState {
+  personalInfo: Record<string, boolean>;
+  skills: boolean[];
+  education: { [key: string]: boolean }[];
+  experience: { [key: string]: boolean }[];
+  projects: { [key: string]: boolean }[];
+}
+
 const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(RESUME_TYPES[0].id);
   const [formState, setFormState] = useState<FormState>(initialState);
@@ -212,6 +221,24 @@ const ResumeTemplates = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
+  
+  // Track which fields the user has actively edited (to differentiate from placeholder values)
+  const [editedFields, setEditedFields] = useState<EditedFieldsState>({
+    personalInfo: {
+      fullName: false,
+      title: false,
+      email: false,
+      phone: false,
+      location: false,
+      linkedin: false,
+      website: false,
+      summary: false
+    },
+    skills: [false],
+    education: [{ degree: false, institution: false, location: false, from: false, to: false, description: false }],
+    experience: [{ title: false, company: false, location: false, from: false, to: false, current: false, description: false }],
+    projects: [{ title: false, technologies: false, description: false, link: false }]
+  });
   
   // Monitor form changes and update section completion status
   useEffect(() => {
@@ -257,6 +284,8 @@ const ResumeTemplates = () => {
   // Handle input changes for personal information
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // Update form state
     setFormState(prev => ({
       ...prev,
       personalInfo: {
@@ -264,6 +293,22 @@ const ResumeTemplates = () => {
         [name]: value
       }
     }));
+    
+    // Mark this field as edited by the user
+    setEditedFields(prev => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        [name]: true
+      }
+    }));
+    
+    // Add visual feedback for edited field
+    const inputEl = document.getElementById(name);
+    if (inputEl) {
+      // Add a subtle green border to show the field has been edited
+      inputEl.classList.add('border-green-500');
+    }
   };
 
   // Handle input changes for skills
@@ -273,6 +318,18 @@ const ResumeTemplates = () => {
     setFormState(prev => ({
       ...prev,
       skills: newSkills
+    }));
+    
+    // Mark this skill as edited by the user
+    const newEditedSkills = [...editedFields.skills];
+    while (newEditedSkills.length <= index) {
+      newEditedSkills.push(false);
+    }
+    newEditedSkills[index] = true;
+    
+    setEditedFields(prev => ({
+      ...prev,
+      skills: newEditedSkills
     }));
   };
 
@@ -306,6 +363,27 @@ const ResumeTemplates = () => {
       ...prev,
       education: newEducation
     }));
+    
+    // Mark this education field as edited by the user
+    const newEditedEducation = [...editedFields.education];
+    while (newEditedEducation.length <= index) {
+      newEditedEducation.push({ degree: false, institution: false, location: false, from: false, to: false, description: false });
+    }
+    newEditedEducation[index] = {
+      ...newEditedEducation[index],
+      [field]: true
+    };
+    
+    setEditedFields(prev => ({
+      ...prev,
+      education: newEditedEducation
+    }));
+    
+    // Add visual feedback for edited field
+    const inputEl = document.getElementById(`education-${index}-${field}`);
+    if (inputEl) {
+      inputEl.classList.add('border-green-500');
+    }
   };
 
   // Add a new education field
@@ -345,6 +423,27 @@ const ResumeTemplates = () => {
       ...prev,
       experience: newExperience
     }));
+    
+    // Mark this experience field as edited by the user
+    const newEditedExperience = [...editedFields.experience];
+    while (newEditedExperience.length <= index) {
+      newEditedExperience.push({ title: false, company: false, location: false, from: false, to: false, current: false, description: false });
+    }
+    newEditedExperience[index] = {
+      ...newEditedExperience[index],
+      [field]: true
+    };
+    
+    setEditedFields(prev => ({
+      ...prev,
+      experience: newEditedExperience
+    }));
+    
+    // Add visual feedback for edited field
+    const inputEl = document.getElementById(`experience-${index}-${field}`);
+    if (inputEl) {
+      inputEl.classList.add('border-green-500');
+    }
   };
 
   // Add a new experience field
