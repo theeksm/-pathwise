@@ -594,7 +594,7 @@ const ResumeTemplates = () => {
   const handleSkipSection = () => {
     const currentSection = activeTab;
     
-    // Mark current section as accessible but not completed
+    // Mark current section as skipped but not completed
     setCompletedSections(prev => ({
       ...prev,
       [currentSection]: false
@@ -602,12 +602,23 @@ const ResumeTemplates = () => {
     
     // Determine next section and make it accessible
     let nextSection = "";
-    if (currentSection === "personal-info") nextSection = "skills";
+    if (currentSection === "personal-info") {
+      toast({
+        title: "Section skipped",
+        description: "Personal information is important for your resume. You can come back to it later.",
+        variant: "default"
+      });
+      nextSection = "skills";
+    }
     else if (currentSection === "skills") nextSection = "experience";
     else if (currentSection === "experience") nextSection = "education";
     else if (currentSection === "education") nextSection = "projects";
-    else if (currentSection === "projects") nextSection = "personal-info"; // Loop back
+    else if (currentSection === "projects") {
+      setPreviewMode(true);
+      return; // Don't navigate if skipping projects, just show preview
+    }
     
+    // Make next section accessible
     setAccessibleTabs(prev => ({
       ...prev,
       [nextSection]: true
@@ -615,11 +626,30 @@ const ResumeTemplates = () => {
     
     // Navigate to next section
     setActiveTab(nextSection);
+    
+    toast({
+      title: "Section skipped",
+      description: "You can come back to this section later.",
+    });
   };
   
   // Handle tab change with validation
   const handleTabChange = (value: string) => {
-    // Allow switching to accessible tabs
+    // If going to a previous tab, just switch directly
+    if (
+      (activeTab === "skills" && value === "personal-info") ||
+      (activeTab === "experience" && (value === "personal-info" || value === "skills")) ||
+      (activeTab === "education" && (value === "personal-info" || value === "skills" || value === "experience")) ||
+      (activeTab === "projects" && (value === "personal-info" || value === "skills" || value === "experience" || value === "education"))
+    ) {
+      setActiveTab(value);
+      return;
+    }
+    
+    // If trying to go to next section, check if current section is valid
+    const currentSection = activeTab;
+    
+    // For forward navigation, check if the tab is accessible
     if (accessibleTabs[value]) {
       setActiveTab(value);
     } else {
@@ -1713,18 +1743,87 @@ const ResumeTemplates = () => {
                   </Tabs>
                 </CardContent>
                 <CardFooter className="flex justify-between flex-wrap gap-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setActiveTab(activeTab === "personal-info" ? "skills" : 
-                                             activeTab === "skills" ? "experience" :
-                                             activeTab === "experience" ? "education" :
-                                             activeTab === "education" ? "projects" : "personal-info")}
+                  {!previewMode && (
+                    <div className="flex gap-2">
+                      {/* Back to Form button when in preview mode */}
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          // Calculate which section to go to based on which sections are completed
+                          let sectionToGoTo = "personal-info";
+                          if (completedSections["personal-info"]) {
+                            if (completedSections["skills"]) {
+                              if (completedSections["experience"]) {
+                                if (completedSections["education"]) {
+                                  sectionToGoTo = "projects";
+                                } else {
+                                  sectionToGoTo = "education";
+                                }
+                              } else {
+                                sectionToGoTo = "experience";
+                              }
+                            } else {
+                              sectionToGoTo = "skills";
+                            }
+                          }
+                          
+                          // If all sections are complete, go to the least completed one
+                          if (
+                            completedSections["personal-info"] && 
+                            completedSections["skills"] && 
+                            completedSections["experience"] &&
+                            completedSections["education"] &&
+                            completedSections["projects"]
+                          ) {
+                            // All complete, go to personal info
+                            sectionToGoTo = "personal-info";
+                          }
+                          
+                          setActiveTab(sectionToGoTo);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4 rotate-180 mr-2" />
+                        {Object.values(completedSections).every(Boolean) ? 
+                          "Review All Sections" : 
+                          "Continue Editing"
+                        }
+                      </Button>
+                      <Button 
+                        onClick={() => setPreviewMode(true)}
+                        variant="default"
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        Preview Resume
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {previewMode && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setPreviewMode(false)}
+                    >
+                      Back to Editor
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    onClick={handleDownload} 
+                    disabled={isDownloading}
+                    variant="default"
+                    className={`${!previewMode ? 'bg-green-600 hover:bg-green-700' : ''}`}
                   >
-                    {activeTab === "projects" ? "Back to Personal Info" : "Next Section"}
-                  </Button>
-                  <Button onClick={() => setPreviewMode(true)}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Preview Resume
+                    {isDownloading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download as PDF
+                      </>
+                    )}
                   </Button>
                 </CardFooter>
               </Card>
