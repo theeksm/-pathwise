@@ -10,7 +10,7 @@ const CACHE_DURATION = 86400000; // 24 hours in milliseconds
 
 // Current stock prices for common stocks to ensure we're getting accurate data
 // These values should be close to real-world values you'd see on Google Finance
-const CURRENT_STOCK_PRICES = {
+const CURRENT_STOCK_PRICES: Record<string, number> = {
   'AAPL': 202.00,  // Apple
   'MSFT': 399.00,  // Microsoft
   'AMZN': 178.00,  // Amazon
