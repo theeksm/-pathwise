@@ -862,30 +862,19 @@ const ResumeTemplates = () => {
   
   // Handle tab change with validation
   const handleTabChange = (value: string) => {
-    // If going to a previous tab, just switch directly
-    if (
-      (activeTab === "skills" && value === "personal-info") ||
-      (activeTab === "experience" && (value === "personal-info" || value === "skills")) ||
-      (activeTab === "education" && (value === "personal-info" || value === "skills" || value === "experience")) ||
-      (activeTab === "projects" && (value === "personal-info" || value === "skills" || value === "experience" || value === "education"))
-    ) {
-      setActiveTab(value);
+    // If trying to access a tab that's not accessible, prevent navigation and show message
+    if (!accessibleTabs[value]) {
+      // Don't allow navigation to locked sections
+      toast({
+        title: "Section locked",
+        description: "Please complete the previous sections in order first",
+        variant: "destructive"
+      });
       return;
     }
     
-    // If trying to go to next section, check if current section is valid
-    const currentSection = activeTab;
-    
-    // For forward navigation, check if the tab is accessible
-    if (accessibleTabs[value]) {
-      setActiveTab(value);
-    } else {
-      toast({
-        title: "Section not accessible yet",
-        description: "Please complete or skip the current section first",
-        variant: "destructive"
-      });
-    }
+    // If going to a previous tab, or an accessible tab, allow navigation
+    setActiveTab(value);
   };
   
   // Handle PDF download using react-pdf
@@ -1398,6 +1387,7 @@ const ResumeTemplates = () => {
                         value="skills" 
                         className={`flex-1 ${accessibleTabs["skills"] ? "" : "opacity-50 cursor-not-allowed"}`}
                         data-state={completedSections["skills"] ? "completed" : ""}
+                        disabled={!accessibleTabs["skills"]}
                       >
                         <div className="flex items-center">
                           {completedSections["skills"] && (
@@ -1410,6 +1400,7 @@ const ResumeTemplates = () => {
                         value="experience" 
                         className={`flex-1 ${accessibleTabs["experience"] ? "" : "opacity-50 cursor-not-allowed"}`}
                         data-state={completedSections["experience"] ? "completed" : ""}
+                        disabled={!accessibleTabs["experience"]}
                       >
                         <div className="flex items-center">
                           {completedSections["experience"] && (
@@ -1422,6 +1413,7 @@ const ResumeTemplates = () => {
                         value="education" 
                         className={`flex-1 ${accessibleTabs["education"] ? "" : "opacity-50 cursor-not-allowed"}`}
                         data-state={completedSections["education"] ? "completed" : ""}
+                        disabled={!accessibleTabs["education"]}
                       >
                         <div className="flex items-center">
                           {completedSections["education"] && (
