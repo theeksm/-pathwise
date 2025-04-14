@@ -3,7 +3,7 @@ import { StockAPIError, StockAPIErrorType } from "./stockAPI";
 
 // A subset of popular stock symbols and company names to use for auto-suggestions
 // This is a small default list that will be used if the API call fails or is unavailable
-const DEFAULT_STOCK_SYMBOLS = [
+export const DEFAULT_STOCK_SYMBOLS = [
   { symbol: "AAPL", name: "Apple Inc." },
   { symbol: "MSFT", name: "Microsoft Corporation" },
   { symbol: "GOOGL", name: "Alphabet Inc." },
@@ -23,7 +23,17 @@ const DEFAULT_STOCK_SYMBOLS = [
   { symbol: "AMD", name: "Advanced Micro Devices Inc." },
   { symbol: "T", name: "AT&T Inc." },
   { symbol: "VZ", name: "Verizon Communications Inc." },
-  { symbol: "CRM", name: "Salesforce Inc." }
+  { symbol: "CRM", name: "Salesforce Inc." },
+  { symbol: "ABNB", name: "Airbnb Inc." },
+  { symbol: "UBER", name: "Uber Technologies Inc." },
+  { symbol: "SNAP", name: "Snap Inc." },
+  { symbol: "SHOP", name: "Shopify Inc." },
+  { symbol: "TWTR", name: "Twitter Inc." },
+  { symbol: "ZM", name: "Zoom Video Communications Inc." },
+  { symbol: "PINS", name: "Pinterest Inc." },
+  { symbol: "SQ", name: "Block Inc." },
+  { symbol: "SPOT", name: "Spotify Technology S.A." },
+  { symbol: "SNOW", name: "Snowflake Inc." }
 ];
 
 export interface StockSymbol {
