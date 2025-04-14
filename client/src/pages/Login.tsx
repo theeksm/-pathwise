@@ -74,6 +74,13 @@ const Login = () => {
     try {
       console.log("Attempting Google sign-in...");
       
+      // Check if Firebase is properly configured
+      if (!import.meta.env.VITE_FIREBASE_API_KEY || 
+          !import.meta.env.VITE_FIREBASE_PROJECT_ID || 
+          !import.meta.env.VITE_FIREBASE_APP_ID) {
+        throw new Error("Firebase is not properly configured. Please contact the administrator.");
+      }
+      
       // Reset any previous state
       googleProvider.setCustomParameters({
         prompt: 'select_account'
@@ -108,6 +115,7 @@ const Login = () => {
         // Later we can integrate this with our backend
         setLocation("/dashboard");
       }
+      
     } catch (error: any) {
       // More detailed error logging
       console.error("Detailed Google sign-in error:", {
@@ -126,6 +134,10 @@ const Login = () => {
         errorMessage = 'Authentication popup was blocked by your browser. Please allow popups for this site.';
       } else if (error.code === 'auth/cancelled-popup-request') {
         errorMessage = 'Authentication was cancelled. Please try again.';
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMessage = 'The authentication credential is invalid. Please try again.';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = 'This domain is not authorized for OAuth operations. Contact your administrator.';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -152,6 +164,13 @@ const Login = () => {
     setIsPhoneLoading(true);
     
     try {
+      // Check if Firebase is properly configured
+      if (!import.meta.env.VITE_FIREBASE_API_KEY || 
+          !import.meta.env.VITE_FIREBASE_PROJECT_ID || 
+          !import.meta.env.VITE_FIREBASE_APP_ID) {
+        throw new Error("Firebase is not properly configured. Please contact the administrator.");
+      }
+      
       if (!phoneButtonRef.current) {
         throw new Error("Button reference not found");
       }
@@ -180,6 +199,7 @@ const Login = () => {
         title: "Verification code sent",
         description: "Please enter the code sent to your phone.",
       });
+      
     } catch (error: any) {
       console.error("Phone sign-in error:", {
         code: error.code,
@@ -193,6 +213,12 @@ const Login = () => {
         errorMessage = 'Please enter a valid phone number with country code (e.g., +1 for US).';
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = 'Too many requests. Please try again later.';
+      } else if (error.code === 'auth/captcha-check-failed') {
+        errorMessage = 'reCAPTCHA verification failed. Please refresh the page and try again.';
+      } else if (error.code === 'auth/quota-exceeded') {
+        errorMessage = 'SMS quota exceeded. Please try again tomorrow.';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = 'This domain is not authorized for SMS operations. Contact your administrator.';
       } else if (error.message) {
         errorMessage = error.message;
       }
