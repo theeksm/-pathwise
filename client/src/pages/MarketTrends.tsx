@@ -818,42 +818,89 @@ const MarketTrends = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="border-b pb-4">
-                    <h3 className="font-medium mb-1">AI Hiring Continues to Surge Across Tech Giants</h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      Major tech companies are expanding their AI divisions, with a 45% increase in AI-related job postings over the last quarter.
-                    </p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="mr-4">2 hours ago</span>
-                      <Badge variant="outline">Tech Jobs</Badge>
+                {isNewsLoading ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-20 w-full" />
+                      <Skeleton className="h-4 w-1/4" />
+                    </div>
+                    <Separator />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-20 w-full" />
+                      <Skeleton className="h-4 w-1/4" />
+                    </div>
+                    <Separator />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-20 w-full" />
+                      <Skeleton className="h-4 w-1/4" />
                     </div>
                   </div>
-                  <div className="border-b pb-4">
-                    <h3 className="font-medium mb-1">Remote Work Trend Stabilizing in Tech Industry</h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      New data shows that approximately 60% of tech jobs now offer remote or hybrid options, representing a new baseline for the industry.
-                    </p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="mr-4">5 hours ago</span>
-                      <Badge variant="outline">Work Trends</Badge>
-                    </div>
+                ) : isNewsError ? (
+                  <div className="p-8 text-center bg-red-50 rounded-md">
+                    <div className="text-red-500 mb-2">Unable to load news data</div>
+                    <p className="text-sm text-gray-500">Please try again later</p>
                   </div>
-                  <div className="border-b pb-4">
-                    <h3 className="font-medium mb-1">Cybersecurity Professionals in High Demand as Threats Evolve</h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      With cyber attacks increasing in sophistication, companies are struggling to fill security roles, offering premium salaries for qualified candidates.
-                    </p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="mr-4">Yesterday</span>
-                      <Badge variant="outline">Security Jobs</Badge>
-                    </div>
+                ) : techNews && techNews.length > 0 ? (
+                  <div className="space-y-4">
+                    {techNews.slice(0, 3).map((article, index) => {
+                      // Format the published date
+                      const publishDate = new Date(article.publishedAt);
+                      const now = new Date();
+                      
+                      // Calculate time difference
+                      const diffMs = now.getTime() - publishDate.getTime();
+                      const diffMins = Math.round(diffMs / 60000);
+                      const diffHours = Math.round(diffMs / 3600000);
+                      const diffDays = Math.round(diffMs / 86400000);
+                      
+                      // Format time for display
+                      let timeAgo;
+                      if (diffMins < 60) {
+                        timeAgo = `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+                      } else if (diffHours < 24) {
+                        timeAgo = `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+                      } else {
+                        timeAgo = `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+                      }
+                      
+                      return (
+                        <div key={index} className="border-b pb-4">
+                          <a 
+                            href={article.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-medium mb-1 hover:text-primary-600 transition-colors"
+                          >
+                            <h3 className="font-medium mb-1 line-clamp-2">{article.title}</h3>
+                          </a>
+                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                            {article.description || "No description available"}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500">
+                            <div className="flex items-center">
+                              <span className="mr-2">{timeAgo}</span>
+                              <span className="text-xs text-gray-400">• {article.source}</span>
+                            </div>
+                            <Badge variant="outline">{article.category || "Tech News"}</Badge>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
+                ) : (
+                  <div className="p-8 text-center">
+                    <p className="text-gray-500">No news articles available</p>
+                  </div>
+                )}
               </CardContent>
               <CardFooter className="border-t pt-4">
-                <Button variant="outline" className="w-full">
-                  View More Industry News
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB" target="_blank" rel="noopener noreferrer">
+                    View More Tech News
+                  </a>
                 </Button>
               </CardFooter>
             </Card>
