@@ -1,5 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, PDFDownloadLink } from '@react-pdf/renderer';
+import { Button } from "@/components/ui/button";
+import { Loader2, Download } from "lucide-react";
 
 // Define resume form state types
 interface ResumeFormState {
