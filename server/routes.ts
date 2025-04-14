@@ -729,6 +729,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Get company-specific news
+  app.get("/api/news/company", async (req, res) => {
+    const symbol = req.query.symbol as string;
+    
+    if (!symbol) {
+      return res.status(400).json({
+        message: "Symbol parameter is required",
+        errorType: "validation_error"
+      });
+    }
+    
+    try {
+      const { getCompanyNews } = await import('./lib/newsAPI');
+      const news = await getCompanyNews(symbol);
+      res.json(news);
+    } catch (error) {
+      console.error(`Error fetching news for ${symbol}:`, error);
+      res.status(500).json({
+        message: "Failed to fetch company news",
+        errorType: "api_error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 
   // Create HTTP server
   const httpServer = createServer(app);

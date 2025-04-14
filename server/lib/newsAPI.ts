@@ -230,3 +230,48 @@ export async function getAllTechNews(): Promise<NewsArticle[]> {
     return [];
   }
 }
+
+// Get news for a specific company/stock
+export async function getCompanyNews(symbol: string): Promise<NewsArticle[]> {
+  try {
+    // Get company name for better search results
+    let companyName = symbol;
+    try {
+      // Try to get full company name from polygon API
+      const response = await fetch(`https://api.polygon.io/v3/reference/tickers/${symbol}?apiKey=${process.env.POLYGON_API_KEY}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.results && data.results.name) {
+          companyName = data.results.name;
+        }
+      }
+    } catch (error) {
+      console.warn(`Could not fetch company name for ${symbol}, using symbol only`);
+    }
+    
+    // Get news from the last 7 days
+    const date = new Date();
+    date.setDate(date.getDate() - 30); // Look back 30 days for company news to get more relevant results
+    const fromDate = date.toISOString().split('T')[0];
+    
+    // Build the URL with parameters - search for the company name and symbol
+    const url = `${BASE_URL}/everything?q=(${encodeURIComponent(companyName)} OR ${encodeURIComponent(symbol)})&language=en&sortBy=publishedAt&from=${fromDate}&pageSize=10`;
+    
+    const data = await fetchNewsEndpoint(url, `company news for ${symbol}`);
+    
+    // Process the articles
+    return (data.articles || []).map((article: any) => ({
+      title: article.title,
+      description: article.description,
+      source: article.source.name,
+      url: article.url,
+      publishedAt: article.publishedAt,
+      content: article.content,
+      imageUrl: article.urlToImage,
+      category: 'Company News'
+    }));
+  } catch (error) {
+    console.error(`Error fetching company news for ${symbol}:`, error);
+    return [];
+  }
+}
