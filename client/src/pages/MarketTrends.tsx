@@ -27,7 +27,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw, Check, ChevronsUpDown } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw, Check, ChevronsUpDown, SlidersHorizontal } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -333,15 +333,255 @@ const MarketTrends = () => {
     return "#ef4444"; // red
   };
 
+  // Universal search functionality
+  const [universalQuery, setUniversalQuery] = useState("");
+  const [universalResults, setUniversalResults] = useState<{
+    stocks: { symbol: string; name: string }[];
+    news: NewsArticle[];
+  }>({ stocks: [], news: [] });
+  const [showUniversalResults, setShowUniversalResults] = useState(false);
+  const [isUniversalSearching, setIsUniversalSearching] = useState(false);
+  const universalSearchRef = useRef<HTMLDivElement>(null);
+  
+  // Filter settings
+  const [filters, setFilters] = useState({
+    sector: "",
+    marketCap: "",
+    dateRange: "",
+    exchange: ""
+  });
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Handle universal search input
+  const handleUniversalSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setUniversalQuery(query);
+    
+    if (query.length < 2) {
+      setShowUniversalResults(false);
+      return;
+    }
+    
+    setIsUniversalSearching(true);
+    setShowUniversalResults(true);
+    
+    try {
+      // Search for stocks
+      const stockResponse = await fetch(`/api/market-trends/stocks/search?q=${encodeURIComponent(query)}`);
+      const stockData = await stockResponse.json();
+      
+      // In a real implementation, we would also search for news and other categories
+      // For now, we'll just filter the tech news we already have
+      const filteredNews = techNews ? 
+        techNews.filter(article => 
+          article.title.toLowerCase().includes(query.toLowerCase()) ||
+          (article.description && article.description.toLowerCase().includes(query.toLowerCase()))
+        ).slice(0, 3) : [];
+      
+      setUniversalResults({
+        stocks: stockData.slice(0, 5),
+        news: filteredNews
+      });
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setIsUniversalSearching(false);
+    }
+  };
+  
+  // Close search results when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (universalSearchRef.current && !universalSearchRef.current.contains(event.target as Node)) {
+        setShowUniversalResults(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  
+  // Handle filter changes
+  const handleFilterChange = (filter: string, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [filter]: value
+    }));
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
+      <div className="text-center mb-6">
         <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
           Market Trends & Career Insights
         </h1>
         <p className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">
           Stay informed about industry trends, growing careers, and market indicators
         </p>
+      </div>
+
+      {/* Universal Search Bar */}
+      <div className="mb-8 relative" ref={universalSearchRef}>
+        <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
+          <div className="relative w-full">
+            <Input
+              type="text"
+              placeholder="Search for stocks, companies, news, or topics..."
+              value={universalQuery}
+              onChange={handleUniversalSearch}
+              className="w-full pl-10"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {isUniversalSearching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <RefreshCcw className="h-4 w-4 animate-spin text-gray-400" />
+              </div>
+            )}
+          </div>
+          
+          <Button 
+            variant="outline" 
+            className="whitespace-nowrap"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <ChevronsUpDown className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+        </div>
+        
+        {/* Filter options */}
+        {showFilters && (
+          <div className="mt-4 p-4 bg-white border rounded-md shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <div className="text-sm font-medium mb-1">Sector</div>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={filters.sector}
+                  onChange={(e) => handleFilterChange("sector", e.target.value)}
+                >
+                  <option value="">All Sectors</option>
+                  <option value="technology">Technology</option>
+                  <option value="healthcare">Healthcare</option>
+                  <option value="finance">Finance</option>
+                  <option value="energy">Energy</option>
+                  <option value="consumer">Consumer</option>
+                </select>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium mb-1">Market Cap</div>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={filters.marketCap}
+                  onChange={(e) => handleFilterChange("marketCap", e.target.value)}
+                >
+                  <option value="">Any Size</option>
+                  <option value="large">Large Cap (over $10B)</option>
+                  <option value="medium">Mid Cap ($2-10B)</option>
+                  <option value="small">Small Cap ($300M-2B)</option>
+                  <option value="micro">Micro Cap (under $300M)</option>
+                </select>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium mb-1">Date Range</div>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={filters.dateRange}
+                  onChange={(e) => handleFilterChange("dateRange", e.target.value)}
+                >
+                  <option value="">All Time</option>
+                  <option value="1d">Today</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                  <option value="1y">Last year</option>
+                </select>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium mb-1">Exchange</div>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={filters.exchange}
+                  onChange={(e) => handleFilterChange("exchange", e.target.value)}
+                >
+                  <option value="">All Exchanges</option>
+                  <option value="NASDAQ">NASDAQ</option>
+                  <option value="NYSE">NYSE</option>
+                  <option value="AMEX">AMEX</option>
+                  <option value="OTC">OTC</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex justify-end mt-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mr-2"
+                onClick={() => {
+                  setFilters({
+                    sector: "",
+                    marketCap: "",
+                    dateRange: "",
+                    exchange: ""
+                  });
+                }}
+              >
+                Reset
+              </Button>
+              <Button 
+                size="sm"
+                onClick={() => setShowFilters(false)}
+              >
+                Apply Filters
+              </Button>
+            </div>
+          </div>
+        )}
+        
+        {/* Search results dropdown */}
+        {showUniversalResults && (universalResults.stocks.length > 0 || universalResults.news.length > 0) && (
+          <div className="absolute z-50 w-full bg-white border mt-1 rounded-md shadow-lg max-h-96 overflow-y-auto">
+            {universalResults.stocks.length > 0 && (
+              <div className="p-2">
+                <h3 className="font-semibold text-sm text-gray-500 px-2 pb-1">Stocks</h3>
+                {universalResults.stocks.map((stock, index) => (
+                  <a 
+                    key={`stock-${index}`} 
+                    href={`/stock/${stock.symbol}`}
+                    className="block p-2 hover:bg-gray-50 rounded-md transition-colors"
+                  >
+                    <div className="font-medium">{stock.symbol}</div>
+                    <div className="text-sm text-gray-500">{stock.name}</div>
+                  </a>
+                ))}
+              </div>
+            )}
+            
+            {universalResults.news.length > 0 && (
+              <div className="p-2 border-t">
+                <h3 className="font-semibold text-sm text-gray-500 px-2 pb-1 pt-1">News</h3>
+                {universalResults.news.map((article, index) => (
+                  <a 
+                    key={`news-${index}`} 
+                    href={article.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block p-2 hover:bg-gray-50 rounded-md transition-colors"
+                  >
+                    <div className="font-medium line-clamp-1">{article.title}</div>
+                    <div className="text-xs text-gray-500">{article.source}</div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Tabs defaultValue="careers" className="space-y-8">
