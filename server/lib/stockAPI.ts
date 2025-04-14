@@ -234,7 +234,8 @@ export async function getStockData(symbol: string): Promise<StockData> {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(-30); // Get last 30 days
     
-    return {
+    // Create the final stock data result
+    const stockData: StockData = {
       symbol: formattedSymbol,
       name: overviewData["Name"] || formattedSymbol,
       currency: "USD",
@@ -243,6 +244,15 @@ export async function getStockData(symbol: string): Promise<StockData> {
       changePercent,
       timeSeries: timeSeriesPoints
     };
+    
+    // Cache the complete stock data result to avoid multiple API calls
+    API_CACHE.set(cacheKey, {
+      data: stockData,
+      timestamp: Date.now()
+    });
+    console.log(`Caching complete stock data for ${formattedSymbol}`);
+    
+    return stockData;
   } catch (error) {
     console.error("Error fetching stock data:", error);
     

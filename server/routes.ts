@@ -678,35 +678,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
+      // Get real stock data from Alpha Vantage API with caching
       const stockData = await getStockData(symbol);
       
-      // If the stockData contains an error, use mock data instead
-      if (stockData.error) {
-        console.log(`Using mock data for symbol ${symbol} due to error: ${stockData.error}`);
-        const { getMockStockData } = await import('./lib/mockStockData');
-        const mockData = getMockStockData(symbol);
-        return res.json(mockData);
-      }
-      
+      // Return the real stock data to the client
       res.json(stockData);
     } catch (error) {
       console.error("Error fetching stock data:", error);
       
-      // For any error, use the mock data for consistent user experience
-      console.log(`Using mock data for symbol ${symbol} due to error during fetch:`, error);
-      try {
-        const { getMockStockData } = await import('./lib/mockStockData');
-        const mockData = getMockStockData(symbol);
-        return res.json(mockData);
-      } catch (mockError) {
-        // If even the mock data fails, then return an error response
-        console.error("Error generating mock data:", mockError);
-        res.status(500).json({ 
-          message: "Failed to fetch stock data", 
-          errorType: "fatal_error",
-          details: error instanceof Error ? error.message : "Unknown error"
-        });
-      }
+      // For critical errors only, return a proper error response
+      res.status(500).json({ 
+        message: "Failed to fetch stock data", 
+        errorType: "api_error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
