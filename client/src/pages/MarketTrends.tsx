@@ -222,7 +222,14 @@ const MarketTrends = () => {
   }, [stockData]);
 
   const handleSearch = () => {
-    setStockSymbol(searchSymbol);
+    if (searchSymbol && searchSymbol !== stockSymbol) {
+      setStockSymbol(searchSymbol);
+      toast({
+        title: "Loading stock data",
+        description: `Fetching real-time data for ${searchSymbol}`,
+        variant: "default"
+      });
+    }
   };
   
   // Function to search for stock symbols
@@ -544,17 +551,12 @@ const MarketTrends = () => {
                                         // Show loading state when changing stocks
                                         toast({
                                           title: "Updating Stock Data",
-                                          description: `Loading data for ${stock.symbol}...`,
+                                          description: `Loading data for ${stock.symbol} (${stock.name})`,
                                           duration: 2000
                                         });
                                         
-                                        // Clear current stock to force refresh
-                                        setStockSymbol('');
-                                        
-                                        // Set new stock symbol after a brief delay
-                                        setTimeout(() => {
-                                          setStockSymbol(stock.symbol);
-                                        }, 100);
+                                        // Apply new stock symbol directly
+                                        setStockSymbol(stock.symbol);
                                       }}
                                     >
                                       <Check
