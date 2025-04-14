@@ -19,31 +19,96 @@ const RESUME_TYPES = [
     id: "professional",
     name: "Professional",
     description: "A clean, minimal design for experienced professionals",
-    color: "#2563eb"
+    color: "#2563eb",
+    fontFamily: "'Inter', 'Arial', sans-serif",
+    headingFont: "'Inter', 'Arial', sans-serif",
+    headingWeight: "600",
+    bodyFont: "'Inter', 'Arial', sans-serif",
+    primaryColor: "#2563eb",
+    secondaryColor: "#e2e8f0",
+    sectionSpacing: "1.5rem",
+    borderStyle: "1px solid #e2e8f0",
+    layoutType: "traditional",
+    titleSize: "1.75rem",
+    subtitleSize: "1.25rem",
+    headingSize: "1.15rem",
+    bodySize: "0.875rem",
   },
   {
     id: "creative",
     name: "Creative",
     description: "A visually appealing design for creative fields",
-    color: "#8b5cf6"
+    color: "#8b5cf6",
+    fontFamily: "'Poppins', 'Helvetica', sans-serif",
+    headingFont: "'Poppins', 'Helvetica', sans-serif",
+    headingWeight: "600",
+    bodyFont: "'Poppins', 'Helvetica', sans-serif",
+    primaryColor: "#8b5cf6",
+    secondaryColor: "#f3e8ff",
+    sectionSpacing: "1.75rem",
+    borderStyle: "none",
+    layoutType: "modern",
+    titleSize: "2rem",
+    subtitleSize: "1.25rem",
+    headingSize: "1.15rem",
+    bodySize: "0.875rem",
   },
   {
     id: "student",
     name: "Student",
     description: "An organized layout highlighting education and skills",
-    color: "#10b981"
+    color: "#10b981",
+    fontFamily: "'Nunito', 'Arial', sans-serif",
+    headingFont: "'Nunito', 'Arial', sans-serif",
+    headingWeight: "700",
+    bodyFont: "'Nunito', 'Arial', sans-serif",
+    primaryColor: "#10b981",
+    secondaryColor: "#ecfdf5",
+    sectionSpacing: "1.5rem",
+    borderStyle: "1px solid #d1fae5",
+    layoutType: "education-focused",
+    titleSize: "1.75rem",
+    subtitleSize: "1.25rem",
+    headingSize: "1.1rem",
+    bodySize: "0.875rem",
   },
   {
     id: "executive",
     name: "Executive",
     description: "A sophisticated design for leadership positions",
-    color: "#0f172a"
+    color: "#0f172a",
+    fontFamily: "'Playfair Display', 'Georgia', serif",
+    headingFont: "'Playfair Display', 'Georgia', serif",
+    headingWeight: "700",
+    bodyFont: "'Source Sans Pro', 'Arial', sans-serif",
+    primaryColor: "#0f172a",
+    secondaryColor: "#f8fafc",
+    sectionSpacing: "1.75rem",
+    borderStyle: "2px solid #e2e8f0",
+    layoutType: "executive",
+    titleSize: "2rem",
+    subtitleSize: "1.25rem",
+    headingSize: "1.25rem",
+    bodySize: "0.875rem",
   },
   {
     id: "career-changer",
     name: "Career Changer",
     description: "Emphasizes transferable skills and achievements",
-    color: "#ef4444"
+    color: "#ef4444",
+    fontFamily: "'Roboto', 'Arial', sans-serif",
+    headingFont: "'Roboto', 'Arial', sans-serif",
+    headingWeight: "500",
+    bodyFont: "'Roboto', 'Arial', sans-serif",
+    primaryColor: "#ef4444",
+    secondaryColor: "#fef2f2",
+    sectionSpacing: "1.5rem",
+    borderStyle: "none",
+    layoutType: "skills-focused",
+    titleSize: "1.75rem",
+    subtitleSize: "1.25rem",
+    headingSize: "1.15rem",
+    bodySize: "0.875rem",
   }
 ];
 
@@ -410,42 +475,42 @@ const ResumeTemplates = () => {
     }
   };
 
-  // Handle PDF download
+  // Handle PDF download using react-pdf
   const handleDownload = async () => {
-    const resumeElement = document.getElementById('resume-preview');
-    if (!resumeElement) return;
-
     setIsDownloading(true);
     
     try {
-      const canvas = await html2canvas(resumeElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false
-      });
+      // Import dynamic component to avoid SSR issues
+      const { default: ResumePDF } = await import('@/components/ResumePDF');
+      const { pdf } = await import('@react-pdf/renderer');
       
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
+      // Get the template object
+      const templateObj = RESUME_TYPES.find(t => t.id === selectedTemplate) || RESUME_TYPES[0];
       
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Generate the PDF
+      const blob = await pdf(<ResumePDF formState={formState} template={templateObj} />).toBlob();
       
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save(`${formState.personalInfo.fullName || 'resume'}_${selectedTemplate}.pdf`);
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a link and click it to download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${formState.personalInfo.fullName || 'resume'}_${selectedTemplate}.pdf`;
+      link.click();
+      
+      // Clean up
+      URL.revokeObjectURL(url);
       
       toast({
         title: "Resume downloaded",
-        description: "Your resume has been downloaded as a PDF file."
+        description: "Your resume has been downloaded as a professional PDF file."
       });
     } catch (error) {
       console.error("Error downloading resume:", error);
       toast({
         title: "Download failed",
-        description: "Failed to download your resume. Please try again.",
+        description: "Failed to download your resume. Please try again or try another browser.",
         variant: "destructive"
       });
     } finally {
