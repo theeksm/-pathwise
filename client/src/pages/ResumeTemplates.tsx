@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -212,6 +212,47 @@ const ResumeTemplates = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
+  
+  // Monitor form changes and update section completion status
+  useEffect(() => {
+    // Check personal info section
+    const personalInfoValid = validateSection("personal-info").valid;
+    
+    // Check skills section
+    const skillsValid = validateSection("skills").valid;
+    
+    // Check experience section
+    const experienceValid = validateSection("experience").valid;
+    
+    // Check education section
+    const educationValid = validateSection("education").valid;
+    
+    // Check projects section
+    const projectsValid = validateSection("projects").valid;
+    
+    // Update completed sections
+    setCompletedSections({
+      "personal-info": personalInfoValid,
+      "skills": skillsValid,
+      "experience": experienceValid,
+      "education": educationValid,
+      "projects": projectsValid
+    });
+    
+    // Update accessible tabs based on which sections are completed
+    if (personalInfoValid && !accessibleTabs["skills"]) {
+      setAccessibleTabs(prev => ({ ...prev, "skills": true }));
+    }
+    if (skillsValid && !accessibleTabs["experience"]) {
+      setAccessibleTabs(prev => ({ ...prev, "experience": true }));
+    }
+    if (experienceValid && !accessibleTabs["education"]) {
+      setAccessibleTabs(prev => ({ ...prev, "education": true }));
+    }
+    if (educationValid && !accessibleTabs["projects"]) {
+      setAccessibleTabs(prev => ({ ...prev, "projects": true }));
+    }
+  }, [formState]);
 
   // Handle input changes for personal information
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -1078,14 +1119,14 @@ const ResumeTemplates = () => {
                   {/* Progress bar */}
                   <div className="mb-6">
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Step {
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Step {
                         activeTab === "personal-info" ? "1/5" :
                         activeTab === "skills" ? "2/5" :
                         activeTab === "experience" ? "3/5" :
                         activeTab === "education" ? "4/5" :
                         "5/5"
                       }</span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         {Object.values(completedSections).filter(Boolean).length}/5 completed
                       </span>
                     </div>
@@ -1096,6 +1137,60 @@ const ResumeTemplates = () => {
                           width: `${(Object.values(completedSections).filter(Boolean).length / 5) * 100}%` 
                         }}
                       ></div>
+                    </div>
+                    
+                    {/* Section completion indicators */}
+                    <div className="flex justify-between mt-3">
+                      <div className="flex flex-col items-center">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center ${
+                          completedSections["personal-info"] 
+                            ? "bg-green-500 text-white" 
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}>
+                          {completedSections["personal-info"] && <CheckCircle className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs mt-1 text-gray-500 dark:text-gray-400">Info</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center ${
+                          completedSections["skills"] 
+                            ? "bg-green-500 text-white" 
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}>
+                          {completedSections["skills"] && <CheckCircle className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs mt-1 text-gray-500 dark:text-gray-400">Skills</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center ${
+                          completedSections["experience"] 
+                            ? "bg-green-500 text-white" 
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}>
+                          {completedSections["experience"] && <CheckCircle className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs mt-1 text-gray-500 dark:text-gray-400">Exp</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center ${
+                          completedSections["education"] 
+                            ? "bg-green-500 text-white" 
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}>
+                          {completedSections["education"] && <CheckCircle className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs mt-1 text-gray-500 dark:text-gray-400">Edu</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center ${
+                          completedSections["projects"] 
+                            ? "bg-green-500 text-white" 
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}>
+                          {completedSections["projects"] && <CheckCircle className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs mt-1 text-gray-500 dark:text-gray-400">Proj</span>
+                      </div>
                     </div>
                   </div>
                   
