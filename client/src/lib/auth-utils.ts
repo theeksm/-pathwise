@@ -11,19 +11,39 @@ import { auth, googleProvider } from "./firebase";
 // Sign in with Google
 export const signInWithGoogle = async (): Promise<UserCredential> => {
   try {
+    // Reset any previous state
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
     // Add auth scopes for better user data
     googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
     googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
     
     // Use signInWithPopup instead of redirect for better compatibility
+    console.log("Attempting Google sign-in with popup");
     const result = await signInWithPopup(auth, googleProvider);
     
     // Log success for debugging
-    console.log("Google sign-in successful", result.user);
+    console.log("Google sign-in successful", result.user.displayName);
     return result;
   } catch (error: any) {
-    console.error("Error signing in with Google:", error);
-    throw error;
+    // More detailed error logging
+    console.error("Error signing in with Google:", {
+      code: error.code,
+      message: error.message,
+      email: error.email,
+      credential: error.credential
+    });
+    
+    // Create a more user-friendly error message based on error code
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in popup was closed before completing authentication.');
+    } else if (error.code === 'auth/popup-blocked') {
+      throw new Error('Authentication popup was blocked by your browser. Please allow popups for this site.');
+    } else {
+      throw new Error(error.message || 'Failed to sign in with Google. Please try again.');
+    }
   }
 };
 
