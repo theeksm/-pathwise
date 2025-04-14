@@ -215,9 +215,18 @@ const MarketTrends = () => {
     refetchInterval: 60000 // Refresh every 60 seconds for balance between real-time and rate limits
   });
   
+  // Default trending stocks in case API fails
+  const defaultTrendingStocks: TrendingStock[] = [
+    { symbol: "AAPL", name: "Apple Inc.", price: 191.56, change: 0.68, changePercent: 0.36 },
+    { symbol: "MSFT", name: "Microsoft Corp.", price: 425.22, change: 2.45, changePercent: 0.58 },
+    { symbol: "NVDA", name: "NVIDIA Corp.", price: 870.39, change: 15.21, changePercent: 1.78 },
+    { symbol: "AMZN", name: "Amazon.com Inc.", price: 180.75, change: -1.23, changePercent: -0.68 },
+    { symbol: "GOOGL", name: "Alphabet Inc.", price: 164.32, change: 1.17, changePercent: 0.72 }
+  ];
+
   // Query for trending stocks
   const { 
-    data: trendingStocks, 
+    data: trendingStocksData, 
     isLoading: isLoadingTrending,
     isError: isTrendingError
   } = useQuery<TrendingStock[], Error>({
@@ -233,6 +242,9 @@ const MarketTrends = () => {
     gcTime: 600000, // 10 minutes
     refetchInterval: 300000, // 5 minutes
   });
+  
+  // Use API data if available, otherwise fall back to default data
+  const trendingStocks = (trendingStocksData && trendingStocksData.length > 0) ? trendingStocksData : defaultTrendingStocks;
   
   // Query for tech news
   const {
