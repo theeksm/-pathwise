@@ -273,7 +273,7 @@ const Login = () => {
     
     toast({
       title: "Login successful",
-      description: "You've signed in with your phone number successfully!",
+      description: `Welcome ${userData.displayName || user.phoneNumber || "back"}!`,
     });
     
     setLocation("/dashboard");
