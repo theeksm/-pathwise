@@ -18,7 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmationResult } from "firebase/auth";
-import { signInWithGoogle, signInWithPhone, initRecaptchaVerifier } from "@/lib/auth-utils";
+import { signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 import PhoneVerification from "@/components/PhoneVerification";
 
 const formSchema = z.object({
@@ -73,7 +74,17 @@ const Login = () => {
     try {
       console.log("Attempting Google sign-in...");
       
-      const result = await signInWithGoogle();
+      // Reset any previous state
+      googleProvider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
+      // Add auth scopes for better user data
+      googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
+      googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+      
+      // Directly use signInWithPopup
+      const result = await signInWithPopup(auth, googleProvider);
       console.log("Google sign-in result:", result);
       
       // Handle the user data from Firebase
@@ -98,8 +109,27 @@ const Login = () => {
         setLocation("/dashboard");
       }
     } catch (error: any) {
-      console.error("Detailed Google sign-in error:", error);
-      const errorMessage = error.message || "Google sign-in failed. Please try again.";
+      // More detailed error logging
+      console.error("Detailed Google sign-in error:", {
+        code: error.code,
+        message: error.message,
+        email: error.email,
+        credential: error.credential
+      });
+      
+      // Create a more user-friendly error message based on error code
+      let errorMessage = "Google sign-in failed. Please try again.";
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign-in popup was closed before completing authentication.';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Authentication popup was blocked by your browser. Please allow popups for this site.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = 'Authentication was cancelled. Please try again.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       setError(errorMessage);
       toast({
         title: "Login failed",
@@ -130,11 +160,20 @@ const Login = () => {
         ? phoneNumber 
         : `+${phoneNumber}`;
       
-      // Initialize reCAPTCHA verifier
-      const verifier = initRecaptchaVerifier('phone-sign-in-button');
+      // Initialize reCAPTCHA verifier directly
+      const verifier = new RecaptchaVerifier(auth, 'phone-sign-in-button', {
+        size: "invisible",
+        callback: () => {
+          console.log("reCAPTCHA solved");
+        },
+        "expired-callback": () => {
+          console.log("reCAPTCHA expired");
+        },
+      });
       
       // Sign in with phone number
-      const result = await signInWithPhone(formattedPhoneNumber, verifier);
+      console.log("Attempting phone authentication with:", formattedPhoneNumber);
+      const result = await signInWithPhoneNumber(auth, formattedPhoneNumber, verifier);
       setConfirmationResult(result);
       
       toast({
@@ -142,10 +181,26 @@ const Login = () => {
         description: "Please enter the code sent to your phone.",
       });
     } catch (error: any) {
-      setError(error.message || "Failed to send verification code. Please try again.");
+      console.error("Phone sign-in error:", {
+        code: error.code,
+        message: error.message
+      });
+      
+      // Create a more user-friendly error message based on error code
+      let errorMessage = "Failed to send verification code. Please try again.";
+      
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'Please enter a valid phone number with country code (e.g., +1 for US).';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many requests. Please try again later.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
       toast({
         title: "Phone verification failed",
-        description: error.message || "Failed to send verification code. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -208,7 +263,9 @@ const Login = () => {
                 )}
                 
                 <div className="space-y-2">
-                  <FormLabel>Phone Number</FormLabel>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Phone Number
+                  </label>
                   <Input
                     type="tel"
                     placeholder="+1234567890"
