@@ -172,11 +172,29 @@ const MarketTrends = () => {
 
   useEffect(() => {
     if (stockData && stockData.timeSeries) {
-      const chartData = stockData.timeSeries.map((dataPoint: any) => ({
-        date: new Date(dataPoint.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        close: dataPoint.close,
-      }));
-      setStockChartData(chartData);
+      // Make sure we have more than one data point to display
+      if (stockData.timeSeries.length > 0) {
+        const chartData = stockData.timeSeries
+          .slice(-30) // Ensure we're only using last 30 days of data for better visualization
+          .map((dataPoint: any) => ({
+            date: new Date(dataPoint.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            close: dataPoint.close,
+          }))
+          .sort((a, b) => {
+            // Ensure data is properly sorted by date
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateA.getTime() - dateB.getTime();
+          });
+        
+        setStockChartData(chartData);
+      } else {
+        // If no time series data, set to empty array
+        setStockChartData([]);
+      }
+    } else {
+      // Reset chart data when no stock data is available
+      setStockChartData([]);
     }
   }, [stockData]);
 
@@ -498,6 +516,7 @@ const MarketTrends = () => {
                                       value={stock.symbol}
                                       onSelect={() => {
                                         setSearchSymbol(stock.symbol);
+                                        setStockSymbol(stock.symbol); // Automatically trigger search
                                         setIsSearchOpen(false);
                                       }}
                                     >
@@ -518,10 +537,7 @@ const MarketTrends = () => {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <Button onClick={handleSearch}>
-                      <Search className="h-4 w-4 mr-2" />
-                      Search
-                    </Button>
+
                     <Button variant="outline" size="icon" onClick={() => refetch()}>
                       <RefreshCcw className="h-4 w-4" />
                     </Button>
@@ -574,29 +590,49 @@ const MarketTrends = () => {
                     </div>
 
                     <div className="h-64">
-                      {stockChartData && stockChartData.length > 0 ? (
+                      {stockChartData && stockChartData.length > 1 ? (
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart
                             data={stockChartData}
                             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                           >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis domain={['auto', 'auto']} />
-                            <Tooltip />
+                            <XAxis 
+                              dataKey="date" 
+                              tick={{ fontSize: 12 }}
+                              tickCount={5}
+                              padding={{ left: 10, right: 10 }}
+                            />
+                            <YAxis 
+                              domain={['auto', 'auto']} 
+                              tick={{ fontSize: 12 }}
+                              tickFormatter={(value) => `$${value.toFixed(2)}`}
+                            />
+                            <Tooltip 
+                              formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Price']}
+                              labelFormatter={(label) => `Date: ${label}`}
+                            />
                             <Line
                               type="monotone"
                               dataKey="close"
                               stroke="#3b82f6"
                               strokeWidth={2}
-                              dot={false}
+                              dot={{ r: 2 }}
+                              activeDot={{ r: 5 }}
                               name="Price"
+                              isAnimationActive={true}
+                              animationDuration={1000}
                             />
                           </LineChart>
                         </ResponsiveContainer>
                       ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-gray-500">No chart data available</p>
+                        <div className="flex flex-col items-center justify-center h-full">
+                          <p className="text-gray-500 mb-2">No chart data available</p>
+                          <p className="text-sm text-gray-400">
+                            {stockData?.error ? 
+                              stockData.error : 
+                              "Try searching for a different stock symbol"}
+                          </p>
                         </div>
                       )}
                     </div>
