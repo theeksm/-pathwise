@@ -1451,7 +1451,7 @@ const ResumeTemplates = () => {
                           <Input
                             id="fullName"
                             name="fullName"
-                            placeholder="Jane Doe"
+                            placeholder="Enter your full name"
                             value={formState.personalInfo.fullName}
                             onChange={handlePersonalInfoChange}
                           />
@@ -1461,7 +1461,7 @@ const ResumeTemplates = () => {
                           <Input
                             id="title"
                             name="title"
-                            placeholder="Software Engineer"
+                            placeholder="Enter your job title"
                             value={formState.personalInfo.title}
                             onChange={handlePersonalInfoChange}
                           />
@@ -1472,7 +1472,7 @@ const ResumeTemplates = () => {
                             id="email"
                             name="email"
                             type="email"
-                            placeholder="jane.doe@example.com"
+                            placeholder="Enter your email address"
                             value={formState.personalInfo.email}
                             onChange={handlePersonalInfoChange}
                           />
@@ -1482,7 +1482,7 @@ const ResumeTemplates = () => {
                           <Input
                             id="phone"
                             name="phone"
-                            placeholder="(123) 456-7890"
+                            placeholder="Enter your phone number"
                             value={formState.personalInfo.phone}
                             onChange={handlePersonalInfoChange}
                           />
