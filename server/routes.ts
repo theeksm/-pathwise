@@ -15,6 +15,7 @@ import {
 } from "@shared/schema";
 import { generateCareerRecommendations, analyzeSkillGap, optimizeResume, matchJobs, generateChatResponse } from "./lib/openai";
 import { getStockData, StockAPIError, StockAPIErrorType } from "./lib/stockAPI";
+import { generateContent } from "./lib/generateContent";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
