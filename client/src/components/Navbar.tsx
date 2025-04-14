@@ -23,8 +23,10 @@ import {
   LayoutDashboard,
   ChevronDown,
   LogOut,
-  User
+  User,
+  Gift
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import Logo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -34,6 +36,7 @@ const features = [
   { icon: BrainCircuit, name: "Career Path Guidance", path: "/career-path" },
   { icon: BookOpen, name: "Skill Gap Analyzer", path: "/skill-gap" },
   { icon: FileText, name: "Resume Optimizer", path: "/resume-optimizer" },
+  { icon: FileText, name: "Resume Templates", path: "/resume-templates" },
   { icon: Briefcase, name: "Job Matching", path: "/job-matching" },
   { icon: Bot, name: "AI Career Coach", path: "/ai-chat" },
   { icon: TrendingUp, name: "Market Trends", path: "/market-trends" },
@@ -51,6 +54,8 @@ const Navbar = () => {
         return "Identify missing skills needed for your target career and get course recommendations.";
       case "Resume Optimizer":
         return "Get AI-powered suggestions to improve your resume and increase interview chances.";
+      case "Resume Templates":
+        return "Create professional resumes from templates with AI suggestions - completely free, no login required.";
       case "Job Matching":
         return "Find job opportunities that match your skills and experience with personalized scores.";
       case "AI Career Coach":
@@ -125,6 +130,22 @@ const Navbar = () => {
                   </div>
                 </div>
               </div>
+              
+              <Link href="/resume-templates">
+                <div className={cn(
+                  "inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer",
+                  isActive("/resume-templates")
+                    ? "border-primary-500 border-b-2 text-gray-900 dark:text-white"
+                    : "text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                )}>
+                  <span className="flex items-center">
+                    Resume Templates
+                    <Badge variant="outline" className="ml-2 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 hover:bg-blue-500/20 dark:hover:bg-blue-500/30 transition-colors border-blue-500/20 dark:border-blue-500/30">
+                      Free
+                    </Badge>
+                  </span>
+                </div>
+              </Link>
               
               <Link href="/market-trends">
                 <div className={cn(
@@ -229,6 +250,23 @@ const Navbar = () => {
                   ))}
                   
                   <div className="mt-4">
+                    <Link href="/resume-templates" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={cn(
+                        "px-4 py-2 text-base font-medium cursor-pointer",
+                        isActive("/resume-templates") 
+                          ? "bg-primary-50 border-l-4 border-primary-500 text-primary-700 dark:bg-gray-700 dark:text-white dark:border-blue-500" 
+                          : "border-transparent text-gray-500 dark:text-gray-300"
+                      )}>
+                        <span className="flex items-center">
+                          <FileText className="h-4 w-4 mr-2 text-blue-700 dark:text-blue-400 stroke-[2]" />
+                          Resume Templates
+                          <Badge variant="outline" className="ml-2 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 text-xs">
+                            Free
+                          </Badge>
+                        </span>
+                      </div>
+                    </Link>
+                    
                     <Link href="/market-trends" onClick={() => setIsMobileMenuOpen(false)}>
                       <div className={cn(
                         "px-4 py-2 text-base font-medium cursor-pointer",

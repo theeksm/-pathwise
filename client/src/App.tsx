@@ -15,6 +15,7 @@ import Dashboard from "@/pages/Dashboard";
 import CareerPath from "@/pages/CareerPath";
 import SkillGap from "@/pages/SkillGap";
 import ResumeOptimizer from "@/pages/ResumeOptimizer";
+import ResumeTemplates from "@/pages/ResumeTemplates";
 import JobMatching from "@/pages/JobMatching";
 import MarketTrends from "@/pages/MarketTrends";
 import EntrepreneurshipAdvisor from "@/pages/EntrepreneurshipAdvisor";
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/pricing" component={Pricing} />
           <Route path="/contact" component={Contact} />
           <Route path="/market-trends" component={MarketTrends} />
+          <Route path="/resume-templates" component={ResumeTemplates} />
           <Route path="/privacy-policy" component={PrivacyPolicy} />
           <Route path="/terms-of-service" component={TermsOfService} />
           
