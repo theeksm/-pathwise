@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -27,7 +27,10 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw, Check, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 // Define interfaces for stock data
 interface StockDataPoint {
@@ -48,6 +51,11 @@ interface StockData {
   changePercent?: number;
   timeSeries?: StockDataPoint[];
   error?: string;
+}
+
+interface StockSymbol {
+  symbol: string;
+  name: string;
 }
 
 // Career trends data (would come from API in production)
