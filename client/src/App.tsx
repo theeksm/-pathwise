@@ -18,6 +18,7 @@ import ResumeOptimizer from "@/pages/ResumeOptimizer";
 import ResumeTemplates from "@/pages/ResumeTemplates";
 import JobMatching from "@/pages/JobMatching";
 import MarketTrends from "@/pages/MarketTrends";
+import StockProfile from "@/pages/StockProfile";
 import EntrepreneurshipAdvisor from "@/pages/EntrepreneurshipAdvisor";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
@@ -40,6 +41,7 @@ function Router() {
           <Route path="/pricing" component={Pricing} />
           <Route path="/contact" component={Contact} />
           <Route path="/market-trends" component={MarketTrends} />
+          <Route path="/stock/:symbol" component={StockProfile} />
           <Route path="/resume-templates" component={ResumeTemplates} />
           <Route path="/privacy-policy" component={PrivacyPolicy} />
           <Route path="/terms-of-service" component={TermsOfService} />
