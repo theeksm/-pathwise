@@ -547,6 +547,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Resume Generator - Free Tool (No Authentication Required)
+  app.post("/api/generate-content", async (req, res) => {
+    try {
+      const inputSchema = z.object({
+        prompt: z.string()
+      });
+      
+      const validatedData = inputSchema.parse(req.body);
+      const content = await generateContent(validatedData.prompt);
+      
+      res.json({ content });
+    } catch (error) {
+      console.error("Error generating content:", error);
+      res.status(500).json({ 
+        message: "Error generating content", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
   // Chat routes
   app.get("/api/chats", isAuthenticated, async (req, res) => {
     const user = req.user as any;
