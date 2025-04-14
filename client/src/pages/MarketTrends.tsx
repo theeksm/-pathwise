@@ -149,6 +149,10 @@ const MarketTrends = () => {
   const [stockSymbol, setStockSymbol] = useState("MSFT");
   const [searchSymbol, setSearchSymbol] = useState("MSFT");
   const [stockChartData, setStockChartData] = useState<any[]>([]);
+  const [symbolSuggestions, setSymbolSuggestions] = useState<StockSymbol[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const { data: stockData, isLoading, isError, error, refetch } = useQuery<StockData>({
     queryKey: ['/api/market-trends/stocks', stockSymbol],
@@ -179,6 +183,41 @@ const MarketTrends = () => {
   const handleSearch = () => {
     setStockSymbol(searchSymbol);
   };
+  
+  // Function to search for stock symbols
+  const searchStockSymbols = async (query: string) => {
+    if (!query || query.trim().length === 0) {
+      setSymbolSuggestions([]);
+      return;
+    }
+    
+    setIsSearching(true);
+    try {
+      const response = await fetch(`/api/market-trends/stocks/search?q=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error('Failed to search for stock symbols');
+      }
+      
+      const data = await response.json();
+      setSymbolSuggestions(data);
+    } catch (error) {
+      console.error('Error searching for stock symbols:', error);
+      setSymbolSuggestions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+  
+  // Effect to search for stock symbols when the query changes
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchQuery) {
+        searchStockSymbols(searchQuery);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
 
   const calculateRiskColor = (risk: number) => {
     if (risk < 30) return "#4ade80"; // green
@@ -423,12 +462,62 @@ const MarketTrends = () => {
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Input 
-                      placeholder="Enter stock symbol (e.g., AAPL)" 
-                      value={searchSymbol}
-                      onChange={(e) => setSearchSymbol(e.target.value.toUpperCase())}
-                      className="w-64"
-                    />
+                    <div className="relative w-64">
+                      <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={isSearchOpen}
+                            className="w-full justify-between"
+                          >
+                            {searchSymbol || "Search for a stock"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[300px] p-0">
+                          <Command>
+                            <div className="flex items-center border-b px-3">
+                              <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                              <input
+                                placeholder="Search stock symbol or name..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                              />
+                            </div>
+                            {isSearching ? (
+                              <div className="py-6 text-center text-sm">Searching...</div>
+                            ) : (
+                              <>
+                                <CommandEmpty>No stocks found.</CommandEmpty>
+                                <CommandGroup>
+                                  {symbolSuggestions.map((stock) => (
+                                    <CommandItem
+                                      key={stock.symbol}
+                                      value={stock.symbol}
+                                      onSelect={() => {
+                                        setSearchSymbol(stock.symbol);
+                                        setIsSearchOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          searchSymbol === stock.symbol ? "opacity-100" : "opacity-0"
+                                        )}
+                                      />
+                                      <span className="font-medium">{stock.symbol}</span>
+                                      <span className="ml-2 text-muted-foreground">{stock.name}</span>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </>
+                            )}
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <Button onClick={handleSearch}>
                       <Search className="h-4 w-4 mr-2" />
                       Search
