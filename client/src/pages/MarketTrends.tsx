@@ -31,6 +31,7 @@ import { Search, TrendingUp, TrendingDown, ArrowRight, RefreshCcw, Check, Chevro
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 // Define interfaces for stock data
 interface StockDataPoint {
@@ -156,6 +157,7 @@ const automationRiskJobs = [
 ];
 
 const MarketTrends = () => {
+  const { toast } = useToast();
   const [stockSymbol, setStockSymbol] = useState("MSFT");
   const [searchSymbol, setSearchSymbol] = useState("MSFT");
   // Define chart data point interface 
@@ -185,10 +187,10 @@ const MarketTrends = () => {
       }
       return response.json();
     },
-    // These settings ensure fresh data
-    staleTime: 10000, // Consider data stale after 10 seconds
-    gcTime: 60000, // Keep in cache for 1 minute (formerly cacheTime in v4)
-    refetchInterval: 30000 // Refresh every 30 seconds
+    // These settings ensure real-time data with no caching
+    staleTime: 0, // Data is always considered stale (needs refresh)
+    gcTime: 0, // Don't cache data at all
+    refetchInterval: 5000 // Refresh every 5 seconds for real-time updates
   });
 
   useEffect(() => {
@@ -537,11 +539,22 @@ const MarketTrends = () => {
                                       value={stock.symbol}
                                       onSelect={() => {
                                         setSearchSymbol(stock.symbol);
-                                        setStockSymbol(''); // Clear first to force refresh
-                                        setTimeout(() => {
-                                          setStockSymbol(stock.symbol); // Then set new symbol
-                                        }, 10);
                                         setIsSearchOpen(false);
+                                        
+                                        // Show loading state when changing stocks
+                                        toast({
+                                          title: "Updating Stock Data",
+                                          description: `Loading data for ${stock.symbol}...`,
+                                          duration: 2000
+                                        });
+                                        
+                                        // Clear current stock to force refresh
+                                        setStockSymbol('');
+                                        
+                                        // Set new stock symbol after a brief delay
+                                        setTimeout(() => {
+                                          setStockSymbol(stock.symbol);
+                                        }, 100);
                                       }}
                                     >
                                       <Check
@@ -562,9 +575,7 @@ const MarketTrends = () => {
                       </Popover>
                     </div>
 
-                    <Button variant="outline" size="icon" onClick={() => refetch()}>
-                      <RefreshCcw className="h-4 w-4" />
-                    </Button>
+                    {/* No manual refresh needed - data updates automatically */}
                   </div>
                 </div>
               </CardHeader>
