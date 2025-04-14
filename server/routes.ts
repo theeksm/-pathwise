@@ -651,12 +651,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Market trends routes
+  // Search for stocks using Polygon API
   app.get("/api/market-trends/stocks/search", async (req, res) => {
     const query = req.query.q as string;
     
     try {
-      const { searchStockSymbols } = await import('./lib/stockSymbols');
-      const results = await searchStockSymbols(query || '');
+      const { searchStocks } = await import('./lib/polygonAPI');
+      const results = await searchStocks(query || '');
       res.json(results);
     } catch (error) {
       console.error("Error searching for stock symbols:", error);
@@ -667,6 +668,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get real-time stock data by symbol using Polygon API
   app.get("/api/market-trends/stocks", async (req, res) => {
     const symbol = req.query.symbol as string;
     
@@ -678,8 +680,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      // Get real stock data from Alpha Vantage API with caching
-      const stockData = await getStockData(symbol);
+      // Get real-time stock data from Polygon API with caching
+      const { getRealTimeStockData } = await import('./lib/polygonAPI');
+      const stockData = await getRealTimeStockData(symbol);
       
       // Return the real stock data to the client
       res.json(stockData);
@@ -689,6 +692,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // For critical errors only, return a proper error response
       res.status(500).json({ 
         message: "Failed to fetch stock data", 
+        errorType: "api_error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
+  // Get trending stocks
+  app.get("/api/market-trends/trending-stocks", async (req, res) => {
+    try {
+      const { getTrendingStocks } = await import('./lib/polygonAPI');
+      const trendingStocks = await getTrendingStocks();
+      res.json(trendingStocks);
+    } catch (error) {
+      console.error("Error fetching trending stocks:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch trending stocks", 
+        errorType: "api_error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
+  // Get tech industry news
+  app.get("/api/news/tech", async (req, res) => {
+    try {
+      const { getAllTechNews } = await import('./lib/newsAPI');
+      const news = await getAllTechNews();
+      res.json(news);
+    } catch (error) {
+      console.error("Error fetching tech news:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch tech news", 
         errorType: "api_error",
         details: error instanceof Error ? error.message : "Unknown error"
       });
