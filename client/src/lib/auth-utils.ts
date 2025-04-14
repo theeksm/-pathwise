@@ -11,7 +11,15 @@ import { auth, googleProvider } from "./firebase";
 // Sign in with Google
 export const signInWithGoogle = async (): Promise<UserCredential> => {
   try {
+    // Add auth scopes for better user data
+    googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
+    googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+    
+    // Use signInWithPopup instead of redirect for better compatibility
     const result = await signInWithPopup(auth, googleProvider);
+    
+    // Log success for debugging
+    console.log("Google sign-in successful", result.user);
     return result;
   } catch (error: any) {
     console.error("Error signing in with Google:", error);
