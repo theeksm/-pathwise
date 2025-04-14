@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmationResult } from "firebase/auth";
+import { signInWithGoogle, signInWithPhone, initRecaptchaVerifier } from "@/lib/auth-utils";
+import PhoneVerification from "@/components/PhoneVerification";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -33,6 +36,12 @@ const Login = () => {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isPhoneLoading, setIsPhoneLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const phoneButtonRef = useRef<HTMLButtonElement>(null);
   
   // Use our auth hook which contains the login mutation
   const { user, loginMutation } = useAuth();
