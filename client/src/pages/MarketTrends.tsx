@@ -42,14 +42,24 @@ interface StockDataPoint {
   volume: number;
 }
 
+// Define proper interfaces for our stock data
+interface StockDataPoint {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 interface StockData {
   symbol: string;
-  name?: string;
+  name: string;
   currency: string;
-  price?: number;
-  change?: number;
-  changePercent?: number;
-  timeSeries?: StockDataPoint[];
+  price: number;
+  change: number;
+  changePercent: number;
+  timeSeries: StockDataPoint[];
   error?: string;
 }
 
@@ -148,26 +158,37 @@ const automationRiskJobs = [
 const MarketTrends = () => {
   const [stockSymbol, setStockSymbol] = useState("MSFT");
   const [searchSymbol, setSearchSymbol] = useState("MSFT");
-  const [stockChartData, setStockChartData] = useState<any[]>([]);
+  // Define chart data point interface 
+  interface ChartDataPoint {
+    date: string;
+    close: number;
+  }
+  
+  const [stockChartData, setStockChartData] = useState<ChartDataPoint[]>([]);
   const [symbolSuggestions, setSymbolSuggestions] = useState<StockSymbol[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
-  const { data: stockData, isLoading, isError, error, refetch } = useQuery<StockData>({
+  const { data: stockData, isLoading, isError, error, refetch } = useQuery<StockData, Error>({
     queryKey: ['/api/market-trends/stocks', stockSymbol],
-    refetchOnWindowFocus: false,
-    retry: 1,
+    refetchOnWindowFocus: true,
+    retry: 2,
     enabled: !!stockSymbol,
-    // Add the query parameter in the URL
+    // Add cache-busting timestamp to prevent stale data
     queryFn: async () => {
-      const response = await fetch(`/api/market-trends/stocks?symbol=${stockSymbol}`);
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/market-trends/stocks?symbol=${stockSymbol}&t=${timestamp}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch stock data');
       }
       return response.json();
     },
+    // These settings ensure fresh data
+    staleTime: 10000, // Consider data stale after 10 seconds
+    gcTime: 60000, // Keep in cache for 1 minute (formerly cacheTime in v4)
+    refetchInterval: 30000 // Refresh every 30 seconds
   });
 
   useEffect(() => {
@@ -176,11 +197,11 @@ const MarketTrends = () => {
       if (stockData.timeSeries.length > 0) {
         const chartData = stockData.timeSeries
           .slice(-30) // Ensure we're only using last 30 days of data for better visualization
-          .map((dataPoint: any) => ({
+          .map((dataPoint: StockDataPoint) => ({
             date: new Date(dataPoint.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
             close: dataPoint.close,
           }))
-          .sort((a, b) => {
+          .sort((a: ChartDataPoint, b: ChartDataPoint) => {
             // Ensure data is properly sorted by date
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
@@ -516,7 +537,10 @@ const MarketTrends = () => {
                                       value={stock.symbol}
                                       onSelect={() => {
                                         setSearchSymbol(stock.symbol);
-                                        setStockSymbol(stock.symbol); // Automatically trigger search
+                                        setStockSymbol(''); // Clear first to force refresh
+                                        setTimeout(() => {
+                                          setStockSymbol(stock.symbol); // Then set new symbol
+                                        }, 10);
                                         setIsSearchOpen(false);
                                       }}
                                     >
