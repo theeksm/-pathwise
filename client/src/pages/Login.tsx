@@ -71,20 +71,39 @@ const Login = () => {
     setIsGoogleLoading(true);
     
     try {
+      console.log("Attempting Google sign-in...");
+      
       const result = await signInWithGoogle();
+      console.log("Google sign-in result:", result);
+      
       // Handle the user data from Firebase
-      if (result.user) {
+      if (result && result.user) {
+        const userData = {
+          // Extract user data to register with your backend if needed
+          name: result.user.displayName || "",
+          email: result.user.email || "",
+          photoURL: result.user.photoURL || "",
+          uid: result.user.uid,
+        };
+        
+        console.log("User authenticated with Google:", userData);
+        
         toast({
           title: "Login successful",
-          description: "You've signed in with Google successfully!",
+          description: `Welcome ${userData.name || "back"}!`,
         });
+        
+        // For now, we'll just navigate to dashboard
+        // Later we can integrate this with our backend
         setLocation("/dashboard");
       }
     } catch (error: any) {
-      setError(error.message || "Google sign-in failed. Please try again.");
+      console.error("Detailed Google sign-in error:", error);
+      const errorMessage = error.message || "Google sign-in failed. Please try again.";
+      setError(errorMessage);
       toast({
         title: "Login failed",
-        description: error.message || "Google sign-in failed. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
