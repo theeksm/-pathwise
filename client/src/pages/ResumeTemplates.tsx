@@ -282,9 +282,9 @@ const ResumeTemplates = () => {
     setCompletedSections({
       "personal-info": personalInfoValid && personalInfoEdited,
       "skills": skillsValid && skillsEdited,
-      "experience": experienceValid, // Experience is optional, so we don't require edits
-      "education": educationValid,   // Education is optional, so we don't require edits
-      "projects": projectsValid      // Projects are optional, so we don't require edits
+      "experience": experienceValid && experienceEdited, // Must be valid AND edited by user
+      "education": educationValid && educationEdited,   // Must be valid AND edited by user  
+      "projects": projectsValid && projectsEdited       // Must be valid AND edited by user
     });
     
     // Update accessible tabs based on which sections are completed or have been edited
@@ -294,10 +294,10 @@ const ResumeTemplates = () => {
     if ((skillsValid && skillsEdited) && !accessibleTabs["experience"]) {
       setAccessibleTabs(prev => ({ ...prev, "experience": true }));
     }
-    if (experienceValid && !accessibleTabs["education"]) {
+    if ((experienceValid && experienceEdited) && !accessibleTabs["education"]) {
       setAccessibleTabs(prev => ({ ...prev, "education": true }));
     }
-    if (educationValid && !accessibleTabs["projects"]) {
+    if ((educationValid && educationEdited) && !accessibleTabs["projects"]) {
       setAccessibleTabs(prev => ({ ...prev, "projects": true }));
     }
   }, [formState, editedFields]);
