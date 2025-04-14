@@ -651,6 +651,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Market trends routes
+  app.get("/api/market-trends/stocks/search", async (req, res) => {
+    const query = req.query.q as string;
+    
+    try {
+      const { searchStockSymbols } = await import('./lib/stockSymbols');
+      const results = await searchStockSymbols(query || '');
+      res.json(results);
+    } catch (error) {
+      console.error("Error searching for stock symbols:", error);
+      res.status(500).json({ 
+        message: "Failed to search for stock symbols", 
+        errorType: "search_error" 
+      });
+    }
+  });
+
   app.get("/api/market-trends/stocks", async (req, res) => {
     const symbol = req.query.symbol as string;
     
