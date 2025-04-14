@@ -190,6 +190,24 @@ const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(RESUME_TYPES[0].id);
   const [formState, setFormState] = useState<FormState>(initialState);
   const [activeTab, setActiveTab] = useState("personal-info");
+  
+  // Track completed sections
+  const [completedSections, setCompletedSections] = useState<Record<string, boolean>>({
+    "personal-info": false,
+    "skills": false,
+    "experience": false,
+    "education": false,
+    "projects": false
+  });
+  
+  // Track which tabs are accessible
+  const [accessibleTabs, setAccessibleTabs] = useState<Record<string, boolean>>({
+    "personal-info": true,
+    "skills": false,
+    "experience": false,
+    "education": false,
+    "projects": false
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -475,6 +493,144 @@ const ResumeTemplates = () => {
     }
   };
 
+  // Check if section is valid to proceed
+  const validateSection = (section: string): { valid: boolean; message?: string } => {
+    switch (section) {
+      case "personal-info":
+        const { fullName, title } = formState.personalInfo;
+        if (!fullName.trim()) {
+          return { valid: false, message: "Please provide your full name" };
+        }
+        if (!title.trim()) {
+          return { valid: false, message: "Please provide your professional title" };
+        }
+        return { valid: true };
+      
+      case "skills":
+        const hasSkill = formState.skills.some(skill => skill.name.trim() !== "");
+        if (!hasSkill) {
+          return { valid: false, message: "Please add at least one skill" };
+        }
+        return { valid: true };
+      
+      case "experience":
+        // Experience is optional but if provided, must have title and company
+        const hasInvalidExperience = formState.experience.some(
+          exp => (exp.title.trim() !== "" && exp.company.trim() === "") || 
+                 (exp.title.trim() === "" && exp.company.trim() !== "")
+        );
+        
+        if (hasInvalidExperience) {
+          return { valid: false, message: "Please complete both job title and company for each experience entry" };
+        }
+        return { valid: true };
+      
+      case "education":
+        // Education is optional but if provided, must have degree and institution
+        const hasInvalidEducation = formState.education.some(
+          edu => (edu.degree.trim() !== "" && edu.institution.trim() === "") || 
+                 (edu.degree.trim() === "" && edu.institution.trim() !== "")
+        );
+        
+        if (hasInvalidEducation) {
+          return { valid: false, message: "Please complete both degree and institution for each education entry" };
+        }
+        return { valid: true };
+      
+      case "projects":
+        // Projects are optional but if provided, must have a title
+        const hasInvalidProject = formState.projects.some(
+          proj => proj.title.trim() === "" && (proj.technologies.trim() !== "" || proj.description.trim() !== "")
+        );
+        
+        if (hasInvalidProject) {
+          return { valid: false, message: "Please provide a title for each project" };
+        }
+        return { valid: true };
+      
+      default:
+        return { valid: true };
+    }
+  };
+
+  // Handle navigation to next section
+  const handleNextSection = () => {
+    const currentSection = activeTab;
+    const validation = validateSection(currentSection);
+    
+    if (!validation.valid) {
+      toast({
+        title: "Please fix the following issues",
+        description: validation.message,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Mark current section as completed
+    setCompletedSections(prev => ({
+      ...prev,
+      [currentSection]: true
+    }));
+    
+    // Determine next section and make it accessible
+    let nextSection = "";
+    if (currentSection === "personal-info") nextSection = "skills";
+    else if (currentSection === "skills") nextSection = "experience";
+    else if (currentSection === "experience") nextSection = "education";
+    else if (currentSection === "education") nextSection = "projects";
+    else if (currentSection === "projects") nextSection = "personal-info"; // Loop back
+    
+    setAccessibleTabs(prev => ({
+      ...prev,
+      [nextSection]: true
+    }));
+    
+    // Navigate to next section
+    setActiveTab(nextSection);
+  };
+  
+  // Handle skip section
+  const handleSkipSection = () => {
+    const currentSection = activeTab;
+    
+    // Mark current section as accessible but not completed
+    setCompletedSections(prev => ({
+      ...prev,
+      [currentSection]: false
+    }));
+    
+    // Determine next section and make it accessible
+    let nextSection = "";
+    if (currentSection === "personal-info") nextSection = "skills";
+    else if (currentSection === "skills") nextSection = "experience";
+    else if (currentSection === "experience") nextSection = "education";
+    else if (currentSection === "education") nextSection = "projects";
+    else if (currentSection === "projects") nextSection = "personal-info"; // Loop back
+    
+    setAccessibleTabs(prev => ({
+      ...prev,
+      [nextSection]: true
+    }));
+    
+    // Navigate to next section
+    setActiveTab(nextSection);
+  };
+  
+  // Handle tab change with validation
+  const handleTabChange = (value: string) => {
+    // Allow switching to accessible tabs
+    if (accessibleTabs[value]) {
+      setActiveTab(value);
+    } else {
+      toast({
+        title: "Section not accessible yet",
+        description: "Please complete or skip the current section first",
+        variant: "destructive"
+      });
+    }
+  };
+  
   // Handle PDF download using react-pdf
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -889,13 +1045,92 @@ const ResumeTemplates = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  {/* Progress bar */}
+                  <div className="mb-6">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Step {
+                        activeTab === "personal-info" ? "1/5" :
+                        activeTab === "skills" ? "2/5" :
+                        activeTab === "experience" ? "3/5" :
+                        activeTab === "education" ? "4/5" :
+                        "5/5"
+                      }</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {Object.values(completedSections).filter(Boolean).length}/5 completed
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${(Object.values(completedSections).filter(Boolean).length / 5) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <Tabs value={activeTab} onValueChange={handleTabChange}>
                     <TabsList className="w-full mb-6">
-                      <TabsTrigger value="personal-info" className="flex-1">Personal Info</TabsTrigger>
-                      <TabsTrigger value="skills" className="flex-1">Skills</TabsTrigger>
-                      <TabsTrigger value="experience" className="flex-1">Experience</TabsTrigger>
-                      <TabsTrigger value="education" className="flex-1">Education</TabsTrigger>
-                      <TabsTrigger value="projects" className="flex-1">Projects</TabsTrigger>
+                      <TabsTrigger 
+                        value="personal-info" 
+                        className={`flex-1 ${accessibleTabs["personal-info"] ? "" : "opacity-50 cursor-not-allowed"}`}
+                        data-state={completedSections["personal-info"] ? "completed" : ""}
+                      >
+                        <div className="flex items-center">
+                          {completedSections["personal-info"] && (
+                            <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                          )}
+                          Personal Info
+                        </div>
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="skills" 
+                        className={`flex-1 ${accessibleTabs["skills"] ? "" : "opacity-50 cursor-not-allowed"}`}
+                        data-state={completedSections["skills"] ? "completed" : ""}
+                      >
+                        <div className="flex items-center">
+                          {completedSections["skills"] && (
+                            <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                          )}
+                          Skills
+                        </div>
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="experience" 
+                        className={`flex-1 ${accessibleTabs["experience"] ? "" : "opacity-50 cursor-not-allowed"}`}
+                        data-state={completedSections["experience"] ? "completed" : ""}
+                      >
+                        <div className="flex items-center">
+                          {completedSections["experience"] && (
+                            <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                          )}
+                          Experience
+                        </div>
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="education" 
+                        className={`flex-1 ${accessibleTabs["education"] ? "" : "opacity-50 cursor-not-allowed"}`}
+                        data-state={completedSections["education"] ? "completed" : ""}
+                      >
+                        <div className="flex items-center">
+                          {completedSections["education"] && (
+                            <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                          )}
+                          Education
+                        </div>
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="projects" 
+                        className={`flex-1 ${accessibleTabs["projects"] ? "" : "opacity-50 cursor-not-allowed"}`}
+                        data-state={completedSections["projects"] ? "completed" : ""}
+                      >
+                        <div className="flex items-center">
+                          {completedSections["projects"] && (
+                            <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                          )}
+                          Projects
+                        </div>
+                      </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="personal-info" className="space-y-6 mt-4">
@@ -1007,6 +1242,24 @@ const ResumeTemplates = () => {
                         <p className="text-xs text-gray-500 dark:text-gray-400 italic">
                           Pro tip: A good summary highlights your unique value and makes employers want to read more.
                         </p>
+                      </div>
+                      
+                      <div className="flex justify-between pt-4 border-t mt-6">
+                        <div></div> {/* Spacer for alignment */}
+                        <div className="space-x-2">
+                          <Button
+                            variant="outline"
+                            onClick={handleSkipSection}
+                          >
+                            Skip
+                          </Button>
+                          <Button
+                            onClick={handleNextSection}
+                          >
+                            Next: Skills
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </TabsContent>
 
