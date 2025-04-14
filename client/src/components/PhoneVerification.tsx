@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ConfirmationResult } from "firebase/auth";
+import { ConfirmationResult, User, UserCredential } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PhoneVerificationProps {
   confirmationResult: ConfirmationResult;
-  onVerificationComplete: (user: any) => void;
+  onVerificationComplete: (user: User) => void;
   onCancel: () => void;
 }
 
