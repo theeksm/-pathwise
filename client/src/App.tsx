@@ -22,6 +22,8 @@ import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import AIChatPage from "@/pages/AIChat";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
 
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -37,6 +39,8 @@ function Router() {
           <Route path="/pricing" component={Pricing} />
           <Route path="/contact" component={Contact} />
           <Route path="/market-trends" component={MarketTrends} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/terms-of-service" component={TermsOfService} />
           
           {/* Protected routes - require authentication */}
           <ProtectedRoute path="/dashboard" component={Dashboard} />

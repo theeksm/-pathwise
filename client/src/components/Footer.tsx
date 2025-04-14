@@ -89,9 +89,17 @@ const Footer = () => {
               <Linkedin className="h-5 w-5" />
             </a>
           </div>
-          <p className="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
-            &copy; {new Date().getFullYear()} PathWise. All rights reserved.
-          </p>
+          <div className="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
+            <p className="mb-2">&copy; {new Date().getFullYear()} PathWise. All rights reserved.</p>
+            <div className="flex space-x-4">
+              <Link href="/privacy-policy" className="text-gray-400 hover:text-white text-sm">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="text-gray-400 hover:text-white text-sm">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
