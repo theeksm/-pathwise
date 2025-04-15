@@ -87,7 +87,7 @@ const Pricing = () => {
             {/* Pro Plan */}
             <Card className="border border-primary-200 shadow-lg relative bg-white dark:bg-gray-950 scale-105 z-10">
               <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                <Badge className="bg-primary-600 text-white px-3 py-1 text-xs font-medium rounded-full">Most Popular</Badge>
+                <Badge className="bg-blue-700 dark:bg-blue-600 text-white px-4 py-1.5 text-sm font-bold rounded-full shadow-md">Most Popular</Badge>
               </div>
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
@@ -130,7 +130,7 @@ const Pricing = () => {
                 </ul>
               </CardContent>
               <CardFooter className="flex flex-col pt-4">
-                <Button className="w-full bg-primary-600 hover:bg-primary-700 text-white">
+                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 text-base shadow-md transition-all">
                   Start Pro Trial
                 </Button>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
@@ -236,7 +236,7 @@ const Pricing = () => {
             {/* Pro Plan (Annual) */}
             <Card className="border border-primary-200 shadow-lg relative bg-white dark:bg-gray-950 scale-105 z-10">
               <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                <Badge className="bg-primary-600 text-white px-3 py-1 text-xs font-medium rounded-full">Most Popular</Badge>
+                <Badge className="bg-blue-700 dark:bg-blue-600 text-white px-4 py-1.5 text-sm font-bold rounded-full shadow-md">Most Popular</Badge>
               </div>
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
@@ -282,7 +282,7 @@ const Pricing = () => {
                 </ul>
               </CardContent>
               <CardFooter className="flex flex-col pt-4">
-                <Button className="w-full bg-primary-600 hover:bg-primary-700 text-white">
+                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 text-base shadow-md transition-all">
                   Start Pro Trial
                 </Button>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
