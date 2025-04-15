@@ -130,7 +130,7 @@ const Pricing = () => {
                 </ul>
               </CardContent>
               <CardFooter className="flex flex-col pt-4">
-                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 text-base shadow-md transition-all">
+                <Button className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 text-base shadow-lg border-2 border-blue-700 transition-all">
                   Start Pro Trial
                 </Button>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
@@ -282,7 +282,7 @@ const Pricing = () => {
                 </ul>
               </CardContent>
               <CardFooter className="flex flex-col pt-4">
-                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 text-base shadow-md transition-all">
+                <Button className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 text-base shadow-lg border-2 border-blue-700 transition-all">
                   Start Pro Trial
                 </Button>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
