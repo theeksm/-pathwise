@@ -616,27 +616,27 @@ const MarketTrends = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border p-2 text-left">Career Field</th>
-                        <th className="border p-2 text-left">Growth Rate</th>
-                        <th className="border p-2 text-left">Avg. Salary</th>
-                        <th className="border p-2 text-left">Demand</th>
-                        <th className="border p-2 text-left">Automation Risk</th>
+                      <tr className="bg-gray-50 dark:bg-gray-800">
+                        <th className="border dark:border-gray-700 p-2 text-left dark:text-gray-300">Career Field</th>
+                        <th className="border dark:border-gray-700 p-2 text-left dark:text-gray-300">Growth Rate</th>
+                        <th className="border dark:border-gray-700 p-2 text-left dark:text-gray-300">Avg. Salary</th>
+                        <th className="border dark:border-gray-700 p-2 text-left dark:text-gray-300">Demand</th>
+                        <th className="border dark:border-gray-700 p-2 text-left dark:text-gray-300">Automation Risk</th>
                       </tr>
                     </thead>
                     <tbody>
                       {careerTrends.map((career, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="border p-2 font-medium">{career.name}</td>
-                          <td className="border p-2">
+                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                          <td className="border dark:border-gray-700 p-2 font-medium dark:text-white">{career.name}</td>
+                          <td className="border dark:border-gray-700 p-2 dark:text-gray-300">
                             <span className="flex items-center">
                               <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
                               {career.growth}%
                             </span>
                           </td>
-                          <td className="border p-2">{career.avgSalary}</td>
-                          <td className="border p-2">{career.demandLevel}</td>
-                          <td className="border p-2">{career.automationRisk}</td>
+                          <td className="border dark:border-gray-700 p-2 dark:text-gray-300">{career.avgSalary}</td>
+                          <td className="border dark:border-gray-700 p-2 dark:text-gray-300">{career.demandLevel}</td>
+                          <td className="border dark:border-gray-700 p-2 dark:text-gray-300">{career.automationRisk}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -677,17 +677,17 @@ const MarketTrends = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <h3 className="text-lg font-bold mb-2">{careerTrends[0].name}</h3>
+                <h3 className="text-lg font-bold mb-2 dark:text-white">{careerTrends[0].name}</h3>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium text-gray-700">Growth Rate:</p>
-                    <p className="flex items-center">
+                    <p className="font-medium text-gray-700 dark:text-gray-300">Growth Rate:</p>
+                    <p className="flex items-center dark:text-gray-300">
                       <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
                       {careerTrends[0].growth}% (Next 5 years)
                     </p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Required Skills:</p>
+                    <p className="font-medium text-gray-700 dark:text-gray-300">Required Skills:</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {careerTrends[0].requiredSkills.map((skill, index) => (
                         <Badge key={index} variant="outline">{skill}</Badge>
@@ -695,7 +695,7 @@ const MarketTrends = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Top Industries:</p>
+                    <p className="font-medium text-gray-700 dark:text-gray-300">Top Industries:</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {careerTrends[0].industries.map((industry, index) => (
                         <Badge key={index} variant="secondary">{industry}</Badge>
@@ -753,25 +753,25 @@ const MarketTrends = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-md">
-                    <h3 className="font-medium mb-1">1. Healthcare Practitioners</h3>
-                    <p className="text-sm text-gray-600">Doctors, nurses, therapists, and specialized medical professionals</p>
-                    <Badge className="mt-2 bg-green-100 text-green-800 border-0">Low Risk (5%)</Badge>
+                  <div className="p-3 border dark:border-gray-700 rounded-md">
+                    <h3 className="font-medium mb-1 dark:text-white">1. Healthcare Practitioners</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Doctors, nurses, therapists, and specialized medical professionals</p>
+                    <Badge className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-0">Low Risk (5%)</Badge>
                   </div>
-                  <div className="p-3 border rounded-md">
-                    <h3 className="font-medium mb-1">2. Education and Training</h3>
-                    <p className="text-sm text-gray-600">Teachers, counselors, and specialized instructors</p>
-                    <Badge className="mt-2 bg-green-100 text-green-800 border-0">Low Risk (15%)</Badge>
+                  <div className="p-3 border dark:border-gray-700 rounded-md">
+                    <h3 className="font-medium mb-1 dark:text-white">2. Education and Training</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Teachers, counselors, and specialized instructors</p>
+                    <Badge className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-0">Low Risk (15%)</Badge>
                   </div>
-                  <div className="p-3 border rounded-md">
-                    <h3 className="font-medium mb-1">3. Creative Professions</h3>
-                    <p className="text-sm text-gray-600">Artists, designers, writers, and performers</p>
-                    <Badge className="mt-2 bg-green-100 text-green-800 border-0">Low Risk (20%)</Badge>
+                  <div className="p-3 border dark:border-gray-700 rounded-md">
+                    <h3 className="font-medium mb-1 dark:text-white">3. Creative Professions</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Artists, designers, writers, and performers</p>
+                    <Badge className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-0">Low Risk (20%)</Badge>
                   </div>
-                  <div className="p-3 border rounded-md">
-                    <h3 className="font-medium mb-1">4. Complex Problem Solvers</h3>
-                    <p className="text-sm text-gray-600">Scientists, engineers, and strategic managers</p>
-                    <Badge className="mt-2 bg-green-100 text-green-800 border-0">Low Risk (25%)</Badge>
+                  <div className="p-3 border dark:border-gray-700 rounded-md">
+                    <h3 className="font-medium mb-1 dark:text-white">4. Complex Problem Solvers</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Scientists, engineers, and strategic managers</p>
+                    <Badge className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-0">Low Risk (25%)</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -786,21 +786,21 @@ const MarketTrends = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-primary-50 rounded-lg">
-                    <h3 className="font-medium text-primary-900 mb-2">Focus on Uniquely Human Skills</h3>
-                    <p className="text-sm text-gray-600">
+                  <div className="p-4 bg-primary-50 dark:bg-primary-950 rounded-lg">
+                    <h3 className="font-medium text-primary-900 dark:text-primary-200 mb-2">Focus on Uniquely Human Skills</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Develop skills that AI and automation struggle with: creativity, emotional intelligence, ethical judgment, and critical thinking.
                     </p>
                   </div>
-                  <div className="p-4 bg-primary-50 rounded-lg">
-                    <h3 className="font-medium text-primary-900 mb-2">Continuous Learning</h3>
-                    <p className="text-sm text-gray-600">
+                  <div className="p-4 bg-primary-50 dark:bg-primary-950 rounded-lg">
+                    <h3 className="font-medium text-primary-900 dark:text-primary-200 mb-2">Continuous Learning</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Commit to lifelong learning and skill development. Stay adaptable and keep up with technology changes in your field.
                     </p>
                   </div>
-                  <div className="p-4 bg-primary-50 rounded-lg">
-                    <h3 className="font-medium text-primary-900 mb-2">Work Alongside Technology</h3>
-                    <p className="text-sm text-gray-600">
+                  <div className="p-4 bg-primary-50 dark:bg-primary-950 rounded-lg">
+                    <h3 className="font-medium text-primary-900 dark:text-primary-200 mb-2">Work Alongside Technology</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Learn to collaborate with AI and automation tools rather than compete against them. Become the person who can manage and interpret automated systems.
                     </p>
                   </div>
