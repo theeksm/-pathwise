@@ -26,154 +26,164 @@ const Pricing = () => {
 
       <Tabs defaultValue="monthly" className="w-full mb-12">
         <div className="flex justify-center mb-8">
-          <TabsList className="grid w-64 grid-cols-2">
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="annual">Annual (Save 20%)</TabsTrigger>
+          <TabsList className="grid w-80 grid-cols-2 p-1 rounded-lg bg-gray-100 dark:bg-gray-800">
+            <TabsTrigger 
+              value="monthly" 
+              className="rounded-md py-2 px-4 text-sm font-medium transition-all data-[state=active]:shadow-md"
+            >
+              Monthly
+            </TabsTrigger>
+            <TabsTrigger 
+              value="annual" 
+              className="rounded-md py-2 px-4 text-sm font-medium transition-all data-[state=active]:shadow-md"
+            >
+              Annual (Save 20%)
+            </TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="monthly" className="w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Free Plan */}
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Basic career exploration</CardDescription>
+            <Card className="border border-gray-200 hover:border-gray-300 transition-colors bg-white dark:bg-gray-950">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Free</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">Basic career exploration</CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$0</span>
-                  <span className="text-gray-500 ml-1">/month</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$0</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/month</span>
                 </div>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Career path exploration</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Career path exploration</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Basic skill gap analysis</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Basic skill gap analysis</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Limited AI chat assistance (5 messages/day)</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Limited AI chat assistance (5 messages/day)</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Market trends dashboard</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Market trends dashboard</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
+              <CardFooter className="flex flex-col pt-4">
                 <Button className="w-full" variant="outline">
                   Get Started
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   No credit card required
                 </p>
               </CardFooter>
             </Card>
 
             {/* Pro Plan */}
-            <Card className="border-primary-200 shadow-md relative">
+            <Card className="border border-primary-200 shadow-lg relative bg-white dark:bg-gray-950 scale-105 z-10">
               <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                <Badge className="bg-primary-600">Most Popular</Badge>
+                <Badge className="bg-primary-600 text-white px-3 py-1 text-xs font-medium rounded-full">Most Popular</Badge>
               </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Pro</CardTitle>
-                <CardDescription>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">
                   Advanced career development tools
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$19</span>
-                  <span className="text-gray-500 ml-1">/month</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$19</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/month</span>
                 </div>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       <span className="font-medium">Everything in Free</span>, plus:
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Complete AI-powered resume optimization</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Complete AI-powered resume optimization</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Advanced skill gap analysis with learning paths</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Advanced skill gap analysis with learning paths</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited AI career coach messages</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Unlimited AI career coach messages</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Personalized job matching</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Personalized job matching</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Career progress tracking dashboard</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Career progress tracking dashboard</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
-                <Button className="w-full bg-primary-600 hover:bg-primary-700">
+              <CardFooter className="flex flex-col pt-4">
+                <Button className="w-full bg-primary-600 hover:bg-primary-700 text-white">
                   Start Pro Trial
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   7-day free trial, cancel anytime
                 </p>
               </CardFooter>
             </Card>
 
             {/* Enterprise Plan */}
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <CardDescription>For teams and organizations</CardDescription>
+            <Card className="border border-gray-200 hover:border-gray-300 transition-colors bg-white dark:bg-gray-950">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Enterprise</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">For teams and organizations</CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$49</span>
-                  <span className="text-gray-500 ml-1">/month</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$49</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/month</span>
                 </div>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       <span className="font-medium">Everything in Pro</span>, plus:
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Team collaboration features</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Team collaboration features</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Custom industry analytics</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Custom industry analytics</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">HR integration options</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">HR integration options</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Dedicated account manager</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Dedicated account manager</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Priority support</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Priority support</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
+              <CardFooter className="flex flex-col pt-4">
                 <Button className="w-full" variant="outline">
                   Contact Sales
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   Custom plans available
                 </p>
               </CardFooter>
@@ -184,151 +194,151 @@ const Pricing = () => {
         <TabsContent value="annual" className="w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Free Plan (Annual) */}
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Basic career exploration</CardDescription>
+            <Card className="border border-gray-200 hover:border-gray-300 transition-colors bg-white dark:bg-gray-950">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Free</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">Basic career exploration</CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$0</span>
-                  <span className="text-gray-500 ml-1">/year</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$0</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/year</span>
                 </div>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Career path exploration</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Career path exploration</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Basic skill gap analysis</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Basic skill gap analysis</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Limited AI chat assistance (5 messages/day)</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Limited AI chat assistance (5 messages/day)</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Market trends dashboard</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Market trends dashboard</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
+              <CardFooter className="flex flex-col pt-4">
                 <Button className="w-full" variant="outline">
                   Get Started
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   No credit card required
                 </p>
               </CardFooter>
             </Card>
 
             {/* Pro Plan (Annual) */}
-            <Card className="border-primary-200 shadow-md relative">
+            <Card className="border border-primary-200 shadow-lg relative bg-white dark:bg-gray-950 scale-105 z-10">
               <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                <Badge className="bg-primary-600">Most Popular</Badge>
+                <Badge className="bg-primary-600 text-white px-3 py-1 text-xs font-medium rounded-full">Most Popular</Badge>
               </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Pro</CardTitle>
-                <CardDescription>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">
                   Advanced career development tools
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$15</span>
-                  <span className="text-gray-500 ml-1">/month</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$15</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/month</span>
                 </div>
-                <p className="text-xs text-green-600 mt-1">
+                <p className="text-sm text-green-600 dark:text-green-500 mt-1 font-medium">
                   Save $48 per year
                 </p>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       <span className="font-medium">Everything in Free</span>, plus:
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Complete AI-powered resume optimization</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Complete AI-powered resume optimization</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Advanced skill gap analysis with learning paths</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Advanced skill gap analysis with learning paths</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited AI career coach messages</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Unlimited AI career coach messages</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Personalized job matching</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Personalized job matching</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Career progress tracking dashboard</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Career progress tracking dashboard</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
-                <Button className="w-full bg-primary-600 hover:bg-primary-700">
+              <CardFooter className="flex flex-col pt-4">
+                <Button className="w-full bg-primary-600 hover:bg-primary-700 text-white">
                   Start Pro Trial
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   7-day free trial, billed annually ($180/year)
                 </p>
               </CardFooter>
             </Card>
 
             {/* Enterprise Plan (Annual) */}
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <CardDescription>For teams and organizations</CardDescription>
+            <Card className="border border-gray-200 hover:border-gray-300 transition-colors bg-white dark:bg-gray-950">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Enterprise</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">For teams and organizations</CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold">$39</span>
-                  <span className="text-gray-500 ml-1">/month</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">$39</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-1 font-medium">/month</span>
                 </div>
-                <p className="text-xs text-green-600 mt-1">
+                <p className="text-sm text-green-600 dark:text-green-500 mt-1 font-medium">
                   Save $120 per year
                 </p>
               </CardHeader>
-              <CardContent className="pb-1">
-                <ul className="space-y-2">
+              <CardContent className="pb-4">
+                <ul className="space-y-3">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       <span className="font-medium">Everything in Pro</span>, plus:
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Team collaboration features</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Team collaboration features</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Custom industry analytics</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Custom industry analytics</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">HR integration options</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">HR integration options</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Dedicated account manager</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Dedicated account manager</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Priority support</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Priority support</span>
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="flex flex-col pt-6">
+              <CardFooter className="flex flex-col pt-4">
                 <Button className="w-full" variant="outline">
                   Contact Sales
                 </Button>
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                   Billed annually ($468/year)
                 </p>
               </CardFooter>
