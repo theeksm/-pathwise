@@ -662,7 +662,20 @@ const MarketTrends = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
                     <YAxis dataKey="name" type="category" width={100} />
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'var(--background)',
+                        borderColor: 'var(--border)',
+                        color: 'var(--foreground)'
+                      }}
+                      itemStyle={{
+                        color: 'var(--foreground)'
+                      }}
+                      labelStyle={{
+                        color: 'var(--foreground)',
+                        fontWeight: 'bold'
+                      }}
+                    />
                     <Bar dataKey="growth" fill="#3b82f6" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -733,7 +746,20 @@ const MarketTrends = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" domain={[0, 100]} />
                     <YAxis dataKey="name" type="category" width={100} />
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'var(--background)',
+                        borderColor: 'var(--border)',
+                        color: 'var(--foreground)'
+                      }}
+                      itemStyle={{
+                        color: 'var(--foreground)'
+                      }}
+                      labelStyle={{
+                        color: 'var(--foreground)',
+                        fontWeight: 'bold'
+                      }}
+                    />
                     <Bar dataKey="risk">
                       {automationRiskJobs.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={calculateRiskColor(entry.risk)} />
@@ -960,6 +986,18 @@ const MarketTrends = () => {
                             <Tooltip 
                               formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Price']}
                               labelFormatter={(label) => `Date: ${label}`}
+                              contentStyle={{ 
+                                backgroundColor: 'var(--background)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--foreground)'
+                              }}
+                              itemStyle={{
+                                color: 'var(--foreground)'
+                              }}
+                              labelStyle={{
+                                color: 'var(--foreground)',
+                                fontWeight: 'bold'
+                              }}
                             />
                             <Line
                               type="monotone"
