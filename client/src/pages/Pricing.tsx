@@ -427,86 +427,86 @@ const Pricing = () => {
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   AI Career Coach
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   5 messages/day
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Unlimited
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Unlimited + Priority
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   Job Matching
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Basic
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Personalized
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Enterprise Connections
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   Market Trends
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-green-500">✓</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-green-500">✓</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Custom Industry Reports
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   Entrepreneurship Advisor
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-red-500">✕</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-green-500">✓</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-green-500">✓</span> + Custom Analysis
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   Learning Path Recommendations
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Basic
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Personalized
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   Custom + Team Learning
                 </td>
               </tr>
               <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   Team Collaboration
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-red-500">✕</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-red-500">✕</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <span className="text-green-500">✓</span>
                 </td>
               </tr>
@@ -515,9 +515,9 @@ const Pricing = () => {
         </div>
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Need a Custom Solution?</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center">
+        <h2 className="text-2xl font-bold mb-4 dark:text-white">Need a Custom Solution?</h2>
+        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6">
           For educational institutions, government agencies, or large
           organizations, we offer custom pricing and features. Contact our sales
           team to learn more.
@@ -528,53 +528,53 @@ const Pricing = () => {
       </div>
 
       <div className="mt-16">
-        <h2 className="text-2xl font-bold text-center mb-8">
+        <h2 className="text-2xl font-bold text-center mb-8 dark:text-white">
           Frequently Asked Questions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           <div className="space-y-1">
-            <h3 className="font-medium">Can I cancel my subscription anytime?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">Can I cancel my subscription anytime?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Yes, you can cancel your subscription at any time. If you cancel,
               you'll still have access to your plan until the end of your billing
               period.
             </p>
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium">How does the free trial work?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">How does the free trial work?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Our 7-day free trial gives you full access to all Pro features. No
               credit card is required for the free plan, but you'll need to
               provide payment details for Pro or Enterprise trials.
             </p>
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium">Can I switch plans later?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">Can I switch plans later?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Yes, you can upgrade or downgrade your plan at any time. When
               upgrading, you'll get immediate access to new features. When
               downgrading, changes take effect at the end of your billing cycle.
             </p>
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium">Do you offer educational discounts?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">Do you offer educational discounts?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Yes, we offer special discounts for students, educational
               institutions, and non-profit organizations. Contact our sales team
               for more information.
             </p>
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium">What payment methods do you accept?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">What payment methods do you accept?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               We accept all major credit cards (Visa, MasterCard, American
               Express), PayPal, and offer invoice payment options for Enterprise
               customers.
             </p>
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium">Is my data secure?</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-medium dark:text-white">Is my data secure?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Yes, we take data security seriously. We use industry-standard
               encryption and never share your personal information with third
               parties without your consent.
