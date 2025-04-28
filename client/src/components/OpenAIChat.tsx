@@ -81,26 +81,44 @@ const OpenAIChat = () => {
   const { data: currentChat, isLoading: isChatLoading } = useQuery<Chat>({
     queryKey: ['/api/chats', chatId],
     enabled: !!chatId,
+    select: (data) => {
+      console.log("Current chat data received:", data);
+      return data;
+    }
   });
 
   // Send a message
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
+      console.log("Sending message:", content);
       if (!chatId) {
         // Create a new chat first
+        console.log("No chat ID, creating new chat");
         const newChat = await createChatMutation.mutateAsync();
-        return apiRequest("POST", `/api/chats/${newChat.id}/message`, { content });
+        console.log("Created new chat:", newChat);
+        const response = await apiRequest("POST", `/api/chats/${newChat.id}/message`, { content });
+        console.log("Message response:", response);
+        return response;
       }
-      return apiRequest("POST", `/api/chats/${chatId}/message`, { content });
+      console.log("Using existing chat ID:", chatId);
+      const response = await apiRequest("POST", `/api/chats/${chatId}/message`, { content });
+      console.log("Message response:", response);
+      return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/chats', chatId] });
+    onSuccess: (data) => {
+      console.log("Message sent successfully, response data:", data);
+      // Invalidate both the chats list and the specific chat
+      queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
+      if (chatId) {
+        queryClient.invalidateQueries({ queryKey: ['/api/chats', chatId] });
+      }
       setMessage("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
     },
     onError: (error: Error) => {
+      console.error("Error sending message:", error);
       toast({
         title: "Error sending message",
         description: error.message,
