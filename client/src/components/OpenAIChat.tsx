@@ -152,7 +152,7 @@ const OpenAIChat = () => {
   // Auto-scroll to bottom on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [currentChat?.messages]);
+  }, [currentChat]);
 
   // Handle Enter key to send message (Shift+Enter for new line)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -175,7 +175,7 @@ const OpenAIChat = () => {
         {/* Message display area */}
         <div className="flex-grow p-4 overflow-y-auto bg-slate-50 dark:bg-slate-900 rounded-t-md">
           {/* Welcome message if no messages */}
-          {(!currentChat?.messages || currentChat.messages.length === 0) && (
+          {(!currentChat || !currentChat.messages || currentChat.messages.length === 0) && (
             <div className="text-center py-10">
               <h3 className="text-lg font-medium mb-2">Welcome to the AI Career Coach</h3>
               <p className="text-muted-foreground">
@@ -187,7 +187,7 @@ const OpenAIChat = () => {
           
           {/* Messages */}
           <div className="space-y-4">
-            {currentChat?.messages?.map((msg, index) => (
+            {currentChat?.messages && currentChat.messages.map((msg: Message, index: number) => (
               <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* Avatar */}
