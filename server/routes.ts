@@ -587,29 +587,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/chats", isAuthenticated, routeZValidator("body", insertChatSchema), async (req, res) => {
     try {
-      const chat = await storage.createChat(req.body);
+      console.log("Creating new chat with data:", req.body);
+      
+      // Make sure we always include an empty messages array
+      const chatData = {
+        ...req.body,
+        messages: [] // Always initialize with empty messages array
+      };
+      
+      const chat = await storage.createChat(chatData);
+      console.log("Created new chat:", chat);
       res.status(201).json(chat);
     } catch (error) {
+      console.error("Error creating chat:", error);
       res.status(500).json({ message: "Error creating chat", error });
     }
   });
 
   app.post("/api/chats/:id/message", isAuthenticated, async (req, res) => {
+    console.log("POST /api/chats/:id/message - Request received");
     const user = req.user as any;
+    console.log("User:", user);
     const chatId = parseInt(req.params.id);
+    console.log("Chat ID:", chatId);
     const messageSchema = z.object({
       content: z.string()
     });
     
     try {
       const validatedData = messageSchema.parse(req.body);
+      console.log("Validated message data:", validatedData);
+      
+      console.log("Fetching chat from storage");
       const chat = await storage.getChatById(chatId);
       
       if (!chat) {
+        console.log("Chat not found with ID:", chatId);
         return res.status(404).json({ message: "Chat not found" });
       }
+      console.log("Retrieved chat:", JSON.stringify(chat));
       
       if (chat.userId !== user.id) {
+        console.log("User ID mismatch, access denied");
         return res.status(403).json({ message: "Unauthorized" });
       }
       
@@ -619,6 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: validatedData.content,
         timestamp: new Date().toISOString()
       };
+      console.log("Created user message:", userMessage);
       
       // Ensure chat.messages is always an array
       const currentMessages = Array.isArray(chat.messages) ? chat.messages : [];
