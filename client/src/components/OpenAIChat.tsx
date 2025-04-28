@@ -8,6 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// Import assets properly with correct path
+import userAvatarSrc from "../assets/user-avatar.svg";
+import aiAvatarSrc from "../assets/ai-avatar.svg";
 
 // Message type definition
 interface Message {
@@ -172,7 +175,7 @@ const OpenAIChat = () => {
                   {/* Avatar */}
                   <Avatar className={`${msg.role === 'user' ? 'ml-2' : 'mr-2'} h-8 w-8`}>
                     <AvatarImage 
-                      src={msg.role === 'user' ? '/user-avatar.png' : "/ai-avatar.png"} 
+                      src={msg.role === 'user' ? userAvatarSrc : aiAvatarSrc} 
                       alt={msg.role === 'user' ? 'User' : 'AI'} 
                     />
                     <AvatarFallback>
@@ -199,6 +202,10 @@ const OpenAIChat = () => {
               <div className="flex justify-start">
                 <div className="flex items-start max-w-[80%]">
                   <Avatar className="mr-2 h-8 w-8">
+                    <AvatarImage 
+                      src={aiAvatarSrc} 
+                      alt="AI" 
+                    />
                     <AvatarFallback>AI</AvatarFallback>
                   </Avatar>
                   <Card>
