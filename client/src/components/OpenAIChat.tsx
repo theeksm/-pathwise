@@ -53,14 +53,18 @@ const OpenAIChat = () => {
   // Create a new chat
   const createChatMutation = useMutation({
     mutationFn: async () => {
+      console.log("Creating a new chat for user:", user);
       const res = await apiRequest("POST", "/api/chats", {
         userId: user?.id,
         title: "New Career Chat",
-        messages: [],
+        messages: [], // Explicitly initialize with empty messages array
       });
-      return res.json();
+      const data = await res.json();
+      console.log("New chat created with response:", data);
+      return data;
     },
     onSuccess: (data: Chat) => {
+      console.log("Chat created successfully:", data);
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
       setChatId(data.id);
       toast({
@@ -69,6 +73,7 @@ const OpenAIChat = () => {
       });
     },
     onError: (error: Error) => {
+      console.error("Error creating chat:", error);
       toast({
         title: "Error creating chat",
         description: error.message,
@@ -91,26 +96,46 @@ const OpenAIChat = () => {
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       console.log("Sending message:", content);
+      let chatData;
+      
       if (!chatId) {
         // Create a new chat first
         console.log("No chat ID, creating new chat");
         const newChat = await createChatMutation.mutateAsync();
         console.log("Created new chat:", newChat);
+        setChatId(newChat.id); // Set the new chat ID
+        
+        // Send message to the new chat
         const response = await apiRequest("POST", `/api/chats/${newChat.id}/message`, { content });
         console.log("Message response:", response);
-        return response;
+        chatData = await response.json();
+      } else {
+        // Send message to existing chat
+        console.log("Using existing chat ID:", chatId);
+        const response = await apiRequest("POST", `/api/chats/${chatId}/message`, { content });
+        console.log("Message response:", response);
+        chatData = await response.json();
       }
-      console.log("Using existing chat ID:", chatId);
-      const response = await apiRequest("POST", `/api/chats/${chatId}/message`, { content });
-      console.log("Message response:", response);
-      return response;
+      
+      console.log("Processed chat data:", chatData);
+      return chatData; // Return the parsed JSON data
     },
     onSuccess: (data) => {
       console.log("Message sent successfully, response data:", data);
+      
       // Invalidate both the chats list and the specific chat
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
-      if (chatId) {
-        queryClient.invalidateQueries({ queryKey: ['/api/chats', chatId] });
+      
+      // Use the ID from the response data, since chatId might still be null for new chats
+      const currentChatId = data?.id || chatId;
+      if (currentChatId) {
+        console.log("Invalidating chat with ID:", currentChatId);
+        queryClient.invalidateQueries({ queryKey: ['/api/chats', currentChatId] });
+        
+        // Set the chat ID if it's from a new chat
+        if (!chatId && data?.id) {
+          setChatId(data.id);
+        }
       }
       setMessage("");
       if (textareaRef.current) {
