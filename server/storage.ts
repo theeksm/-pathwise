@@ -281,16 +281,27 @@ export class MemStorage implements IStorage {
   async createChat(insertChat: InsertChat): Promise<Chat> {
     const id = this.currentChatId++;
     const now = new Date();
-    const chat: Chat = { ...insertChat, id, createdAt: now };
+    const chat: Chat = { 
+      ...insertChat, 
+      id, 
+      createdAt: now,
+      messages: insertChat.messages || [] // Ensure messages is always initialized
+    };
+    console.log("Storage: Creating chat with data:", JSON.stringify(chat));
     this.chatsData.set(id, chat);
     return chat;
   }
   
   async updateChat(id: number, chatData: Partial<Chat>): Promise<Chat | undefined> {
+    console.log(`Storage: Updating chat ${id} with data:`, JSON.stringify(chatData));
     const chat = this.chatsData.get(id);
-    if (!chat) return undefined;
+    if (!chat) {
+      console.log(`Storage: Chat ${id} not found in storage`);
+      return undefined;
+    }
     
     const updatedChat = { ...chat, ...chatData };
+    console.log(`Storage: Updated chat data:`, JSON.stringify(updatedChat));
     this.chatsData.set(id, updatedChat);
     return updatedChat;
   }
