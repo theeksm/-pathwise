@@ -625,16 +625,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const messages = [...currentMessages, userMessage];
       
       // Get AI response
-      const aiResponse = await generateChatResponse(
-        messages.map(m => ({ role: m.role, content: m.content }))
-      );
-      
-      // Add AI response to messages
-      const aiMessage = {
-        role: "assistant",
-        content: aiResponse,
-        timestamp: new Date().toISOString()
-      };
+      console.log("Generating AI response for chat", chatId, "with messages:", messages);
+      let aiMessage;
+      try {
+        const aiResponse = await generateChatResponse(
+          messages.map(m => ({ role: m.role, content: m.content }))
+        );
+        console.log("OpenAI response received:", aiResponse);
+        
+        // Add AI response to messages
+        aiMessage = {
+          role: "assistant",
+          content: aiResponse,
+          timestamp: new Date().toISOString()
+        };
+      } catch (err) {
+        console.error("Error from OpenAI API:", err);
+        // Add error message as AI response
+        aiMessage = {
+          role: "assistant",
+          content: "I'm having trouble connecting right now. Please try again in a moment.",
+          timestamp: new Date().toISOString()
+        };
+      }
       
       const updatedMessages = [...messages, aiMessage];
       
