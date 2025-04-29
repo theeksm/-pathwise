@@ -13,9 +13,13 @@ const firebaseMeasurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
 
 // Log configuration for debugging (without exposing sensitive values)
 console.log("Firebase config initialized with:", { 
-  projectIdAvailable: !!firebaseProjectId,
-  apiKeyAvailable: !!firebaseApiKey,
-  appIdAvailable: !!firebaseAppId
+  apiKey: !!firebaseApiKey ? `${firebaseApiKey.substring(0, 3)}...${firebaseApiKey.substring(firebaseApiKey.length - 3)}` : "missing",
+  authDomain: firebaseAuthDomain || "using fallback domain",
+  projectId: firebaseProjectId || "using fallback project",
+  storageBucket: !!firebaseStorageBucket ? "present" : "using fallback bucket",
+  messagingSenderId: !!firebaseMessagingSenderId ? "present" : "using fallback sender ID",
+  appId: !!firebaseAppId ? `${firebaseAppId.substring(0, 3)}...${firebaseAppId.substring(firebaseAppId.length - 3)}` : "missing",
+  measurementId: !!firebaseMeasurementId ? firebaseMeasurementId : "using fallback measurement ID"
 });
 
 // Firebase configuration
