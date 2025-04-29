@@ -29,14 +29,19 @@ const AIChatPage = () => {
           </TabsList>
         </div>
         
-        {/* Show a message if user attempts to select enhanced mode while not logged in */}
+        {/* Upgrade Membership upsell popup for when free users try to access enhanced mode */}
         {currentTab === "enhanced" && !user && (
           <Card className="shadow-lg border-blue-200 max-w-md mx-auto p-6 mb-4">
-            <h2 className="text-lg font-medium text-center mb-4">Sign in to use the Enhanced AI chat</h2>
-            <p className="text-muted-foreground text-center mb-6">To use our advanced OpenAI-powered career coach, please sign in to your account.</p>
-            <div className="flex justify-center">
-              <Button onClick={() => navigate("/auth")} className="bg-primary hover:bg-primary/90">
+            <h2 className="text-lg font-medium text-center mb-4">Upgrade Your Membership</h2>
+            <p className="text-muted-foreground text-center mb-6">
+              Enhanced Mode gives you access to our premium OpenAI-powered career advisor with deeper analysis, personalized recommendations, and advanced features.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Button onClick={() => navigate("/auth")} variant="outline">
                 Sign In
+              </Button>
+              <Button onClick={() => navigate("/pricing")} className="bg-primary hover:bg-primary/90">
+                See Pricing Plans
               </Button>
             </div>
           </Card>
@@ -61,8 +66,15 @@ const AIChatPage = () => {
             </Card>
           ) : (
             <Card className="shadow-lg border-blue-200 max-w-md mx-auto p-6">
-              <h2 className="text-lg font-medium text-center mb-4">Premium Feature</h2>
-              <p className="text-muted-foreground text-center mb-6">The Enhanced AI Chat is available only for logged-in users.</p>
+              <h2 className="text-lg font-medium text-center mb-4">Upgrade to Access Enhanced Mode</h2>
+              <p className="text-muted-foreground text-center mb-6">
+                Experience our advanced AI career advisor powered by OpenAI GPT. Get in-depth career analysis, personalized advice, and comprehensive guidance all in one place.
+              </p>
+              <div className="flex justify-center">
+                <Button onClick={() => navigate("/pricing")} className="bg-primary hover:bg-primary/90">
+                  Upgrade Membership
+                </Button>
+              </div>
             </Card>
           )}
         </TabsContent>
