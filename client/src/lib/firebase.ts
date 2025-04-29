@@ -26,7 +26,7 @@ const firebaseConfig = {
   storageBucket: firebaseStorageBucket || "pathwise-e3558.appspot.com",
   messagingSenderId: firebaseMessagingSenderId || "227768112306",
   appId: firebaseAppId || "1:227768112306:web:3a438581c5ca96be9e25ab",
-  measurementId: firebaseMeasurementId || "G-K1MLYQ6HFD"
+  measurementId: firebaseMeasurementId || "G-WVG96RYLDK" // Updated to the correct measurement ID from server
 };
 
 // Initialize Firebase (avoid duplicate initialization)
