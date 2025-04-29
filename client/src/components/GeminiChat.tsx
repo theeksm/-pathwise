@@ -30,7 +30,7 @@ interface Chat {
   createdAt: string;
 }
 
-const OpenAIChat = () => {
+const GeminiChat = () => {
   const { user } = useAuth() || { user: null };
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -47,35 +47,42 @@ const OpenAIChat = () => {
 
   useEffect(() => {
     if (chats && chats.length > 0 && !chatId) {
-      // Use the most recent chat
-      setChatId(chats[0].id);
+      // Try to find a standard chat first
+      const standardChat = chats.find(chat => chat.chatMode === "standard");
+      if (standardChat) {
+        setChatId(standardChat.id);
+      } else {
+        // Otherwise, use the most recent chat
+        setChatId(chats[0].id);
+      }
     }
   }, [chats, chatId]);
 
   // Create a new chat
   const createChatMutation = useMutation({
     mutationFn: async () => {
-      console.log("Creating a new chat for user:", user);
+      console.log("Creating a new Gemini chat for user:", user);
       const res = await apiRequest("POST", "/api/chats", {
         userId: user?.id,
-        title: "New Career Chat",
+        title: "New Standard Chat",
+        chatMode: "standard",
         messages: [], // Explicitly initialize with empty messages array
       });
       const data = await res.json();
-      console.log("New chat created with response:", data);
+      console.log("New standard chat created with response:", data);
       return data;
     },
     onSuccess: (data: Chat) => {
-      console.log("Chat created successfully:", data);
+      console.log("Standard chat created successfully:", data);
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
       setChatId(data.id);
       toast({
         title: "Chat created",
-        description: "Started a new conversation",
+        description: "Started a new standard conversation",
       });
     },
     onError: (error: Error) => {
-      console.error("Error creating chat:", error);
+      console.error("Error creating standard chat:", error);
       toast({
         title: "Error creating chat",
         description: error.message,
@@ -89,74 +96,54 @@ const OpenAIChat = () => {
     queryKey: ['/api/chats', chatId],
     enabled: !!chatId,
     select: (data) => {
-      console.log("Current chat data received:", data);
+      console.log("Current standard chat data received:", data);
       return data;
     }
   });
 
-  // Send a message using Enhanced OpenAI mode
+  // Send a message using Standard Gemini mode
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      console.log("Sending message:", content);
+      console.log("Sending message to Gemini:", content);
       let chatData;
       
       try {
         if (!chatId) {
           // Create a new chat first
-          console.log("No chat ID, creating new chat");
+          console.log("No chat ID, creating new standard chat");
           const newChat = await createChatMutation.mutateAsync();
-          console.log("Created new chat:", newChat);
+          console.log("Created new standard chat:", newChat);
           setChatId(newChat.id); // Set the new chat ID
           
-          // Send message to the new chat with enhanced mode
+          // Send message to the new chat with standard mode
           const response = await apiRequest("POST", `/api/chats/${newChat.id}/message`, { 
             content,
-            chatMode: "enhanced" // Specify enhanced (OpenAI) mode
+            chatMode: "standard" // Specify standard (Gemini) mode
           });
-          console.log("Message response:", response);
-          
-          if (!response.ok) {
-            // Check if premium access is required
-            const errorData = await response.json();
-            if (errorData.requiresUpgrade) {
-              throw new Error("Premium membership required to use enhanced AI mode");
-            } else {
-              throw new Error("Failed to send message: " + errorData.message);
-            }
-          }
+          console.log("Standard message response:", response);
           
           chatData = await response.json();
         } else {
-          // Send message to existing chat with enhanced mode
-          console.log("Using existing chat ID:", chatId);
+          // Send message to existing chat with standard mode
+          console.log("Using existing chat ID for standard mode:", chatId);
           const response = await apiRequest("POST", `/api/chats/${chatId}/message`, { 
             content,
-            chatMode: "enhanced" // Specify enhanced (OpenAI) mode
+            chatMode: "standard" // Specify standard (Gemini) mode
           });
-          console.log("Message response:", response);
-          
-          if (!response.ok) {
-            // Check if premium access is required
-            const errorData = await response.json();
-            if (errorData.requiresUpgrade) {
-              throw new Error("Premium membership required to use enhanced AI mode");
-            } else {
-              throw new Error("Failed to send message: " + errorData.message);
-            }
-          }
+          console.log("Standard message response:", response);
           
           chatData = await response.json();
         }
         
-        console.log("Processed chat data:", chatData);
+        console.log("Processed standard chat data:", chatData);
         return chatData; // Return the parsed JSON data
       } catch (error) {
-        console.error("Error in sendMessageMutation:", error);
+        console.error("Error in standard sendMessageMutation:", error);
         throw error;
       }
     },
     onSuccess: (data) => {
-      console.log("Message sent successfully, response data:", data);
+      console.log("Standard message sent successfully, response data:", data);
       
       // Invalidate both the chats list and the specific chat
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
@@ -164,7 +151,7 @@ const OpenAIChat = () => {
       // Use the ID from the response data, since chatId might still be null for new chats
       const currentChatId = data?.id || chatId;
       if (currentChatId) {
-        console.log("Invalidating chat with ID:", currentChatId);
+        console.log("Invalidating standard chat with ID:", currentChatId);
         queryClient.invalidateQueries({ queryKey: ['/api/chats', currentChatId] });
         
         // Set the chat ID if it's from a new chat
@@ -178,7 +165,7 @@ const OpenAIChat = () => {
       }
     },
     onError: (error: Error) => {
-      console.error("Error sending message:", error);
+      console.error("Error sending standard message:", error);
       toast({
         title: "Error sending message",
         description: error.message,
@@ -228,21 +215,19 @@ const OpenAIChat = () => {
   // UI output
   return (
     <div className="flex flex-col h-full">
-      {/* Chat history panel could be added here in the future */}
-      
       {/* Main chat area */}
       <div className="flex-grow flex flex-col overflow-hidden">
         {/* Message display area */}
         <div className="flex-grow p-4 overflow-y-auto bg-slate-50 dark:bg-slate-900 rounded-t-md">
           {/* Provider label */}
           <div className="text-center text-xs text-muted-foreground mb-4 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">
-            Enhanced Mode • Powered by OpenAI
+            Powered by Gemini AI
           </div>
-          
+
           {/* Welcome message if no messages */}
           {(!currentChat || !currentChat.messages || currentChat.messages.length === 0) && (
             <div className="text-center py-10">
-              <h3 className="text-lg font-medium mb-2">Welcome to the AI Career Coach</h3>
+              <h3 className="text-lg font-medium mb-2">Welcome to the Standard AI Career Coach</h3>
               <p className="text-muted-foreground">
                 Ask me anything about career guidance, skill development, job search, 
                 interview preparation, or professional growth.
@@ -339,4 +324,4 @@ const OpenAIChat = () => {
   );
 };
 
-export default OpenAIChat;
+export default GeminiChat;
