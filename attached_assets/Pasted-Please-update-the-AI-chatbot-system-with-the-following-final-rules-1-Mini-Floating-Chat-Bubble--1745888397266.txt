@@ -1,0 +1,36 @@
+Please update the AI chatbot system with the following final rules:
+
+1. **Mini Floating Chat Bubble (Small Chat) — "Turi AI"**
+- Keep using the existing lightweight Turi chatbot or Firebase function chatbot.
+- Allow users to ask anything, but keep the responses simple and basic.
+- This chat can suggest parts of the website (e.g., "Try the Skill Gap Analyzer" or "Check Market Trends") but cannot deeply analyze or generate professional results.
+
+2. **Big Full-Screen Chat (Standard Version — for Free Users) — "Gemini AI"**
+- Use Gemini API to power the free large chat mode.
+- The Standard Chatbot should:
+  - Provide good conversation.
+  - Suggest users to try other features like Skill Gap Analyzer, Resume Builder, Market Trends.
+  - Recommend exploring the site but **not** deeply analyze user skills or generate deep career plans.
+- Show label: "Standard Mode — Powered by Gemini AI"
+
+3. **Big Full-Screen Chat (Enhanced Version — for Paid Members) — "OpenAI GPT"**
+- Use OpenAI API (GPT-4) to power the Enhanced Chat Mode.
+- The Enhanced Chatbot should behave like a **super smart AI career advisor**.
+- It must:
+  - Directly analyze users’ input data (e.g., skills, goals, industries mentioned) through conversation.
+  - Provide complete career path suggestions, skill gaps, resume tips, and job market advice.
+  - Act smart enough so users don't need to manually use other functions like Resume Builder or Skill Gap Analyzer — the AI will give full personalized outputs inside the chat.
+- Only accessible by paid members.
+- Show label: "Enhanced Mode — Powered by OpenAI GPT"
+
+4. **Access Control Rules:**
+- Free users → Standard Mode only (Gemini).
+- Paid members → can access both Standard and Enhanced Mode.
+- If a Free user clicks Enhanced Mode, show an "Upgrade Membership" upsell popup.
+
+5. **Technical Notes:**
+- Store API keys securely in environment variables.
+- Make sure chat loading indicators, error handling, and session timeouts are properly handled for a smooth UX.
+- Allow users to easily switch modes if they have access.
+
+Let me know once the AI system is fully updated with these behaviors.
