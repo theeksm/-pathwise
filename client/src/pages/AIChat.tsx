@@ -24,8 +24,8 @@ const AIChatPage = () => {
       >
         <div className="flex justify-center mb-4">
           <TabsList>
-            <TabsTrigger value="standard">Standard Chat</TabsTrigger>
-            <TabsTrigger value="enhanced" disabled={!user}>Enhanced Chat</TabsTrigger>
+            <TabsTrigger value="standard">Standard Mode — Powered by Gemini AI</TabsTrigger>
+            <TabsTrigger value="enhanced" disabled={!user}>Enhanced Mode — Powered by OpenAI GPT</TabsTrigger>
           </TabsList>
         </div>
         
