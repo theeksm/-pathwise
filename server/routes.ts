@@ -611,12 +611,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const chatId = parseInt(req.params.id);
     console.log("Chat ID:", chatId);
     const messageSchema = z.object({
-      content: z.string()
+      content: z.string(),
+      chatMode: z.enum(["standard", "enhanced"]).optional()
     });
     
     try {
       const validatedData = messageSchema.parse(req.body);
       console.log("Validated message data:", validatedData);
+      
+      // Determine which AI service to use based on chatMode and user membership
+      // Default to standard mode for free users
+      const chatMode = validatedData.chatMode || "standard";
+      const isPremiumUser = user.premiumMember === true;
+      
+      // If user is trying to use enhanced mode but isn't premium, reject
+      if (chatMode === "enhanced" && !isPremiumUser) {
+        return res.status(403).json({ 
+          message: "Premium membership required for enhanced AI mode", 
+          requiresUpgrade: true 
+        });
+      }
       
       console.log("Fetching chat from storage");
       const chat = await storage.getChatById(chatId);
@@ -644,28 +658,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const currentMessages = Array.isArray(chat.messages) ? chat.messages : [];
       const messages = [...currentMessages, userMessage];
       
-      // Get AI response
-      console.log("Generating AI response for chat", chatId, "with messages:", messages);
+      // Get AI response based on chat mode
+      console.log(`Generating ${chatMode} AI response for chat`, chatId, "with messages:", messages);
       let aiMessage;
       try {
-        const aiResponse = await generateChatResponse(
-          messages.map(m => ({ role: m.role, content: m.content }))
-        );
-        console.log("OpenAI response received:", aiResponse);
+        let aiResponse = "";
+        
+        if (chatMode === "enhanced") {
+          // Use OpenAI for enhanced mode
+          console.log("Using OpenAI API (Enhanced mode)");
+          aiResponse = await generateChatResponse(
+            messages.map(m => ({ role: m.role, content: m.content }))
+          );
+          console.log("OpenAI response received:", aiResponse);
+        } else {
+          // Use Gemini for standard mode
+          console.log("Using Gemini API (Standard mode)");
+          const { generateGeminiChatResponse } = await import('./lib/gemini');
+          aiResponse = await generateGeminiChatResponse(
+            messages.map(m => ({ role: m.role, content: m.content }))
+          );
+          console.log("Gemini response received:", aiResponse);
+        }
         
         // Add AI response to messages
         aiMessage = {
           role: "assistant",
           content: aiResponse,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          aiProvider: chatMode === "enhanced" ? "openai" : "gemini" // Track AI provider used
         };
       } catch (err) {
-        console.error("Error from OpenAI API:", err);
+        console.error(`Error from ${chatMode} AI API:`, err);
         // Add error message as AI response
         aiMessage = {
           role: "assistant",
           content: "I'm having trouble connecting right now. Please try again in a moment.",
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          aiProvider: chatMode === "enhanced" ? "openai" : "gemini"
         };
       }
       
@@ -673,7 +703,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update chat in storage
       const updatedChat = await storage.updateChat(chatId, {
-        messages: updatedMessages
+        messages: updatedMessages,
+        chatMode: chatMode // Save the mode used for this chat
       });
       
       res.json(updatedChat);
