@@ -17,6 +17,7 @@ interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  aiProvider?: string;
 }
 
 // Chat type definition
@@ -25,6 +26,7 @@ interface Chat {
   userId: number;
   title: string;
   messages: Message[];
+  chatMode?: string;
   createdAt: string;
 }
 
