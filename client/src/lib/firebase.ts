@@ -1,10 +1,15 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, PhoneAuthProvider } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
-// Get environment variables
+// Get environment variables for Firebase config
 const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+const firebaseAuthDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
 const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const firebaseStorageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
+const firebaseMessagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
 const firebaseAppId = import.meta.env.VITE_FIREBASE_APP_ID;
+const firebaseMeasurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
 
 // Log configuration for debugging (without exposing sensitive values)
 console.log("Firebase config initialized with:", { 
@@ -13,32 +18,22 @@ console.log("Firebase config initialized with:", {
   appIdAvailable: !!firebaseAppId
 });
 
-// Get auth domain from env
-const firebaseAuthDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
-
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: firebaseApiKey,
-  authDomain: firebaseAuthDomain || `${firebaseProjectId}.firebaseapp.com`,
-  projectId: firebaseProjectId,
-  storageBucket: `${firebaseProjectId}.appspot.com`,
-  messagingSenderId: "764806761857", // This will be auto-filled by Firebase
-  appId: firebaseAppId,
+  apiKey: firebaseApiKey || "AIzaSyA_MZkrOW1ge8aPbF42Kt_RYzcwx7rPTeA",
+  authDomain: firebaseAuthDomain || "pathwise-e3558.firebaseapp.com",
+  projectId: firebaseProjectId || "pathwise-e3558",
+  storageBucket: firebaseStorageBucket || "pathwise-e3558.appspot.com",
+  messagingSenderId: firebaseMessagingSenderId || "227768112306",
+  appId: firebaseAppId || "1:227768112306:web:3a438581c5ca96be9e25ab",
+  measurementId: firebaseMeasurementId || "G-K1MLYQ6HFD"
 };
-
-// Validate Firebase configuration
-if (!firebaseApiKey || !firebaseProjectId || !firebaseAppId) {
-  console.error("Firebase configuration is incomplete. Authentication features will not work.");
-  console.log("Missing values:", {
-    apiKey: !firebaseApiKey ? "missing" : "present",
-    projectId: !firebaseProjectId ? "missing" : "present",
-    appId: !firebaseAppId ? "missing" : "present",
-    authDomain: !firebaseAuthDomain ? "using default" : "present"
-  });
-}
 
 // Initialize Firebase (avoid duplicate initialization)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// Initialize Analytics if in browser environment
+const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
