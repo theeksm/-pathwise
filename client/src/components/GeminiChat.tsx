@@ -228,9 +228,12 @@ const GeminiChat = () => {
           {(!currentChat || !currentChat.messages || currentChat.messages.length === 0) && (
             <div className="text-center py-10">
               <h3 className="text-lg font-medium mb-2">Welcome to the Standard AI Career Coach</h3>
-              <p className="text-muted-foreground">
-                Ask me anything about career guidance, skill development, job search, 
-                interview preparation, or professional growth.
+              <p className="text-muted-foreground mb-2">
+                Ask me questions about career guidance and I'll provide helpful basic advice.
+              </p>
+              <p className="text-muted-foreground text-sm">
+                For more detailed career analysis, skill gap assessment, or personalized resume optimization, 
+                try using the specific tools in PathWise or upgrade to Enhanced Mode.
               </p>
             </div>
           )}
