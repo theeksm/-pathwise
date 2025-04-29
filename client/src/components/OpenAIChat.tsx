@@ -58,7 +58,8 @@ const OpenAIChat = () => {
       console.log("Creating a new chat for user:", user);
       const res = await apiRequest("POST", "/api/chats", {
         userId: user?.id,
-        title: "New Career Chat",
+        title: "New Enhanced Chat",
+        chatMode: "enhanced", // Specify enhanced (OpenAI) mode
         messages: [], // Explicitly initialize with empty messages array
       });
       const data = await res.json();
@@ -70,8 +71,8 @@ const OpenAIChat = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/chats'] });
       setChatId(data.id);
       toast({
-        title: "Chat created",
-        description: "Started a new conversation",
+        title: "Enhanced Chat created",
+        description: "Started a new enhanced conversation",
       });
     },
     onError: (error: Error) => {
@@ -242,10 +243,13 @@ const OpenAIChat = () => {
           {/* Welcome message if no messages */}
           {(!currentChat || !currentChat.messages || currentChat.messages.length === 0) && (
             <div className="text-center py-10">
-              <h3 className="text-lg font-medium mb-2">Welcome to the AI Career Coach</h3>
+              <h3 className="text-lg font-medium mb-2">Welcome to the Enhanced AI Career Coach</h3>
+              <p className="text-muted-foreground mb-2">
+                This premium experience provides in-depth career analysis and personalized guidance.
+              </p>
               <p className="text-muted-foreground">
-                Ask me anything about career guidance, skill development, job search, 
-                interview preparation, or professional growth.
+                Ask me about career paths, skill gaps, resume optimization, or job market trends - 
+                I can provide detailed recommendations without needing to use separate tools.
               </p>
             </div>
           )}
