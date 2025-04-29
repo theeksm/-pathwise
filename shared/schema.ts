@@ -100,7 +100,14 @@ export const learningPaths = pgTable("learning_paths", {
 export const chats = pgTable("chats", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  messages: jsonb("messages").$type<{ role: string; content: string; timestamp: string }[]>(),
+  title: text("title").default("New Chat"),
+  messages: jsonb("messages").$type<{ 
+    role: string; 
+    content: string; 
+    timestamp: string;
+    aiProvider?: string;
+  }[]>(),
+  chatMode: text("chat_mode").default("standard"),
   createdAt: timestamp("created_at").defaultNow()
 });
 

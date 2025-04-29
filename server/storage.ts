@@ -285,6 +285,8 @@ export class MemStorage implements IStorage {
       ...insertChat, 
       id, 
       createdAt: now,
+      title: insertChat.title || "New Chat",
+      chatMode: insertChat.chatMode || "standard",
       messages: insertChat.messages || [] // Ensure messages is always initialized
     };
     console.log("Storage: Creating chat with data:", JSON.stringify(chat));
