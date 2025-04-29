@@ -74,29 +74,55 @@ const Login = () => {
     try {
       console.log("Attempting Google sign-in...");
       
-      // Check if Firebase is properly configured
+      // 1. Verify Firebase configuration
       if (!import.meta.env.VITE_FIREBASE_API_KEY || 
           !import.meta.env.VITE_FIREBASE_PROJECT_ID || 
           !import.meta.env.VITE_FIREBASE_APP_ID) {
         throw new Error("Firebase is not properly configured. Please contact the administrator.");
       }
       
-      // Reset any previous state
+      // 2. Log the current auth domain for troubleshooting
+      console.log("Current Firebase auth domain:", 
+        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 
+        `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`, 
+        "Current URL:", window.location.href
+      );
+      
+      // 3. Reset provider state and set proper parameters
       googleProvider.setCustomParameters({
-        prompt: 'select_account'
+        prompt: 'select_account',
+        // Add current domain to the allowed redirect domains
+        login_hint: localStorage.getItem('lastLoginEmail') || undefined,
       });
       
-      // Add auth scopes for better user data
+      // 4. Add auth scopes for better user data
       googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
       googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
       
-      // Directly use signInWithPopup
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("Google sign-in result:", result);
+      console.log("Initiating Google sign-in popup...");
       
-      // Handle the user data from Firebase
+      // 5. Try with signInWithRedirect if on mobile (better mobile experience)
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        console.log("Mobile device detected, using signInWithRedirect");
+        await signInWithRedirect(auth, googleProvider);
+        // The function will return here on mobile and continue after redirect
+        return;
+      }
+      
+      // 6. Use signInWithPopup for desktop
+      console.log("Using signInWithPopup for authentication...");
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Authentication successful! Result:", result);
+      
+      // 7. Handle the successful authentication
       if (result && result.user) {
+        // Store email for hint on next login
+        if (result.user.email) {
+          localStorage.setItem('lastLoginEmail', result.user.email);
+        }
+        
         // Import dynamically to avoid circular dependencies
+        console.log("Saving user to Firestore...");
         const { saveUserToFirestore } = await import("@/lib/firestore");
         
         // Prepare user data for Firestore
@@ -111,6 +137,7 @@ const Login = () => {
         // Save to Firestore
         try {
           await saveUserToFirestore(userData);
+          console.log("User data saved to Firestore successfully");
         } catch (firestoreError) {
           console.error("Error saving user to Firestore:", firestoreError);
           // Continue with login even if Firestore fails
@@ -118,23 +145,35 @@ const Login = () => {
         
         console.log("User authenticated with Google:", userData);
         
+        // Notify user of successful login
         toast({
           title: "Login successful",
           description: `Welcome ${userData.displayName || "back"}!`,
         });
         
         // Navigate to dashboard
+        console.log("Redirecting to dashboard...");
         setLocation("/dashboard");
+      } else {
+        // This shouldn't happen but handle it just in case
+        throw new Error("Authentication successful but user data is missing");
       }
       
     } catch (error: any) {
-      // More detailed error logging
-      console.error("Detailed Google sign-in error:", {
+      // 8. Enhanced error handling with detailed logs
+      console.error("Google sign-in error:", error);
+      console.error("Detailed error information:", {
         code: error.code,
+        name: error.name,
         message: error.message,
         email: error.email,
-        credential: error.credential
+        credential: error.credential,
+        stack: error.stack
       });
+      
+      // Check if the error is related to unauthorized domain
+      const currentOrigin = window.location.origin;
+      console.log("Current origin:", currentOrigin);
       
       // Create a more user-friendly error message based on error code
       let errorMessage = "Google sign-in failed. Please try again.";
@@ -148,7 +187,9 @@ const Login = () => {
       } else if (error.code === 'auth/invalid-credential') {
         errorMessage = 'The authentication credential is invalid. Please try again.';
       } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage = 'This domain is not authorized for OAuth operations. Contact your administrator.';
+        errorMessage = `Domain not authorized for OAuth operations. Please add "${currentOrigin}" to Firebase authorized domains list.`;
+      } else if (error.code === 'auth/internal-error') {
+        errorMessage = 'Authentication service encountered an error. Please try again later.';
       } else if (error.message) {
         errorMessage = error.message;
       }
