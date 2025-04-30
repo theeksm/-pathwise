@@ -69,16 +69,16 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
     setInput("");
     setIsLoading(true);
 
-    // Prepare the request to Magic Loops API
+    // Prepare the request to server-side Magic Loops API endpoint
     const requestBody = {
-      user_message: message,
-      career_interest: userInfo.careerInterest || "",
-      education_level: userInfo.educationLevel || ""
+      message: message,
+      careerInterest: userInfo.careerInterest || "",
+      educationLevel: userInfo.educationLevel || ""
     };
 
     try {
-      console.log("Sending request to Magic Loops API:", requestBody);
-      const response = await fetch("https://magicloops.dev/api/loop/b2a3319a-338d-4790-8564-9584a3d019d0/run", {
+      console.log("Sending request to server Magic Loops endpoint:", requestBody);
+      const response = await fetch("/api/chat/magic-loops", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
