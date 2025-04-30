@@ -16,6 +16,7 @@ import {
 import { generateCareerRecommendations, analyzeSkillGap, optimizeResume, matchJobs, generateChatResponse } from "./lib/openai";
 import { getStockData, StockAPIError, StockAPIErrorType } from "./lib/stockAPI";
 import { generateContent } from "./lib/generateContent";
+import { getMagicLoopsResponse } from "./lib/magicLoops";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -604,6 +605,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Magic Loops AI Chat API
+  app.post("/api/chat/magic-loops", async (req, res) => {
+    try {
+      const inputSchema = z.object({
+        message: z.string(),
+        careerInterest: z.string().optional(),
+        educationLevel: z.string().optional(),
+      });
+      
+      const validatedData = inputSchema.parse(req.body);
+      
+      // Log the request (without sensitive data)
+      console.log(`Magic Loops chat request received, message length: ${validatedData.message.length}`);
+      
+      // Call the Magic Loops API
+      const response = await getMagicLoopsResponse(
+        validatedData.message,
+        validatedData.careerInterest,
+        validatedData.educationLevel
+      );
+      
+      // Log the response status
+      console.log(`Magic Loops chat response received, success: ${response.success}`);
+      
+      // Return the response
+      res.json(response);
+    } catch (error) {
+      console.error("Error processing Magic Loops chat request:", error);
+      res.status(500).json({
+        message: "Failed to process chat request",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   app.post("/api/chats/:id/message", isAuthenticated, async (req, res) => {
     console.log("POST /api/chats/:id/message - Request received");
     const user = req.user as any;
@@ -612,7 +648,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log("Chat ID:", chatId);
     const messageSchema = z.object({
       content: z.string(),
-      chatMode: z.enum(["standard", "enhanced"]).optional()
+      chatMode: z.enum(["standard", "enhanced", "magic-loops"]).optional()
     });
     
     try {
@@ -664,8 +700,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         let aiResponse = "";
         
-        if (chatMode === "enhanced") {
-          // Use OpenAI for enhanced mode
+        if (chatMode === "magic-loops") {
+          // Use Magic Loops for premium career guidance - replacing the enhanced mode
+          console.log("Using Magic Loops API (May - Career Assistant)");
+          
+          // Get the last user message for Magic Loops
+          const userMessage = validatedData.content;
+          
+          // Get user profile information for context if available
+          const userProfile = await storage.getUser(user.id);
+          const careerInterest = userProfile?.targetCareer || '';
+          const educationLevel = userProfile?.educationLevel || '';
+          
+          // Call Magic Loops API
+          const magicLoopsResponse = await getMagicLoopsResponse(
+            userMessage,
+            careerInterest,
+            educationLevel
+          );
+          
+          aiResponse = magicLoopsResponse.response;
+          console.log("Magic Loops response received:", 
+            aiResponse.substring(0, 50) + (aiResponse.length > 50 ? '...' : '')
+          );
+        } else if (chatMode === "enhanced") {
+          // Use OpenAI for enhanced mode (legacy support)
           console.log("Using OpenAI API (Enhanced mode)");
           aiResponse = await generateChatResponse(
             messages.map(m => ({ role: m.role, content: m.content }))
@@ -681,12 +740,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Gemini response received:", aiResponse);
         }
         
-        // Add AI response to messages
+        // Add AI response to messages with the appropriate provider
+        let aiProvider = "gemini";
+        if (chatMode === "enhanced") aiProvider = "openai";
+        if (chatMode === "magic-loops") aiProvider = "magic-loops";
+        
         aiMessage = {
           role: "assistant",
           content: aiResponse,
           timestamp: new Date().toISOString(),
-          aiProvider: chatMode === "enhanced" ? "openai" : "gemini" // Track AI provider used
+          aiProvider: aiProvider
         };
       } catch (err) {
         console.error(`Error from ${chatMode} AI API:`, err);
