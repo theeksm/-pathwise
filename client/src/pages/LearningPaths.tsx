@@ -647,7 +647,7 @@ const LearningPaths = () => {
                     <SelectValue placeholder="Select a skill" />
                   </SelectTrigger>
                   <SelectContent>
-                    {skills?.map(skill => (
+                    {skills?.map((skill: any) => (
                       <SelectItem key={skill.id} value={skill.skillName}>
                         {skill.skillName} {skill.isMissing ? "🔴" : "✅"}
                       </SelectItem>
