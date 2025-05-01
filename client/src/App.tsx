@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AIChat from "@/components/AIChat";
+import DevModePanel from "@/components/DevModePanel";
 import { AuthProvider } from "@/hooks/use-auth";
 
 // Pages
@@ -61,6 +62,7 @@ function Router() {
         </Switch>
       </main>
       <AIChat />
+      <DevModePanel />
       <Footer />
     </>
   );

@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
+import { hasDevSession, isDevMode } from "./dev-mode";
 
 export function ProtectedRoute({
   path,
@@ -21,7 +22,13 @@ export function ProtectedRoute({
     );
   }
 
+  // Check if we're in dev mode with a valid dev session before redirecting
   if (!user) {
+    if (isDevMode() && hasDevSession()) {
+      console.log('[DEV MODE] Bypassing authentication check for protected route:', path);
+      return <Route path={path} component={Component} />;
+    }
+    
     return (
       <Route path={path}>
         <Redirect to="/login" />
