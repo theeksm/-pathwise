@@ -2154,6 +2154,36 @@ const ResumeTemplates = () => {
                         Add Another Project
                       </Button>
                       
+                      <div className="flex justify-center mt-8 mb-6">
+                        <Card className="w-full p-4 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg">Generate Your Complete Resume Using AI</CardTitle>
+                            <CardDescription>
+                              Our AI can help enhance and complete your resume automatically based on the information you've provided.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Button 
+                              onClick={generateFullResume}
+                              disabled={isGenerating}
+                              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              {isGenerating ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Generating Resume...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="mr-2 h-4 w-4" />
+                                  Generate Resume Using AI Based on My Info
+                                </>
+                              )}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      
                       <div className="flex justify-between pt-4 border-t mt-6">
                         <Button
                           variant="outline"
