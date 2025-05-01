@@ -694,23 +694,17 @@ const ResumeTemplates = () => {
   const validateSection = (section: string): { valid: boolean; message?: string } => {
     switch (section) {
       case "personal-info":
-        const { fullName, title } = formState.personalInfo;
-        const { fullName: fullNameEdited, title: titleEdited } = editedFields.personalInfo;
+        const { fullName } = formState.personalInfo;
+        const { fullName: fullNameEdited } = editedFields.personalInfo;
         
-        // First check if content exists
+        // Only full name is required, other fields are optional
         if (!fullName.trim()) {
           return { valid: false, message: "Please provide your full name" };
         }
-        if (!title.trim()) {
-          return { valid: false, message: "Please provide your professional title" };
-        }
         
-        // Now check if user actually edited these fields rather than using placeholders
+        // Now check if user actually edited the name field rather than using placeholder
         if (!fullNameEdited) {
           return { valid: false, message: "Please edit your full name" };
-        }
-        if (!titleEdited) {
-          return { valid: false, message: "Please edit your professional title" };
         }
         
         return { valid: true };
@@ -727,39 +721,39 @@ const ResumeTemplates = () => {
         return { valid: true };
       
       case "experience":
-        // Experience is optional
-        const hasAnyEditedExperience = formState.experience.some((exp, index) => {
-          if (index >= editedFields.experience.length) return false;
-          const fieldEdits = editedFields.experience[index];
-          return exp.title.trim() !== "" && exp.company.trim() !== "" && 
-                 (fieldEdits.title || fieldEdits.company || fieldEdits.description);
+        // Experience is completely optional - users can have no job experience
+        // Check if any fields have been partially filled in
+        const hasPartialExperience = formState.experience.some(exp => {
+          const hasTitle = exp.title.trim() !== "";
+          const hasCompany = exp.company.trim() !== "";
+          // Only validate if user has started filling in the entry
+          return (hasTitle || hasCompany) && !(hasTitle && hasCompany);
         });
         
-        // If any experience entry has title or company but not both, that's invalid
-        const hasInvalidExperience = formState.experience.some(
-          exp => (exp.title.trim() !== "" && exp.company.trim() === "") || 
-                 (exp.title.trim() === "" && exp.company.trim() !== "")
-        );
-        
-        if (hasInvalidExperience) {
-          return { valid: false, message: "Please complete both job title and company for each experience entry" };
+        if (hasPartialExperience) {
+          // If they started filling in experience, make sure it's complete
+          return { valid: false, message: "If you're adding work experience, please provide both job title and company" };
         }
         
-        // If no edited experience is found, that's okay - it's optional
+        // All experience is valid (either complete or empty)
         return { valid: true };
       
       case "education":
-        // Education is optional
-        const hasInvalidEducation = formState.education.some(
-          edu => (edu.degree.trim() !== "" && edu.institution.trim() === "") || 
-                 (edu.degree.trim() === "" && edu.institution.trim() !== "")
-        );
+        // Education is completely optional - students might not have degrees yet
+        // Check if any fields have been partially filled in
+        const hasPartialEducation = formState.education.some(edu => {
+          const hasDegree = edu.degree.trim() !== "";
+          const hasInstitution = edu.institution.trim() !== "";
+          // Only validate if user has started filling in the entry
+          return (hasDegree || hasInstitution) && !(hasDegree && hasInstitution);
+        });
         
-        if (hasInvalidEducation) {
-          return { valid: false, message: "Please complete both degree and institution for each education entry" };
+        if (hasPartialEducation) {
+          // If they started filling in education, make sure it's complete
+          return { valid: false, message: "If you're adding education, please provide both degree and institution" };
         }
         
-        // Education is optional
+        // All education is valid (either complete or empty)
         return { valid: true };
       
       case "projects":
