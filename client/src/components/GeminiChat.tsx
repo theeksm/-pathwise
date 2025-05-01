@@ -113,30 +113,68 @@ const GeminiChat = () => {
           console.log("No chat ID, creating new standard chat");
           const newChat = await createChatMutation.mutateAsync();
           console.log("Created new standard chat:", newChat);
-          setChatId(newChat.id); // Set the new chat ID
+          
+          // We need to immediately set chatId here to prevent race conditions
+          setChatId(newChat.id);
+          
+          // Add optimistic update - immediately show user message before API response
+          const optimisticUserMessage = {
+            role: "user",
+            content: content,
+            timestamp: new Date().toISOString()
+          };
           
           // Send message to the new chat with standard mode
           const response = await apiRequest("POST", `/api/chats/${newChat.id}/message`, { 
             content,
             chatMode: "standard" // Specify standard (Gemini) mode
           });
-          console.log("Standard message response:", response);
           
+          if (!response.ok) {
+            throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+          }
+          
+          console.log("Standard message response status:", response.status);
           chatData = await response.json();
+          console.log("Received chat data from server:", chatData);
+          
+          // Verify we got a proper response with messages
+          if (!chatData || !chatData.messages || !Array.isArray(chatData.messages)) {
+            throw new Error("Invalid response from server: missing messages array");
+          }
+          
+          return chatData;
         } else {
           // Send message to existing chat with standard mode
           console.log("Using existing chat ID for standard mode:", chatId);
+          
+          // Add optimistic update - immediately show user message before API response
+          const optimisticUserMessage = {
+            role: "user",
+            content: content,
+            timestamp: new Date().toISOString()
+          };
+          
           const response = await apiRequest("POST", `/api/chats/${chatId}/message`, { 
             content,
             chatMode: "standard" // Specify standard (Gemini) mode
           });
-          console.log("Standard message response:", response);
           
+          if (!response.ok) {
+            throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+          }
+          
+          console.log("Standard message response status:", response.status);
           chatData = await response.json();
+          console.log("Received chat data from server:", chatData);
+          
+          // Verify we got a proper response with messages
+          if (!chatData || !chatData.messages || !Array.isArray(chatData.messages)) {
+            throw new Error("Invalid response from server: missing messages array");
+          }
+          
+          return chatData;
         }
-        
-        console.log("Processed standard chat data:", chatData);
-        return chatData; // Return the parsed JSON data
       } catch (error) {
         console.error("Error in standard sendMessageMutation:", error);
         throw error;
