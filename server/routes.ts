@@ -528,6 +528,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(learningPaths);
   });
 
+  app.post("/api/learning-paths", isAuthenticated, async (req, res) => {
+    const user = req.user as any;
+    
+    try {
+      // Create a custom schema that extends the insertLearningPathSchema
+      // but makes some fields optional based on our application needs
+      const createLearningPathSchema = z.object({
+        skillId: z.number().optional(),
+        skillName: z.string(),
+        courseTitle: z.string(),
+        platform: z.string(),
+        cost: z.string().optional().default("Free"),
+        duration: z.string().optional().default("Self-paced"),
+        url: z.string().optional().default(""),
+        status: z.enum(["not_started", "in_progress", "completed"]).optional().default("not_started")
+      });
+      
+      const validatedData = createLearningPathSchema.parse(req.body);
+      
+      // Create the learning path with the user ID
+      const learningPath = await storage.createLearningPath({
+        userId: user.id,
+        skillId: validatedData.skillId || 0, // Default to 0 if undefined
+        courseTitle: validatedData.courseTitle,
+        platform: validatedData.platform,
+        cost: validatedData.cost,
+        duration: validatedData.duration,
+        url: validatedData.url,
+        status: validatedData.status
+      });
+      
+      res.status(201).json(learningPath);
+    } catch (error) {
+      console.error("Error creating learning path:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      
+      res.status(500).json({ message: "Failed to create learning path" });
+    }
+  });
+
   app.patch("/api/learning-paths/:id", isAuthenticated, async (req, res) => {
     const pathId = parseInt(req.params.id);
     const updateSchema = z.object({

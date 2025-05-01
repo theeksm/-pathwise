@@ -214,6 +214,7 @@ const LearningPaths = () => {
     
     addCustomPathMutation.mutate({
       skillId,
+      skillName: newPathData.skillName,
       courseTitle: newPathData.courseTitle,
       platform: newPathData.platform,
       cost: newPathData.cost,
