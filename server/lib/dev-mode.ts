@@ -3,7 +3,12 @@ import { storage } from '../storage';
 
 // Check if dev mode is enabled
 export const isDevMode = (): boolean => {
-  return process.env.NODE_ENV !== 'production' && process.env.DEV_MODE === 'true';
+  // For development, enable dev mode by default
+  // This can be disabled by setting DEV_MODE=false
+  if (process.env.NODE_ENV !== 'production') {
+    return process.env.DEV_MODE !== 'false';
+  }
+  return false;
 };
 
 // Mock developer user object for dev mode
