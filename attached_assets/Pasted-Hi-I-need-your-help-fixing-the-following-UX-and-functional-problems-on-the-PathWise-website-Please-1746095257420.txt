@@ -1,0 +1,39 @@
+Hi, I need your help fixing the following UX and functional problems on the PathWise website. Please address them thoroughly and ensure each point is fully resolved. Here’s the complete breakdown:
+
+⸻
+
+1. Chatbot Scroll Glitch (AI Chat Page)
+	•	Issue: When entering the chatbot page (both Standard Mode – Gemini AI and May – Career Assistant), the page scrolls all the way to the bottom even before a message is sent. After sending a message, it auto-scrolls again unnecessarily, which annoys users.
+	•	Fix:
+	•	Only auto-scroll when a new bot response is received.
+	•	If there are no responses yet, do not scroll.
+	•	Ensure scrolling behavior fixes the view at the latest message only when it exists, using scrollIntoView() or an equivalent solution that avoids forcing users to scroll up manually.
+
+⸻
+
+2. Resume Templates Page – Form and AI Summary Issues
+	•	Issue 1: Required fields block progress unnecessarily.
+	•	Some users (e.g. students or those with no job experience) cannot fill in company names or job titles. These fields are currently marked as required, which prevents them from moving to the next step.
+	•	Fix: Make all fields optional or provide a “No experience yet” toggle to auto-fill with placeholder data like “N/A” and let users proceed.
+	•	Issue 2: ‘Generate AI Summary’ button doesn’t work.
+	•	It throws an error about needing a job title, but there is no job title field in that section.
+	•	Fix: Either add the job title field or change the logic to work with existing fields like Skills, Experience, and Professional Title.
+	•	Improvement: After users complete personal info and skills sections, include a button labeled:
+	•	"Generate Resume Using AI Based on My Info"
+	•	This button should generate a full resume using all filled-in fields and store/save the result to Firestore or the current user session.
+
+⸻
+
+3. UI Hover Bug in Dark Theme (Skill Gap Analyzer and Others)
+	•	Issue: In dark mode, boxes/sections like the Skill Gap Analyzer turn brighter on hover when the user hasn’t clicked yet. This breaks consistency and looks buggy.
+	•	Fix:
+	•	Remove or disable hover brightness transitions across all components in dark mode unless it’s a button or an intentionally interactive element.
+	•	Keep styling clean and static unless necessary for functionality.
+
+⸻
+
+Please update the components or CSS modules involved (e.g. .hover:brightness, resumeForm.tsx, ChatWindow.tsx, ResumeAI.ts, SkillGapPage.tsx, etc.), and test each fix thoroughly before completing.
+
+Make sure the changes are compatible with both light and dark mode, and all responsive views (mobile/tablet/desktop).
+
+Let me know once these issues are fixed and deployed. ✅
