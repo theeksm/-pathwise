@@ -45,7 +45,7 @@ export default function DevModePanel() {
   };
   
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 left-4 z-50">
       {!isOpen ? (
         <Button 
           className="rounded-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold"
