@@ -138,6 +138,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // First check developer mode authentication
     if (isDevMode() && req.cookies && req.cookies['dev-access'] === 'true') {
       console.log('[DEV MODE] Using developer authentication bypass');
+      // Set the mock dev user in the request
+      const mockDevUser = {
+        id: 999,
+        username: 'dev_user',
+        email: 'dev@pathwise.local',
+        name: 'Developer Account',
+        bio: 'This is a mock developer account for testing purposes',
+        role: 'admin',
+        membership: 'premium',
+        createdAt: new Date().toISOString()
+      };
+      req.user = mockDevUser;
       return next();
     }
     
@@ -148,6 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     res.status(401).json({ message: "Unauthorized" });
   };
+  
+  // Developer mode login endpoint is defined below with the other auth routes
 
   // Auth routes
   app.post("/api/auth/register", routeZValidator("body", insertUserSchema), async (req, res) => {
@@ -185,11 +199,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  app.get("/api/auth/user", isAuthenticated, (req, res) => {
-    const user = req.user as any;
-    
-    // If we're using dev mode authentication bypass, return the mock dev user
-    if (isDevMode() && req.cookies && req.cookies['dev-access'] === 'true' && !req.user) {
+  app.get("/api/auth/user", (req, res) => {
+    // Check for developer mode with dev-access cookie
+    if (isDevMode() && req.cookies && req.cookies['dev-access'] === 'true') {
+      console.log('[DEV MODE] Returning mock developer user data');
       return res.json({
         id: 999,
         username: 'dev_user',
@@ -200,6 +213,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
     
+    // Regular authentication check
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const user = req.user as any;
     res.json({ id: user.id, username: user.username, email: user.email });
   });
   
