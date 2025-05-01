@@ -19,14 +19,9 @@ export default function DevModePanel() {
   const [isDevModeActive, setIsDevModeActive] = useState(hasDevSession());
   const [, setLocation] = useLocation();
   
-  // Only render in dev mode
-  if (!isDevMode()) {
-    return null;
-  }
-  
   // Automatically activate dev mode when component mounts if it's not already active
   useEffect(() => {
-    if (!isDevModeActive) {
+    if (isDevMode() && !isDevModeActive) {
       activateDevMode().then(success => {
         if (success) {
           setIsDevModeActive(true);
@@ -35,6 +30,11 @@ export default function DevModePanel() {
       });
     }
   }, [isDevModeActive]);
+  
+  // Only render in dev mode
+  if (!isDevMode()) {
+    return null;
+  }
   
   const handleExitDevMode = () => {
     clearDevSession();
