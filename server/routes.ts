@@ -18,6 +18,7 @@ import { getStockData, StockAPIError, StockAPIErrorType } from "./lib/stockAPI";
 import { generateContent } from "./lib/generateContent";
 import { getMagicLoopsResponse } from "./lib/magicLoops";
 import session from "express-session";
+import { checkDevModeAuth, handleDevModeLogin, initializeDevUser, isDevMode } from "./lib/dev-mode";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
