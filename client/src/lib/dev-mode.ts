@@ -3,7 +3,12 @@
 
 // Check if dev mode is enabled
 export const isDevMode = (): boolean => {
-  return import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === 'true';
+  // For development, let's enable dev mode by default
+  // This can be overridden by setting VITE_DEV_MODE=false explicitly
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_DEV_MODE !== 'false';
+  }
+  return false;
 };
 
 // Mock developer user data
