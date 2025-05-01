@@ -45,10 +45,13 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
     ]);
   }, [initialMessage]);
 
-  // Auto-scroll to the bottom when messages change
+  // Auto-scroll to the bottom only when new messages are received
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    // Only auto-scroll when there are messages
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages.length]);
 
   // Function to send message to Magic Loops API
   const sendMessage = async (message: string) => {
