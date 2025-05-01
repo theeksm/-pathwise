@@ -24,7 +24,9 @@ import {
   ChevronDown,
   LogOut,
   User,
-  Gift
+  Gift,
+  Layers,
+  GraduationCap
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/assets/logo";
@@ -38,6 +40,7 @@ const features = [
   { icon: FileText, name: "Resume Optimizer", path: "/resume-optimizer" },
   { icon: FileText, name: "Resume Templates", path: "/resume-templates" },
   { icon: Briefcase, name: "Job Matching", path: "/job-matching" },
+  { icon: GraduationCap, name: "Learning Paths", path: "/learning-paths" },
   { icon: Bot, name: "AI Career Coach", path: "/ai-chat" },
   { icon: TrendingUp, name: "Market Trends", path: "/market-trends" },
   { icon: Rocket, name: "Entrepreneurship Advisor", path: "/entrepreneurship" },
@@ -60,6 +63,8 @@ const Navbar = () => {
         return "Find job opportunities that match your skills and experience with personalized scores.";
       case "AI Career Coach":
         return "Chat with our AI career coach for personalized guidance and advice.";
+      case "Learning Paths":
+        return "Track your courses, organize your learning journey, and develop new skills for your career.";
       case "Market Trends":
         return "Stay updated with the latest market trends and industry insights.";
       case "Entrepreneurship Advisor":
