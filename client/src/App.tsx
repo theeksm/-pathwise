@@ -20,6 +20,7 @@ import JobMatching from "@/pages/JobMatching";
 import MarketTrends from "@/pages/MarketTrends";
 import StockProfile from "@/pages/StockProfile";
 import EntrepreneurshipAdvisor from "@/pages/EntrepreneurshipAdvisor";
+import LearningPaths from "@/pages/LearningPaths";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
@@ -53,6 +54,7 @@ function Router() {
           <ProtectedRoute path="/resume-optimizer" component={ResumeOptimizer} />
           <ProtectedRoute path="/job-matching" component={JobMatching} />
           <ProtectedRoute path="/entrepreneurship" component={EntrepreneurshipAdvisor} />
+          <ProtectedRoute path="/learning-paths" component={LearningPaths} />
           <ProtectedRoute path="/ai-chat" component={AIChatPage} />
           
           <Route component={NotFound} />
