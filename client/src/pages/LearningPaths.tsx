@@ -264,6 +264,11 @@ const LearningPaths = () => {
     const skill = skills?.find((s: any) => s.id === skillId);
     return skill?.isMissing || false;
   };
+  
+  // Format status for display
+  const formatStatus = (status: string | null) => {
+    return status ? status.replace("_", " ") : "unknown";
+  };
 
   if (isLoading || isLoadingSkills) {
     return (
@@ -383,7 +388,7 @@ const LearningPaths = () => {
                     duration={path.duration || ""}
                     skillName={getSkillName(path.skillId)}
                     isMissing={getSkillStatus(path.skillId)}
-                    tags={[path.status.replace("_", " ")]}
+                    tags={[formatStatus(path.status)]}
                     onStartCourse={() => {
                       if (path.url) {
                         window.open(path.url, "_blank");
@@ -438,7 +443,7 @@ const LearningPaths = () => {
                     duration={path.duration || ""}
                     skillName={getSkillName(path.skillId)}
                     isMissing={getSkillStatus(path.skillId)}
-                    tags={[path.status.replace("_", " ")]}
+                    tags={[formatStatus(path.status)]}
                     onStartCourse={() => {
                       if (path.url) {
                         window.open(path.url, "_blank");
@@ -478,7 +483,7 @@ const LearningPaths = () => {
                     duration={path.duration || ""}
                     skillName={getSkillName(path.skillId)}
                     isMissing={getSkillStatus(path.skillId)}
-                    tags={[path.status.replace("_", " ")]}
+                    tags={[formatStatus(path.status)]}
                     onStartCourse={() => {
                       if (path.url) {
                         window.open(path.url, "_blank");
@@ -518,7 +523,7 @@ const LearningPaths = () => {
                     duration={path.duration || ""}
                     skillName={getSkillName(path.skillId)}
                     isMissing={getSkillStatus(path.skillId)}
-                    tags={[path.status.replace("_", " ")]}
+                    tags={[formatStatus(path.status)]}
                     onStartCourse={() => {
                       if (path.url) {
                         window.open(path.url, "_blank");
