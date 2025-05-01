@@ -196,13 +196,15 @@ const GeminiChat = () => {
     }
   };
 
-  // Auto-scroll to bottom on new message
+  // Auto-scroll to bottom only when new messages are added
   useEffect(() => {
-    // Only auto-scroll when chat has messages
-    if (currentChat?.messages && currentChat.messages.length > 0) {
+    // Only auto-scroll after a message is sent or received, not on initial load
+    if (currentChat?.messages && 
+        currentChat.messages.length > 0 && 
+        sendMessageMutation.isSuccess) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [currentChat?.messages?.length]);
+  }, [currentChat?.messages?.length, sendMessageMutation.isSuccess]);
 
   // Handle Enter key to send message (Shift+Enter for new line)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

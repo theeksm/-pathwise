@@ -1,0 +1,56 @@
+Please address the following bugs and improvements across the PathWise project, covering chatbot behavior, resume template logic, visual bugs, and developer tools.
+
+⸻
+
+🔧 1. AI Chat Scroll Behavior (Standard + Enhanced Modes)
+	•	Bug: Upon entering the chat page, it auto-scrolls all the way down even before anything is typed.
+	•	Fix: Only scroll to the latest message after a reply from the assistant has been added. Do not scroll automatically on initial page load or when there’s no message history yet.
+
+⸻
+
+🧠 2. Standard AI Chat (Gemini Mode) Bug
+	•	Issue: After typing a message and pressing Enter, the input disappears and there’s no response.
+	•	Fix:
+	•	Display the user’s message after submission.
+	•	Ensure the Gemini API is correctly called.
+	•	Display assistant’s response.
+	•	Prevent “new chat created” from clearing the message without processing.
+
+⸻
+
+📝 3. Resume Template Page Logic
+	•	Issues:
+	•	Certain fields (like Job Title or Experience) are required but many users (e.g. students) may not have info to fill.
+	•	“Generate AI Summary” doesn’t work without a job title, which is missing from the form.
+	•	Fixes:
+	•	Make all fields optional or allow skipping.
+	•	Add a “Job Title” field to align with backend requirements.
+	•	Ensure “Generate AI Summary” button works with whatever is provided.
+	•	Add a button labeled:
+“Generate Resume with AI using filled-in information”
+This should trigger the AI and build a draft resume.
+
+⸻
+
+🌚 4. Dark Mode Hover UI Glitch
+	•	Issue: In Skill Gap Analyzer and similar pages, hovering over certain containers makes them turn light gray in dark mode, which is distracting.
+	•	Fix:
+	•	Remove or reduce the brightness change on hover.
+	•	Maintain consistent dark-mode colors for hover/active states.
+
+⸻
+
+👨‍💻 5. Developer Mode Login Bypass
+	•	Purpose: As a developer, I want to test pages quickly without logging in every time.
+	•	Solution:
+	•	Add a “Dev Mode” shortcut that bypasses Firebase Auth and logs in a test user automatically (e.g., dev@pathwise.com).
+	•	Trigger this through a hidden localStorage flag or ?dev=true URL param.
+	•	When Dev Mode is active, automatically redirect to dashboard/chat/etc. as the dev user.
+
+⸻
+
+🔲 6. Move “Dev Mode” Button
+	•	Bug: The “Dev Mode” button is currently located in the bottom-right corner, overlapping with the mini chatbot icon.
+	•	Fix: Move the Dev Mode button to the bottom-left corner of the screen and ensure it:
+	•	Does not overlap with other UI components.
+	•	Has proper dark/light mode styling.
