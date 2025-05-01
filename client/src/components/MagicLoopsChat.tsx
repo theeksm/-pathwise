@@ -4,10 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Send, User } from "lucide-react";
+import { Loader2, Send, User, Crown } from "lucide-react";
 import userAvatar from "@/assets/user-avatar.svg";
 import aiAvatar from "@/assets/ai-avatar.svg";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 // Define the message type
 interface Message {
@@ -24,14 +25,20 @@ interface MagicLoopsChatProps {
     careerInterest?: string;
     educationLevel?: string;
   };
+  isSubscribed?: boolean; // Flag to determine if user has access to this premium feature
 }
 
-export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your career assistant. How can I help you today?", userInfo = {} }: MagicLoopsChatProps) {
+export default function MagicLoopsChat({ 
+  initialMessage = "Hi, I'm May, your career assistant. How can I help you today?", 
+  userInfo = {},
+  isSubscribed = false
+}: MagicLoopsChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   // Initialize with the assistant's greeting
   useEffect(() => {
@@ -146,7 +153,8 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim() && !isLoading) {
+    // Only allow message submission if the user is subscribed and the input isn't empty
+    if (input.trim() && !isLoading && isSubscribed) {
       sendMessage(input);
     }
   };
@@ -231,35 +239,53 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
         </ScrollArea>
       </CardContent>
       
+      {/* Input Area */}
       <div className="p-4 border-t">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask May about your career questions..."
-            className="flex-1 resize-none"
-            rows={1}
-            disabled={isLoading}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <Button 
-            type="submit" 
-            size="icon" 
-            disabled={isLoading || !input.trim()}
-            className="h-full aspect-square"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </form>
+        {isSubscribed ? (
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask May about your career questions..."
+              className="flex-1 resize-none"
+              rows={1}
+              disabled={isLoading}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={isLoading || !input.trim()}
+              className="h-full aspect-square"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </Button>
+          </form>
+        ) : (
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
+            <div className="flex justify-center mb-2">
+              <Crown className="h-6 w-6 text-yellow-500" />
+            </div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-100 mb-2">
+              This AI is available to subscribed users only. Upgrade to unlock.
+            </h3>
+            <Button 
+              onClick={() => navigate("/pricing")} 
+              className="mt-2 bg-primary hover:bg-primary/90"
+            >
+              Upgrade Now
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );

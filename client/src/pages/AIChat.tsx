@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
+import { isDevMode, hasDevSession } from "@/lib/dev-mode";
 
 const AIChatPage = () => {
   const { user } = useAuth() || { user: null };
@@ -21,10 +22,23 @@ const AIChatPage = () => {
   
   const [currentTab, setCurrentTab] = useState<string>(getInitialTab());
   
-  // Check if user has subscription
-  // Since our user model doesn't have subscriptionTier field yet, we'll simulate with dev mode for now
-  // In production, this would check the actual user subscription status
-  const hasSubscription = !!user; // For testing: treat any logged-in user as subscribed
+  // Check if user has subscription or if dev mode is active
+  // In a real production environment, we would check user.subscriptionTier or similar
+  const hasActiveDevSession = isDevMode() && hasDevSession();
+  
+  // Only subscribed users or developers in dev mode can access premium features
+  // For demonstration, we'll consider any logged-in user as subscribed
+  const hasSubscription = !!user || hasActiveDevSession;
+  
+  // Premium AI assistants (May and Flo) require subscription
+  const canAccessPremiumAssistants = hasSubscription || hasActiveDevSession;
+  
+  // Notify about dev mode bypass
+  useEffect(() => {
+    if (hasActiveDevSession) {
+      console.log("[DEV MODE] Developer session active - premium features unlocked");
+    }
+  }, [hasActiveDevSession]);
   
   // Save selected tab to localStorage when it changes
   useEffect(() => {
@@ -44,30 +58,16 @@ const AIChatPage = () => {
         <div className="flex justify-center mb-4">
           <TabsList className="grid grid-cols-3">
             <TabsTrigger value="standard">Standard — Gemini AI</TabsTrigger>
-            <TabsTrigger value="may-assistant" disabled={!user}>May — Career Assistant</TabsTrigger>
-            <TabsTrigger value="flo-assistant">Flo — Empathetic AI</TabsTrigger>
+            <TabsTrigger value="may-assistant" disabled={!canAccessPremiumAssistants}>
+              May — Career Assistant {!canAccessPremiumAssistants && "🔒"}
+            </TabsTrigger>
+            <TabsTrigger value="flo-assistant" disabled={!canAccessPremiumAssistants}>
+              Flo — Empathetic AI {!canAccessPremiumAssistants && "🔒"}
+            </TabsTrigger>
           </TabsList>
         </div>
         
-        {/* Show appropriate upgrade messages for locked assistants */}
-        {(currentTab === "may-assistant" && !user) && (
-          <Card className="shadow-lg border-blue-200 max-w-md mx-auto p-6 mb-4">
-            <h2 className="text-lg font-medium text-center mb-4">Meet May, Your Career Assistant</h2>
-            <p className="text-muted-foreground text-center mb-6">
-              May is our premium career coach powered by Magic Loops AI, providing in-depth career guidance, interview prep, resume feedback, and personalized job recommendations.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Button onClick={() => navigate("/auth")} variant="outline">
-                Sign In
-              </Button>
-              <Button onClick={() => navigate("/pricing")} className="bg-primary hover:bg-primary/90">
-                See Pricing Plans
-              </Button>
-            </div>
-          </Card>
-        )}
-        
-        {/* Standard Chat powered by Gemini */}
+        {/* Standard Chat powered by Gemini - Available to all users */}
         <TabsContent value="standard" className="mt-0">
           <Card className="shadow-lg border-blue-200 overflow-hidden min-h-[800px]">
             <CardContent className="p-0 h-[800px]">
@@ -76,17 +76,18 @@ const AIChatPage = () => {
           </Card>
         </TabsContent>
         
-        {/* May Career Assistant powered by Magic Loops - only shown if user is logged in */}
+        {/* May Career Assistant - Premium Feature */}
         <TabsContent value="may-assistant" className="mt-0">
-          {user ? (
+          {canAccessPremiumAssistants ? (
             <Card className="shadow-lg border-blue-200 overflow-hidden min-h-[800px]">
               <CardContent className="p-0 h-[800px]">
                 <MagicLoopsChat 
                   initialMessage="Hi, I'm May, your career assistant powered by GPT-4.1. I specialize in career advice, interview preparation, resume optimization, and job matching. How can I help you today?"
                   userInfo={{
-                    careerInterest: typeof user.targetCareer === 'string' ? user.targetCareer : '',
-                    educationLevel: typeof user.educationLevel === 'string' ? user.educationLevel : ''
+                    careerInterest: user && typeof user.targetCareer === 'string' ? user.targetCareer : '',
+                    educationLevel: user && typeof user.educationLevel === 'string' ? user.educationLevel : ''
                   }}
+                  isSubscribed={true}
                 />
               </CardContent>
             </Card>
@@ -94,27 +95,51 @@ const AIChatPage = () => {
             <Card className="shadow-lg border-blue-200 max-w-md mx-auto p-6">
               <h2 className="text-lg font-medium text-center mb-4">Meet May, Your Career Assistant</h2>
               <p className="text-muted-foreground text-center mb-6">
-                May is our premium AI-powered career coach, trained on thousands of career paths to provide personalized guidance for your professional journey.
+                This AI is available to subscribed users only. Upgrade to unlock.
               </p>
-              <div className="flex justify-center">
+              <div className="flex justify-center space-x-4">
+                {!user && (
+                  <Button onClick={() => navigate("/auth")} variant="outline">
+                    Sign In
+                  </Button>
+                )}
                 <Button onClick={() => navigate("/pricing")} className="bg-primary hover:bg-primary/90">
-                  Upgrade Membership
+                  Upgrade Now
                 </Button>
               </div>
             </Card>
           )}
         </TabsContent>
         
-        {/* Flo - Empathetic AI Assistant - available for subscription users only */}
+        {/* Flo - Empathetic AI Assistant - Premium Feature */}
         <TabsContent value="flo-assistant" className="mt-0">
-          <Card className="shadow-lg border-purple-200 overflow-hidden min-h-[800px]">
-            <CardContent className="p-0 h-[800px]">
-              <FloChat
-                initialMessage="Hi, I'm Flo, your empathetic career companion. I'm here to listen, understand, and provide supportive guidance for your career journey. How are you feeling today about your career path?"
-                isSubscribed={hasSubscription}
-              />
-            </CardContent>
-          </Card>
+          {canAccessPremiumAssistants ? (
+            <Card className="shadow-lg border-purple-200 overflow-hidden min-h-[800px]">
+              <CardContent className="p-0 h-[800px]">
+                <FloChat
+                  initialMessage="Hi, I'm Flo, your empathetic career companion. I'm here to listen, understand, and provide supportive guidance for your career journey. How are you feeling today about your career path?"
+                  isSubscribed={true}
+                />
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-lg border-purple-200 max-w-md mx-auto p-6">
+              <h2 className="text-lg font-medium text-center mb-4">Meet Flo, Your Empathetic AI</h2>
+              <p className="text-muted-foreground text-center mb-6">
+                This AI is available to subscribed users only. Upgrade to unlock.
+              </p>
+              <div className="flex justify-center space-x-4">
+                {!user && (
+                  <Button onClick={() => navigate("/auth")} variant="outline">
+                    Sign In
+                  </Button>
+                )}
+                <Button onClick={() => navigate("/pricing")} className="bg-purple-600 hover:bg-purple-700 text-white">
+                  Upgrade Now
+                </Button>
+              </div>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
