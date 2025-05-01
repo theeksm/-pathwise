@@ -210,10 +210,30 @@ const OpenAIChat = () => {
     }
   };
 
-  // Auto-scroll to bottom on new message
+  // Track previous messages length to determine when new messages are added
+  const prevMessagesLengthRef = useRef(0);
+  
+  // Auto-scroll to bottom only when new messages are added
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [currentChat]);
+    const currentLength = currentChat?.messages?.length || 0;
+    
+    // Only scroll if:
+    // 1. We have messages AND
+    // 2. Either:
+    //    a. The number of messages has increased (new message added) OR
+    //    b. A message was just successfully sent
+    if (currentChat?.messages && 
+        ((currentLength > prevMessagesLengthRef.current) || sendMessageMutation.isSuccess)) {
+      
+      // Add small delay to ensure rendering is complete before scrolling
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+      
+      // Update the previous length reference
+      prevMessagesLengthRef.current = currentLength;
+    }
+  }, [currentChat?.messages, sendMessageMutation.isSuccess]);
 
   // Handle Enter key to send message (Shift+Enter for new line)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
