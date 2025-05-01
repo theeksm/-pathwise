@@ -45,15 +45,29 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
     ]);
   }, [initialMessage]);
 
+  // Track previous messages length to determine when new messages are added
+  const prevMessagesLengthRef = useRef(0);
+  
   // Auto-scroll to the bottom only when new messages are received
   useEffect(() => {
-    // Don't scroll on initial render with the welcome message
+    // Don't scroll on initial render with just the welcome message
     const isInitialLoad = messages.length === 1 && messages[0].id === "welcome-message";
+    const isNewMessage = messages.length > prevMessagesLengthRef.current;
     
-    // Only auto-scroll when there are messages and it's not the initial welcome message
-    if (messages.length > 0 && !isInitialLoad) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Only auto-scroll when:
+    // 1. There are messages AND
+    // 2. Either:
+    //    a. It's not the initial welcome message AND
+    //    b. New messages have been added
+    if (messages.length > 0 && !isInitialLoad && isNewMessage) {
+      // Add small delay to ensure rendering is complete before scrolling
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
+    
+    // Update the previous length reference
+    prevMessagesLengthRef.current = messages.length;
   }, [messages.length]);
 
   // Function to send message to Magic Loops API
