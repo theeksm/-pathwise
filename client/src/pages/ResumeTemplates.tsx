@@ -714,23 +714,11 @@ const ResumeTemplates = () => {
 
   // Generate AI suggestions for summary
   const generateSummary = async () => {
-    // Check if there's at least some information to work with
-    const hasSkills = formState.skills.some(skill => skill.name.trim() !== "");
-    const hasName = formState.personalInfo.fullName.trim() !== "";
-    
-    if (!hasName && !hasSkills) {
-      toast({
-        title: "Missing information",
-        description: "Please provide at least your name or some skills for better suggestions.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    // Make it work with minimal information
     setIsGenerating(true);
     
     try {
-      // Construct the skills string
+      // Construct the skills string - don't enforce skill requirements
       const skillsString = formState.skills
         .filter(skill => skill.name.trim() !== "")
         .map(skill => skill.name)
@@ -738,15 +726,42 @@ const ResumeTemplates = () => {
       
       // Construct the experience string (optional)
       const experienceString = formState.experience
-        .filter(exp => exp.title.trim() !== "" && exp.company.trim() !== "")
-        .map(exp => `${exp.title} at ${exp.company}`)
+        .filter(exp => exp.title.trim() !== "" || exp.company.trim() !== "")
+        .map(exp => {
+          let expText = "";
+          if (exp.title.trim()) expText += exp.title;
+          if (exp.company.trim()) {
+            if (expText) expText += " at ";
+            expText += exp.company;
+          }
+          return expText;
+        })
+        .filter(text => text) // Remove any empty strings
         .join(", ");
       
       // Use professional title if available, otherwise use more generic wording
       const professionalTitle = formState.personalInfo.title.trim() || "professional";
+      
+      // Prepare name info - use a placeholder if empty
+      const nameInfo = formState.personalInfo.fullName.trim() || "a professional";
 
-      // Prepare the prompt
-      const prompt = `Generate a professional resume summary for a ${professionalTitle} with ${skillsString ? `skills in ${skillsString}` : 'relevant skills'}${experienceString ? ` and experience as ${experienceString}` : ""}. The person's name is ${formState.personalInfo.fullName || '[Name]'}. Keep it concise, professional, and around 2-3 sentences.`;
+      // Prepare the prompt 
+      let prompt = "";
+      
+      // Customize prompt based on available information
+      if (skillsString && experienceString) {
+        prompt = `Generate a professional resume summary for ${nameInfo} who is a ${professionalTitle} with skills in ${skillsString} and experience with ${experienceString}. Keep it concise, professional, and around 2-3 sentences.`;
+      } else if (skillsString) {
+        prompt = `Generate a professional resume summary for ${nameInfo} who is a ${professionalTitle} with skills in ${skillsString}. Keep it concise, professional, and around 2-3 sentences.`;
+      } else if (experienceString) {
+        prompt = `Generate a professional resume summary for ${nameInfo} who is a ${professionalTitle} with experience in ${experienceString}. Keep it concise, professional, and around 2-3 sentences.`;
+      } else {
+        // If we have nothing specific, generate a generic professional summary
+        prompt = `Generate a professional resume summary for ${nameInfo} who is a ${professionalTitle}. Include generic but impressive professional qualities. Keep it concise, professional, and around 2-3 sentences.`;
+      }
+      
+      // Add logging for debug
+      console.log("Generating summary with prompt:", prompt);
       
       const response = await fetch("/api/generate-content", {
         method: "POST",
@@ -763,6 +778,9 @@ const ResumeTemplates = () => {
       const data = await response.json();
       
       if (data.content) {
+        // Log the API response for debugging
+        console.log("Generated summary:", data.content);
+        
         setFormState(prev => ({
           ...prev,
           personalInfo: {
@@ -790,12 +808,14 @@ const ResumeTemplates = () => {
           title: "Summary generated",
           description: "AI-suggested summary has been added to your resume."
         });
+      } else {
+        throw new Error("Empty content returned from API");
       }
     } catch (error) {
       console.error("Error generating summary:", error);
       toast({
         title: "Generation failed",
-        description: "Failed to generate summary. Please try again later.",
+        description: "Failed to generate summary. Please try again later. Error: " + (error instanceof Error ? error.message : String(error)),
         variant: "destructive"
       });
     } finally {
@@ -807,20 +827,26 @@ const ResumeTemplates = () => {
   const generateJobDescription = async (index: number) => {
     const experience = formState.experience[index];
     
-    if (!experience.title || !experience.company) {
-      toast({
-        title: "Missing information",
-        description: "Please provide both job title and company name for better suggestions.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    // Be more lenient - generate with whatever information is available
     setIsGenerating(true);
     
     try {
-      // Prepare the prompt
-      const prompt = `Generate 3-4 professional bullet points describing responsibilities and achievements for a ${experience.title} position at ${experience.company}. Focus on impactful, measurable achievements where possible. Format as bullet points.`;
+      // Prepare the prompt with available information
+      let prompt = "";
+      
+      if (experience.title && experience.company) {
+        prompt = `Generate 3-4 professional bullet points describing responsibilities and achievements for a ${experience.title} position at ${experience.company}. Focus on impactful, measurable achievements where possible. Format as bullet points.`;
+      } else if (experience.title) {
+        prompt = `Generate 3-4 professional bullet points describing responsibilities and achievements for a ${experience.title} position. Focus on impactful, measurable achievements where possible. Format as bullet points.`;
+      } else if (experience.company) {
+        prompt = `Generate 3-4 professional bullet points describing responsibilities and achievements for a professional role at ${experience.company}. Focus on impactful, measurable achievements where possible. Format as bullet points.`;
+      } else {
+        // Default case if neither title nor company are provided
+        prompt = `Generate 3-4 professional bullet points describing responsibilities and achievements for a generic professional role. Focus on impactful, measurable achievements that would be valuable on a resume. Format as bullet points.`;
+      }
+      
+      // Add logging for debug
+      console.log("Generating job description with prompt:", prompt);
       
       const response = await fetch("/api/generate-content", {
         method: "POST",
@@ -837,6 +863,9 @@ const ResumeTemplates = () => {
       const data = await response.json();
       
       if (data.content) {
+        // Log response for debugging
+        console.log("Generated job description:", data.content);
+        
         // Update the specific job description
         handleExperienceChange(index, "description", data.content.trim());
         
@@ -844,12 +873,22 @@ const ResumeTemplates = () => {
           title: "Description generated",
           description: "AI-suggested job description has been added."
         });
+        
+        // If user hasn't provided a title, suggest they fill it in
+        if (!experience.title && !experience.company) {
+          toast({
+            title: "Suggestion",
+            description: "For better results, consider adding a job title and company name.",
+          });
+        }
+      } else {
+        throw new Error("Empty content returned from API");
       }
     } catch (error) {
       console.error("Error generating job description:", error);
       toast({
         title: "Generation failed",
-        description: "Failed to generate job description. Please try again later.",
+        description: "Failed to generate job description. Please try again later. Error: " + (error instanceof Error ? error.message : String(error)),
         variant: "destructive"
       });
     } finally {
@@ -869,22 +908,46 @@ const ResumeTemplates = () => {
           return { valid: false, message: "Please provide your full name" };
         }
         
-        // Now check if user actually edited the name field rather than using placeholder
-        if (!fullNameEdited) {
-          return { valid: false, message: "Please edit your full name" };
+        // Make name editing optional - if they entered it manually, it counts as edited
+        if (fullName.trim() && !fullNameEdited) {
+          // Auto-mark it as edited if they manually entered a name
+          setEditedFields(prev => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              fullName: true
+            }
+          }));
         }
         
         return { valid: true };
       
       case "skills":
-        const hasEditedSkill = formState.skills.some((skill, index) => 
-          skill.name.trim() !== "" && 
-          (index < editedFields.skills.length ? editedFields.skills[index] : false)
-        );
+        // Make skills section more lenient - any non-empty skill is acceptable
+        const hasSkill = formState.skills.some(skill => skill.name.trim() !== "");
         
-        if (!hasEditedSkill) {
-          return { valid: false, message: "Please add at least one skill that you've edited" };
+        if (!hasSkill) {
+          return { valid: false, message: "Please add at least one skill" };
         }
+        
+        // Auto-mark skills as edited if they contain content
+        formState.skills.forEach((skill, index) => {
+          if (skill.name.trim() !== "") {
+            if (index >= editedFields.skills.length || !editedFields.skills[index]) {
+              const newEditedSkills = [...editedFields.skills];
+              while (newEditedSkills.length <= index) {
+                newEditedSkills.push(false);
+              }
+              newEditedSkills[index] = true;
+              
+              setEditedFields(prev => ({
+                ...prev,
+                skills: newEditedSkills
+              }));
+            }
+          }
+        });
+        
         return { valid: true };
       
       case "experience":
@@ -907,33 +970,11 @@ const ResumeTemplates = () => {
       
       case "education":
         // Education is completely optional - students might not have degrees yet
-        // Check if any fields have been partially filled in
-        const hasPartialEducation = formState.education.some(edu => {
-          const hasDegree = edu.degree.trim() !== "";
-          const hasInstitution = edu.institution.trim() !== "";
-          // Only validate if user has started filling in the entry
-          return (hasDegree || hasInstitution) && !(hasDegree && hasInstitution);
-        });
-        
-        if (hasPartialEducation) {
-          // If they started filling in education, make sure it's complete
-          return { valid: false, message: "If you're adding education, please provide both degree and institution" };
-        }
-        
-        // All education is valid (either complete or empty)
+        // Make it more lenient - any filled fields are acceptable
         return { valid: true };
       
       case "projects":
-        // Projects are optional
-        const hasInvalidProject = formState.projects.some(
-          proj => proj.title.trim() === "" && (proj.technologies.trim() !== "" || proj.description.trim() !== "")
-        );
-        
-        if (hasInvalidProject) {
-          return { valid: false, message: "Please provide a title for each project" };
-        }
-        
-        // Projects are optional
+        // Projects are completely optional
         return { valid: true };
       
       default:
