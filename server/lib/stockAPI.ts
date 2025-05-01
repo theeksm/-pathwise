@@ -46,7 +46,7 @@ export class StockAPIError extends Error {
   }
 }
 
-// Check if API key is available
+// Checık if API key is available
 if (!API_KEY) {
   console.warn("WARNING: ALPHA_VANTAGE_API_KEY environment variable is not set. Stock data API will not work properly.");
 }
