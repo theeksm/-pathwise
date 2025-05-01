@@ -1,0 +1,54 @@
+Hi, please fix these remaining and unfixed issues on the PathWise website. Be specific and thorough with each point:
+
+⸻
+
+🧠 1. Enhanced AI Chat (May – Career Assistant)
+	•	Problem: The page scrolls to the bottom as soon as it’s opened and again after the user sends a message, even if no response is shown yet.
+	•	✅ Fix: Only scroll after a reply has successfully rendered. If the chat is empty, don’t scroll. Respect the user’s current scroll position.
+
+⸻
+
+🗨️ 2. Standard AI Chat (Gemini Mode)
+	•	Problem: After submitting a message, it says “new chat created” and:
+	•	The user’s message disappears.
+	•	No AI response appears.
+	•	✅ Fix: Ensure messages display correctly after pressing Enter:
+	•	Show the user’s message.
+	•	Display the assistant’s reply.
+	•	Fix any API call issues with Gemini AI not returning or rendering responses.
+
+⸻
+
+📝 3. Resume Templates Page
+	•	Problem 1: Required fields (e.g. work experience, job title) block progress for users with no experience.
+	•	Problem 2: “Generate AI Summary” does nothing or shows an error (like “enter job title”) even when filled.
+	•	✅ Fixes:
+	•	Make all fields optional or skippable.
+	•	Add a Job Title field if it’s required by the backend.
+	•	Make the “Generate AI Summary” button functional — it should generate a summary with whatever info is filled.
+	•	Add a second button:
+“Generate Resume with AI using filled-in information” — this should send current form data to the resume generator.
+
+⸻
+
+🌒 4. Dark Mode Hover Bug
+	•	Problem: In dark mode (especially Skill Gap page), hovering over certain areas like tag boxes causes them to lighten too much.
+	•	✅ Fix: Remove excessive brightness/opacity changes on hover in dark mode. Keep hover effects subtle and consistent with the rest of the theme.
+
+⸻
+
+🛠️ 5. Dev Mode Access for Developer Testing
+	•	Problem: As a developer, testing is slow because login is required after every refresh.
+	•	✅ Fix: Add a developer-only shortcut:
+	•	Automatically logs in a hardcoded dev account (e.g. dev@pathwise.com) via localStorage flag, URL param (?dev=true), or session token.
+	•	Bypass Firebase Auth page and go directly to dashboard or AI chat page.
+
+⸻
+
+🧩 6. “Dev Mode” Button Position
+	•	Problem: The “Dev Mode” button is covering the mini chatbot icon (bottom right).
+	•	✅ Fix: Move the Dev Mode button to the bottom-left corner of the screen. Ensure it’s always visible and not overlapping with any interactive UI.
+
+⸻
+
+Please test every fix manually to confirm they work before replying.
