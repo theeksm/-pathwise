@@ -552,12 +552,176 @@ const ResumeTemplates = () => {
     }
   };
 
-  // Generate AI suggestions for summary
-  const generateSummary = async () => {
-    if (!formState.personalInfo.title || !formState.skills[0].name) {
+  // Generate full resume using AI based on all user input
+  const generateFullResume = async () => {
+    // Check if there's at least some information to work with
+    const hasName = formState.personalInfo.fullName.trim() !== "";
+    
+    if (!hasName) {
       toast({
         title: "Missing information",
-        description: "Please provide at least your job title and some skills for better suggestions.",
+        description: "Please provide at least your name to generate a resume.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    
+    try {
+      // Gather all available information from the form
+      const skillsString = formState.skills
+        .filter(skill => skill.name.trim() !== "")
+        .map(skill => skill.name)
+        .join(", ");
+      
+      const experienceString = formState.experience
+        .filter(exp => exp.title.trim() !== "" && exp.company.trim() !== "")
+        .map(exp => `${exp.title} at ${exp.company}${exp.description ? `: ${exp.description}` : ''}`)
+        .join(" | ");
+      
+      const educationString = formState.education
+        .filter(edu => edu.degree.trim() !== "" || edu.institution.trim() !== "")
+        .map(edu => `${edu.degree || 'Degree'} from ${edu.institution || 'Institution'}`)
+        .join(", ");
+      
+      const professionalTitle = formState.personalInfo.title.trim() || "professional";
+
+      // Prepare the prompt for generating everything
+      const prompt = `Generate a complete resume content for ${formState.personalInfo.fullName} who is a ${professionalTitle}.
+      
+      Available information:
+      - Skills: ${skillsString || 'None provided'}
+      - Experience: ${experienceString || 'No experience provided'}
+      - Education: ${educationString || 'No education provided'}
+      - Contact: ${formState.personalInfo.email || 'No email'}, ${formState.personalInfo.phone || 'No phone'}, ${formState.personalInfo.location || 'No location'}
+      
+      Please generate:
+      1. A professional summary (2-3 sentences)
+      2. Detailed bullet points for any work experience mentioned
+      3. Suggestions for additional skills that would complement the existing ones
+      4. A refined professional title if the current one can be improved
+      
+      Format the response as JSON with these keys: "summary", "experience" (array of objects with title, company, description), "additionalSkills" (array of strings), "refinedTitle" (string).`;
+
+      const response = await fetch("/api/generate-content", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt })
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to generate resume content");
+      }
+      
+      const data = await response.json();
+      
+      if (data.content) {
+        try {
+          // Parse the JSON response
+          const content = JSON.parse(data.content);
+          
+          // Update the resume form with generated content
+          let newFormState = {...formState};
+          
+          // Update summary
+          if (content.summary) {
+            newFormState.personalInfo.summary = content.summary;
+          }
+          
+          // Update professional title if available and not already specified
+          if (content.refinedTitle && !formState.personalInfo.title) {
+            newFormState.personalInfo.title = content.refinedTitle;
+          }
+          
+          // Update experience with enhanced descriptions if available
+          if (content.experience && Array.isArray(content.experience)) {
+            content.experience.forEach((exp, index) => {
+              if (index < newFormState.experience.length) {
+                // Update existing experience entries
+                if (!newFormState.experience[index].description && exp.description) {
+                  newFormState.experience[index].description = exp.description;
+                }
+              } else {
+                // Add new experience entries
+                newFormState.experience.push({
+                  title: exp.title || "",
+                  company: exp.company || "",
+                  location: exp.location || "",
+                  from: exp.from || "",
+                  to: exp.to || "",
+                  current: false,
+                  description: exp.description || ""
+                });
+              }
+            });
+          }
+          
+          // Add suggested skills that don't already exist
+          if (content.additionalSkills && Array.isArray(content.additionalSkills)) {
+            const existingSkills = new Set(newFormState.skills.map(s => s.name.toLowerCase()));
+            
+            content.additionalSkills.forEach(skill => {
+              if (!existingSkills.has(skill.toLowerCase())) {
+                newFormState.skills.push({ name: skill });
+                existingSkills.add(skill.toLowerCase());
+              }
+            });
+          }
+          
+          // Update the form state
+          setFormState(newFormState);
+          
+          // Mark fields as edited
+          setEditedFields(prev => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              summary: true,
+              title: content.refinedTitle ? true : prev.personalInfo.title
+            }
+          }));
+          
+          toast({
+            title: "Resume generated",
+            description: "AI has enhanced your resume with available information. Review and edit as needed.",
+          });
+          
+          // Show preview
+          setPreviewMode(true);
+        } catch (error) {
+          console.error("Error parsing AI response:", error);
+          toast({
+            title: "Processing error",
+            description: "Could not process the AI response. Please try again.",
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error generating resume:", error);
+      toast({
+        title: "Generation failed",
+        description: "Failed to generate resume. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Generate AI suggestions for summary
+  const generateSummary = async () => {
+    // Check if there's at least some information to work with
+    const hasSkills = formState.skills.some(skill => skill.name.trim() !== "");
+    const hasName = formState.personalInfo.fullName.trim() !== "";
+    
+    if (!hasName && !hasSkills) {
+      toast({
+        title: "Missing information",
+        description: "Please provide at least your name or some skills for better suggestions.",
         variant: "destructive"
       });
       return;
@@ -572,14 +736,17 @@ const ResumeTemplates = () => {
         .map(skill => skill.name)
         .join(", ");
       
-      // Construct the experience string
+      // Construct the experience string (optional)
       const experienceString = formState.experience
         .filter(exp => exp.title.trim() !== "" && exp.company.trim() !== "")
         .map(exp => `${exp.title} at ${exp.company}`)
         .join(", ");
+      
+      // Use professional title if available, otherwise use more generic wording
+      const professionalTitle = formState.personalInfo.title.trim() || "professional";
 
       // Prepare the prompt
-      const prompt = `Generate a professional resume summary for a ${formState.personalInfo.title} with skills in ${skillsString}${experienceString ? ` and experience as ${experienceString}` : ""}. Keep it concise, professional, and around 2-3 sentences.`;
+      const prompt = `Generate a professional resume summary for a ${professionalTitle} with ${skillsString ? `skills in ${skillsString}` : 'relevant skills'}${experienceString ? ` and experience as ${experienceString}` : ""}. The person's name is ${formState.personalInfo.fullName || '[Name]'}. Keep it concise, professional, and around 2-3 sentences.`;
       
       const response = await fetch("/api/generate-content", {
         method: "POST",
