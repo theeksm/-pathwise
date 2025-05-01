@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { activateDevMode, clearDevSession, hasDevSession, isDevMode, mockDataFunctions } from '@/lib/dev-mode';
+import {
+  activateDevMode,
+  clearDevSession,
+  hasDevSession,
+  isDevMode,
+  mockDataFunctions
+} from '@/lib/dev-mode';
 import { getAuth, signOut } from 'firebase/auth';
 
-// Pages for quick navigation
 const quickNavPages = [
   { name: 'Dashboard', path: '/' },
   { name: 'AI Chat', path: '/ai-chat' },
@@ -14,15 +19,17 @@ const quickNavPages = [
   { name: 'Market Trends', path: '/market-trends' }
 ];
 
+const buttonStyle =
+  'border border-gray-300 dark:border-white text-gray-800 dark:text-white bg-white dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-xs';
+
 export default function DevModePanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDevModeActive, setIsDevModeActive] = useState(hasDevSession());
   const [, setLocation] = useLocation();
-  
-  // Automatically activate dev mode when component mounts if it's not already active
+
   useEffect(() => {
     if (isDevMode() && !isDevModeActive) {
-      activateDevMode().then(success => {
+      activateDevMode().then((success) => {
         if (success) {
           setIsDevModeActive(true);
           console.log('[DEV MODE] Auto-activated development mode');
@@ -30,12 +37,9 @@ export default function DevModePanel() {
       });
     }
   }, [isDevModeActive]);
-  
-  // Only render in dev mode
-  if (!isDevMode()) {
-    return null;
-  }
-  
+
+  if (!isDevMode()) return null;
+
   const handleExitDevMode = () => {
     clearDevSession();
     const auth = getAuth();
@@ -43,11 +47,11 @@ export default function DevModePanel() {
       window.location.href = '/';
     });
   };
-  
+
   return (
     <div className="fixed bottom-4 left-4 z-50">
       {!isOpen ? (
-        <Button 
+        <Button
           className="rounded-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold"
           onClick={() => setIsOpen(true)}
         >
@@ -57,27 +61,27 @@ export default function DevModePanel() {
         <div className="bg-slate-800 rounded-lg p-4 shadow-lg border border-yellow-500 max-w-xs">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-white font-bold">Developer Mode</h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="text-white"
               onClick={() => setIsOpen(false)}
             >
               X
             </Button>
           </div>
-          
+
           <div className="space-y-4">
-            {/* Navigation */}
+            {/* Quick Navigation */}
             <div>
               <p className="text-white text-sm font-medium mb-2">Quick Navigation:</p>
               <div className="grid grid-cols-2 gap-1">
-                {quickNavPages.map(page => (
+                {quickNavPages.map((page) => (
                   <Button
                     key={page.path}
                     variant="outline"
                     size="sm"
-                    className="text-xs"
+                    className={buttonStyle}
                     onClick={() => setLocation(page.path)}
                   >
                     {page.name}
@@ -85,53 +89,53 @@ export default function DevModePanel() {
                 ))}
               </div>
             </div>
-            
+
             {/* Mock Data */}
             <div>
               <p className="text-white text-sm font-medium mb-2">Mock Data:</p>
               <div className="space-y-1">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-xs"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
                   onClick={mockDataFunctions.prefillResume}
                 >
                   Prefill Resume
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-xs"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
                   onClick={mockDataFunctions.triggerSkillAnalysis}
                 >
                   Auto-Run Skill Analysis
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-xs"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
                   onClick={mockDataFunctions.clearMockData}
                 >
                   Clear Mock Data
                 </Button>
               </div>
             </div>
-            
+
             {/* Debug Tools */}
             <div>
               <p className="text-white text-sm font-medium mb-2">Debug Tools:</p>
               <div className="space-y-1">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-xs"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
                   onClick={mockDataFunctions.logAuthState}
                 >
                   Log Auth State
                 </Button>
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
+                <Button
+                  variant="destructive"
+                  size="sm"
                   className="w-full text-xs"
                   onClick={handleExitDevMode}
                 >
