@@ -30,6 +30,35 @@ export const setDevSession = (): void => {
   document.cookie = `dev-access=true; expires=${expiryDate.toUTCString()}; path=/`;
 };
 
+// Activate developer mode via API
+export const activateDevMode = async (): Promise<boolean> => {
+  if (!isDevMode()) {
+    console.error('[DEV MODE] Developer mode is not enabled in environment');
+    return false;
+  }
+  
+  try {
+    const response = await fetch('/api/auth/dev-login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to activate dev mode: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('[DEV MODE] Developer mode activated successfully:', data);
+    return true;
+  } catch (error) {
+    console.error('[DEV MODE] Error activating developer mode:', error);
+    return false;
+  }
+};
+
 // Clear dev session cookie
 export const clearDevSession = (): void => {
   document.cookie = 'dev-access=; Max-Age=0; path=/;';

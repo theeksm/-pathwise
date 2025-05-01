@@ -18,6 +18,7 @@ import { getStockData, StockAPIError, StockAPIErrorType } from "./lib/stockAPI";
 import { generateContent } from "./lib/generateContent";
 import { getMagicLoopsResponse } from "./lib/magicLoops";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import { checkDevModeAuth, handleDevModeLogin, initializeDevUser, isDevMode } from "./lib/dev-mode";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -57,6 +58,15 @@ type JobMatch = {
 const SessionStore = MemoryStore(session);
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize the dev user if in dev mode
+  if (isDevMode()) {
+    await initializeDevUser();
+    console.log('[DEV MODE] Developer mode is enabled');
+  }
+  
+  // Set up cookie parser middleware
+  app.use(cookieParser());
+  
   // Set up session middleware
   app.use(
     session({
@@ -125,9 +135,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth middleware to check if user is authenticated
   const isAuthenticated = (req: Request, res: Response, next: Function) => {
+    // First check developer mode authentication
+    if (isDevMode() && req.cookies && req.cookies['dev-access'] === 'true') {
+      console.log('[DEV MODE] Using developer authentication bypass');
+      return next();
+    }
+    
+    // Regular authentication check
     if (req.isAuthenticated()) {
       return next();
     }
+    
     res.status(401).json({ message: "Unauthorized" });
   };
 
@@ -169,7 +187,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/user", isAuthenticated, (req, res) => {
     const user = req.user as any;
+    
+    // If we're using dev mode authentication bypass, return the mock dev user
+    if (isDevMode() && req.cookies && req.cookies['dev-access'] === 'true' && !req.user) {
+      return res.json({
+        id: 999,
+        username: 'dev_user',
+        email: 'dev@pathwise.local',
+        name: 'Developer Account',
+        role: 'admin',
+        membership: 'premium'
+      });
+    }
+    
     res.json({ id: user.id, username: user.username, email: user.email });
+  });
+  
+  // Dev mode login route - only available in dev mode
+  app.post("/api/auth/dev-login", (req, res) => {
+    if (!isDevMode()) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
+    console.log('[DEV MODE] Setting dev-access cookie for developer mode');
+    
+    // Set dev-access cookie (24 hour expiry)
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + 24 * 60 * 60 * 1000);
+    
+    res.cookie('dev-access', 'true', {
+      expires: expiryDate,
+      httpOnly: false, // Allow JS access to read the cookie
+      sameSite: 'lax',
+      path: '/'
+    });
+    
+    // Return the mock user
+    res.status(200).json({
+      id: 999,
+      username: 'dev_user',
+      email: 'dev@pathwise.local',
+      name: 'Developer Account',
+      role: 'admin',
+      membership: 'premium'
+    });
   });
 
   // User routes

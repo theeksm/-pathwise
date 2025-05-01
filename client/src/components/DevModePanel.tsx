@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { clearDevSession, isDevMode, mockDataFunctions } from '@/lib/dev-mode';
+import { activateDevMode, clearDevSession, hasDevSession, isDevMode, mockDataFunctions } from '@/lib/dev-mode';
 import { getAuth, signOut } from 'firebase/auth';
 
 // Pages for quick navigation
@@ -16,12 +16,25 @@ const quickNavPages = [
 
 export default function DevModePanel() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDevModeActive, setIsDevModeActive] = useState(hasDevSession());
   const [, setLocation] = useLocation();
   
   // Only render in dev mode
   if (!isDevMode()) {
     return null;
   }
+  
+  // Automatically activate dev mode when component mounts if it's not already active
+  useEffect(() => {
+    if (!isDevModeActive) {
+      activateDevMode().then(success => {
+        if (success) {
+          setIsDevModeActive(true);
+          console.log('[DEV MODE] Auto-activated development mode');
+        }
+      });
+    }
+  }, [isDevModeActive]);
   
   const handleExitDevMode = () => {
     clearDevSession();
@@ -65,7 +78,7 @@ export default function DevModePanel() {
                     variant="outline"
                     size="sm"
                     className="text-xs"
-                    onClick={() => navigate(page.path)}
+                    onClick={() => setLocation(page.path)}
                   >
                     {page.name}
                   </Button>
