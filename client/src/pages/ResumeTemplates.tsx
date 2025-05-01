@@ -638,7 +638,7 @@ const ResumeTemplates = () => {
           
           // Update experience with enhanced descriptions if available
           if (content.experience && Array.isArray(content.experience)) {
-            content.experience.forEach((exp, index) => {
+            content.experience.forEach((exp: any, index: number) => {
               if (index < newFormState.experience.length) {
                 // Update existing experience entries
                 if (!newFormState.experience[index].description && exp.description) {
@@ -663,7 +663,7 @@ const ResumeTemplates = () => {
           if (content.additionalSkills && Array.isArray(content.additionalSkills)) {
             const existingSkills = new Set(newFormState.skills.map(s => s.name.toLowerCase()));
             
-            content.additionalSkills.forEach(skill => {
+            content.additionalSkills.forEach((skill: any) => {
               if (!existingSkills.has(skill.toLowerCase())) {
                 newFormState.skills.push({ name: skill });
                 existingSkills.add(skill.toLowerCase());
