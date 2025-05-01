@@ -239,7 +239,7 @@ const LearningPaths = () => {
     const searchMatch = 
       !searchQuery || 
       path.courseTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (skills?.find(s => s.id === path.skillId)?.skillName || "")
+      (skills?.find((s: any) => s.id === path.skillId)?.skillName || "")
         .toLowerCase().includes(searchQuery.toLowerCase()) ||
       (path.platform || "").toLowerCase().includes(searchQuery.toLowerCase());
     
@@ -255,13 +255,13 @@ const LearningPaths = () => {
 
   // Get skill name by ID
   const getSkillName = (skillId: number) => {
-    const skill = skills?.find(s => s.id === skillId);
+    const skill = skills?.find((s: any) => s.id === skillId);
     return skill?.skillName || "Unknown Skill";
   };
 
   // Get skill status (missing or present)
   const getSkillStatus = (skillId: number) => {
-    const skill = skills?.find(s => s.id === skillId);
+    const skill = skills?.find((s: any) => s.id === skillId);
     return skill?.isMissing || false;
   };
 
