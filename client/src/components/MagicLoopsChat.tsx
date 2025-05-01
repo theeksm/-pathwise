@@ -47,8 +47,11 @@ export default function MagicLoopsChat({ initialMessage = "Hi, I'm May, your car
 
   // Auto-scroll to the bottom only when new messages are received
   useEffect(() => {
-    // Only auto-scroll when there are messages
-    if (messages.length > 0) {
+    // Don't scroll on initial render with the welcome message
+    const isInitialLoad = messages.length === 1 && messages[0].id === "welcome-message";
+    
+    // Only auto-scroll when there are messages and it's not the initial welcome message
+    if (messages.length > 0 && !isInitialLoad) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages.length]);
