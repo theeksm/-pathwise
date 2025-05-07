@@ -1,153 +1,71 @@
-import { createContext, ReactNode, useContext } from "react";
-import {
-  useQuery,
-  useMutation,
-  UseMutationResult,
-  UseQueryResult
-} from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { createContext, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, signOut, User as FirebaseUser } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { type User } from "@shared/schema";
 
-type LoginData = {
-  username: string;
-  password: string;
-};
+interface User {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  phoneNumber: string | null;
+}
 
-type RegisterData = {
-  username: string;
-  email: string;
-  password: string;
-};
-
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  error: Error | null;
-  loginMutation: UseMutationResult<any, Error, LoginData>;
-  logoutMutation: UseMutationResult<any, Error, void>;
-  registerMutation: UseMutationResult<any, Error, RegisterData>;
-};
+  logout: () => Promise<void>;
+}
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const {
-    data: user,
-    error,
-    isLoading,
-    refetch
-  } = useQuery<User | null>({
-    queryKey: ['/api/auth/user'],
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 0, // Don't cache failed requests
-    throwOnError: false,
-    queryFn: async () => {
-      try {
-        const res = await fetch('/api/auth/user', {
-          credentials: 'include',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const formattedUser: User = {
+          uid: firebaseUser.uid,
+          displayName: firebaseUser.displayName,
+          email: firebaseUser.email,
+          photoURL: firebaseUser.photoURL,
+          phoneNumber: firebaseUser.phoneNumber,
+        };
+        setUser(formattedUser);
+        toast({
+          title: "Welcome back",
+          description: `Logged in as ${firebaseUser.email || "your account"}`,
         });
-        
-        if (res.status === 401) {
-          return null;
-        }
-        
-        if (!res.ok) {
-          throw new Error(`${res.status}: ${res.statusText}`);
-        }
-        
-        return await res.json();
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        return null;
+      } else {
+        setUser(null);
       }
-    }
-  });
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
+  }, [toast]);
 
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginData) => {
-      const res = await apiRequest("POST", "/api/auth/login", credentials);
-      return await res.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Login successful",
-        description: "Welcome back to PathWise!",
-      });
-      refetch(); // Refetch the user data
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Login failed",
-        description: error.message || "Invalid username or password",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const registerMutation = useMutation({
-    mutationFn: async (credentials: RegisterData) => {
-      const res = await apiRequest("POST", "/api/auth/register", credentials);
-      return await res.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Registration successful",
-        description: "Welcome to PathWise!",
-      });
-      refetch(); // Refetch the user data
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Registration failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      await apiRequest("POST", "/api/auth/logout");
-    },
-    onSuccess: () => {
-      // Clear user data from cache
-      queryClient.setQueryData(['/api/auth/user'], null);
-      queryClient.invalidateQueries();
-      
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
       toast({
         title: "Logged out",
         description: "You have been logged out successfully.",
       });
-    },
-    onError: (error: Error) => {
+    } catch (error: any) {
       toast({
         title: "Logout failed",
         description: error.message,
         variant: "destructive",
       });
-    },
-  });
+    }
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user: user as User | null,
-        isLoading,
-        error,
-        loginMutation,
-        logoutMutation,
-        registerMutation,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isLoading, logout }}>
       {children}
     </AuthContext.Provider>
   );

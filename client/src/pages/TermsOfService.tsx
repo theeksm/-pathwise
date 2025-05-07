@@ -131,7 +131,7 @@ const TermsOfService = () => {
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
                 <p className="dark:text-gray-300 font-semibold">
-                  pathwise.support@example.com
+                  pathwiseforeducation@gmail.com
                 </p>
               </section>
 

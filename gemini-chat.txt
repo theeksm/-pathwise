@@ -63,7 +63,7 @@ const GeminiChat = () => {
     mutationFn: async () => {
       console.log("Creating a new Gemini chat for user:", user);
       const res = await apiRequest("POST", "/api/chats", {
-        userId: user?.id,
+        userId: Number(user?.id),
         title: "New Standard Chat",
         chatMode: "standard",
         messages: [], // Explicitly initialize with empty messages array
