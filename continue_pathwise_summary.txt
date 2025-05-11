@@ -1,0 +1,32 @@
+🧠 Project Summary for Continue Autopilot
+You're helping me finish a project called PathWise, a personal career assistant web app built with:
+
+- Frontend: React (with TypeScript, TailwindCSS)
+- Backend: Express (TypeScript)
+- Chat functionality using OpenAI API
+- Auth via Firebase
+- Database via Drizzle / Supabase (if integrated)
+
+Here’s what I want the assistant to do:
+
+1. Fix any build or runtime issues
+   – If `npm run dev` fails, identify and resolve errors automatically.
+   – If the site doesn’t load, debug why.
+
+2. Polish and complete features
+   - Chat pages (AIChat.tsx, etc.) should:
+     - Handle user messages and render AI replies
+     - Only show premium features to subscribed users
+   - Connect properly to OpenAI and Gemini APIs from .env
+   - Ensure assistant roles (chat/edit/apply) are working in Continue
+
+3. Prepare for production
+   - Check and clean unused code/files
+   - Prepare for deployment (e.g., on Vercel or Replit if applicable)
+
+You can find the project files in folders like:
+client/src/pages/
+server/lib/
+.env
+
+Start by checking if the app runs, then fix anything that breaks and finish what’s missing.

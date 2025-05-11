@@ -11,16 +11,40 @@ export const isDevMode = (): boolean => {
   return false;
 };
 
-// Mock developer user data
+// Mock user states
 export const mockDevUser = {
-  id: 999,
-  username: 'dev_user',
-  email: 'dev@pathwise.local',
-  name: 'Developer Account',
-  bio: 'This is a mock developer account for testing purposes',
-  role: 'admin',
-  membership: 'premium',
-  createdAt: new Date().toISOString(),
+  free: {
+    id: 998,
+    username: 'free_user',
+    email: 'free@pathwise.local',
+    name: 'Free Account',
+    bio: 'This is a mock free user account',
+    role: 'user',
+    membership: 'free',
+    createdAt: new Date().toISOString(),
+  },
+  premium: {
+    id: 999,
+    username: 'premium_user',
+    email: 'premium@pathwise.local',
+    name: 'Premium Account',
+    bio: 'This is a mock premium user account',
+    role: 'user',
+    membership: 'premium',
+    createdAt: new Date().toISOString(),
+  }
+};
+
+// Current mock user state
+let currentMockUser = mockDevUser.free;
+
+// Get current mock user
+export const getCurrentMockUser = () => currentMockUser;
+
+// Set mock user state
+export const setMockUserState = (type: 'free' | 'premium') => {
+  currentMockUser = mockDevUser[type];
+  console.log(`[DEV MODE] Switched to ${type} user:`, currentMockUser);
 };
 
 // Check for dev session cookie

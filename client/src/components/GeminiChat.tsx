@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { isDevMode, hasDevSession } from "@/lib/dev-mode";
 import { Send, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +33,7 @@ interface Chat {
 
 const GeminiChat = () => {
   const { user } = useAuth() || { user: null };
+  const hasActiveDevSession = isDevMode() && hasDevSession();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
@@ -69,7 +71,7 @@ const GeminiChat = () => {
   const createChatMutation = useMutation({
     mutationFn: async () => {
       const res = await apiRequest("POST", "/api/chats", {
-        userId: user?.id,
+        userId: user?.id ?? null,  // Allow null userId
         title: "New Standard Chat",
         messages: [],
         chatMode: "standard"
@@ -104,7 +106,8 @@ const GeminiChat = () => {
         
         const res = await apiRequest("POST", `/api/chats/${newChat.id}/message`, {
           content,
-          chatMode: "standard"
+          chatMode: "standard",
+          userId: user?.id ?? null  // Allow null userId
         });
         
         if (!res.ok) {
@@ -116,7 +119,8 @@ const GeminiChat = () => {
         // Send to existing chat
         const res = await apiRequest("POST", `/api/chats/${chatId}/message`, {
           content,
-          chatMode: "standard"
+          chatMode: "standard",
+          userId: user?.id ?? null  // Allow null userId
         });
         
         if (!res.ok) {
@@ -172,15 +176,19 @@ const GeminiChat = () => {
   };
   
   // Auto-scroll to bottom when new messages arrive
+  // Only auto-scroll when AI responds
   useEffect(() => {
     const currentLength = currentChat?.messages?.length || 0;
     const isNewMessage = currentLength > prevMessagesLengthRef.current;
     
     if (currentChat?.messages && isNewMessage) {
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-      
+      const lastMessage = currentChat.messages[currentChat.messages.length - 1];
+      // Only auto-scroll for AI responses
+      if (lastMessage.role === 'assistant') {
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
       prevMessagesLengthRef.current = currentLength;
     }
   }, [currentChat?.messages]);
@@ -208,7 +216,7 @@ const GeminiChat = () => {
       </div>
       
       {/* Messages area */}
-      <div className="flex-grow p-4 overflow-y-auto bg-slate-50 dark:bg-slate-900">
+      <div className="flex-grow p-4 overflow-y-auto bg-slate-50 dark:bg-slate-900" style={{ scrollBehavior: 'auto' }}>
         {/* Provider label */}
         <div className="text-center text-xs text-muted-foreground mb-4 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">
           Powered by Gemini AI
@@ -293,12 +301,12 @@ const GeminiChat = () => {
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
             className="flex-grow resize-none min-h-[60px] max-h-[200px] overflow-auto"
-            disabled={isLoading || !user}
+            disabled={isLoading || (!user && !hasActiveDevSession)}
           />
           <Button 
             type="submit"
             size="icon"
-            disabled={isLoading || !message.trim() || !user}
+            disabled={isLoading || !message.trim() || (!user && !hasActiveDevSession)}
             className="h-10 w-10"
           >
             {sendMessageMutation.isPending ? (

@@ -37,6 +37,7 @@ export default function MagicLoopsChat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLengthRef = useRef(0);
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
@@ -52,30 +53,7 @@ export default function MagicLoopsChat({
     ]);
   }, [initialMessage]);
 
-  // Track previous messages length to determine when new messages are added
-  const prevMessagesLengthRef = useRef(0);
   
-  // Auto-scroll to the bottom only when new messages are received
-  useEffect(() => {
-    // Don't scroll on initial render with just the welcome message
-    const isInitialLoad = messages.length === 1 && messages[0].id === "welcome-message";
-    const isNewMessage = messages.length > prevMessagesLengthRef.current;
-    
-    // Only auto-scroll when:
-    // 1. There are messages AND
-    // 2. Either:
-    //    a. It's not the initial welcome message AND
-    //    b. New messages have been added
-    if (messages.length > 0 && !isInitialLoad && isNewMessage) {
-      // Add small delay to ensure rendering is complete before scrolling
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-    
-    // Update the previous length reference
-    prevMessagesLengthRef.current = messages.length;
-  }, [messages.length]);
 
   // Function to send message to Magic Loops API
   const sendMessage = async (message: string) => {
@@ -161,7 +139,7 @@ export default function MagicLoopsChat({
 
   return (
     <Card className="w-full h-[80vh] flex flex-col overflow-hidden border-0 shadow-lg rounded-xl">
-      <div className="bg-primary p-4 text-primary-foreground rounded-t-xl">
+      <div className="bg-blue-600 p-4 text-white rounded-t-xl">
         <div className="flex items-center space-x-2">
           <img src={aiAvatar} alt="AI Avatar" className="w-8 h-8 rounded-full" />
           <div>
@@ -203,7 +181,7 @@ export default function MagicLoopsChat({
                     className={`p-3 rounded-lg ${
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
+                        : "bg-blue-50 dark:bg-blue-900/30 text-gray-800 dark:text-gray-100"
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{message.content}</p>
@@ -227,7 +205,7 @@ export default function MagicLoopsChat({
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="p-3 rounded-lg bg-muted flex items-center">
+                  <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-gray-800 dark:text-gray-100 flex items-center">
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     <span>May is thinking...</span>
                   </div>
@@ -261,7 +239,7 @@ export default function MagicLoopsChat({
               type="submit" 
               size="icon" 
               disabled={isLoading || !input.trim()}
-              className="h-full aspect-square"
+              className="h-full aspect-square bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -271,7 +249,7 @@ export default function MagicLoopsChat({
             </Button>
           </form>
         ) : (
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-lg text-center">
             <div className="flex justify-center mb-2">
               <Crown className="h-6 w-6 text-yellow-500" />
             </div>

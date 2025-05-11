@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmationResult } from "firebase/auth";
-import { signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import { signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier, signInWithRedirect } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import PhoneVerification from "@/components/PhoneVerification";
 
@@ -79,10 +79,8 @@ const SignUp = () => {
       console.log("Attempting Google sign-in for registration...");
       
       // Check if Firebase is properly configured
-      if (!import.meta.env.VITE_FIREBASE_API_KEY || 
-          !import.meta.env.VITE_FIREBASE_PROJECT_ID || 
-          !import.meta.env.VITE_FIREBASE_APP_ID) {
-        throw new Error("Firebase is not properly configured. Please contact the administrator.");
+      if (!auth || !googleProvider) {
+        throw new Error("Firebase authentication is not initialized. Please contact the administrator.");
       }
       
       // Reset any previous state
@@ -132,6 +130,13 @@ const SignUp = () => {
       }
       
     } catch (error: any) {
+      // Reset loading state immediately for popup-related errors
+      if (error.code === 'auth/popup-closed-by-user' ||
+          error.code === 'auth/cancelled-popup-request') {
+        setIsGoogleLoading(false);
+        return; // Don't show error message for user-initiated cancellations
+      }
+
       // More detailed error logging
       console.error("Detailed Google sign-in error:", {
         code: error.code,
@@ -143,9 +148,7 @@ const SignUp = () => {
       // Create a more user-friendly error message based on error code
       let errorMessage = "Google sign-up failed. Please try again.";
       
-      if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in popup was closed before completing authentication.';
-      } else if (error.code === 'auth/popup-blocked') {
+      if (error.code === 'auth/popup-blocked') {
         errorMessage = 'Authentication popup was blocked by your browser. Please allow popups for this site.';
       } else if (error.code === 'auth/invalid-credential') {
         errorMessage = 'The authentication credential is invalid. Please try again.';
@@ -161,7 +164,6 @@ const SignUp = () => {
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -416,9 +418,9 @@ const SignUp = () => {
                   
                   <div className="text-center text-sm dark:text-gray-300">
                     Already have an account?{" "}
-                    <Button variant="link" className="p-0 dark:text-blue-400" onClick={() => setLocation("/login")}>
+                    <button className="p-0 text-blue-600 dark:text-blue-400 hover:underline" onClick={() => setLocation("/login")}>
                       Log in
-                    </Button>
+                    </button>
                   </div>
                   
                   <div className="relative my-6">

@@ -6,7 +6,8 @@ import {
   clearDevSession,
   hasDevSession,
   isDevMode,
-  mockDataFunctions
+  mockDataFunctions,
+  setMockUserState
 } from '@/lib/dev-mode';
 import { getAuth, signOut } from 'firebase/auth';
 
@@ -20,7 +21,7 @@ const quickNavPages = [
 ];
 
 const buttonStyle =
-  'border border-gray-300 dark:border-white text-gray-800 dark:text-white bg-white dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-xs';
+  'border border-gray-300 dark:border-white text-gray-800 dark:text-white bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-xs shadow-sm';
 
 export default function DevModePanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,19 +53,19 @@ export default function DevModePanel() {
     <div className="fixed bottom-4 left-4 z-50">
       {!isOpen ? (
         <Button
-          className="rounded-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold"
+          className="rounded-full bg-white-100 text-black font-bold border border-gray-300 shadow-md"
           onClick={() => setIsOpen(true)}
         >
           DEV MODE
         </Button>
       ) : (
-        <div className="bg-slate-800 rounded-lg p-4 shadow-lg border border-yellow-500 max-w-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow-lg border border-yellow-500 max-w-xs">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-white font-bold">Developer Mode</h3>
+            <h3 className="text-black dark:text-white font-bold">Developer Mode</h3>
             <Button
               variant="ghost"
               size="sm"
-              className="text-white"
+              className="text-black dark:text-white"
               onClick={() => setIsOpen(false)}
             >
               X
@@ -74,7 +75,7 @@ export default function DevModePanel() {
           <div className="space-y-4">
             {/* Quick Navigation */}
             <div>
-              <p className="text-white text-sm font-medium mb-2">Quick Navigation:</p>
+              <p className="text-black dark:text-white text-sm font-medium mb-2">Quick Navigation:</p>
               <div className="grid grid-cols-2 gap-1">
                 {quickNavPages.map((page) => (
                   <Button
@@ -92,7 +93,28 @@ export default function DevModePanel() {
 
             {/* Mock Data */}
             <div>
-              <p className="text-white text-sm font-medium mb-2">Mock Data:</p>
+              <p className="text-black dark:text-white text-sm font-medium mb-2">Simulate User State:</p>
+              <div className="space-y-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
+                  onClick={() => setMockUserState('free')}
+                >
+                  Free User
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${buttonStyle}`}
+                  onClick={() => setMockUserState('premium')}
+                >
+                  Paid User
+                </Button>
+              </div>
+            </div>
+            <div>
+              <p className="text-black dark:text-white text-sm font-medium mb-2">Mock Data:</p>
               <div className="space-y-1">
                 <Button
                   variant="outline"
@@ -123,7 +145,7 @@ export default function DevModePanel() {
 
             {/* Debug Tools */}
             <div>
-              <p className="text-white text-sm font-medium mb-2">Debug Tools:</p>
+              <p className="text-black dark:text-white text-sm font-medium mb-2">Debug Tools:</p>
               <div className="space-y-1">
                 <Button
                   variant="outline"

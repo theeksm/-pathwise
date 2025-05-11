@@ -31,7 +31,10 @@ const AIChatPage = () => {
   const hasSubscription = !!user || hasActiveDevSession;
   
   // Premium AI assistants (May and Flo) require subscription
-  const canAccessPremiumAssistants = hasSubscription || hasActiveDevSession;
+  const canAccessPremiumAssistants = hasSubscription;
+
+  // Gemini is free for all users
+  const canAccessGemini = true;
   
   // Notify about dev mode bypass
   useEffect(() => {
@@ -74,19 +77,22 @@ const AIChatPage = () => {
               <GeminiChat />
             </CardContent>
           </Card>
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-500">
+              Gemini AI chat is freely available to all users.
+              For advanced career guidance, try May or Flo (Premium).
+            </p>
+          </div>
         </TabsContent>
         
         {/* May Career Assistant - Premium Feature */}
         <TabsContent value="may-assistant" className="mt-0">
-          {canAccessPremiumAssistants ? (
+          {hasSubscription ? (
             <Card className="shadow-lg border-blue-200 overflow-hidden min-h-[800px]">
               <CardContent className="p-0 h-[800px]">
                 <MagicLoopsChat 
                   initialMessage="Hi, I'm May, your career assistant powered by GPT-4.1. I specialize in career advice, interview preparation, resume optimization, and job matching. How can I help you today?"
-                  userInfo={{
-                    careerInterest: user && typeof user.targetCareer === 'string' ? user.targetCareer : '',
-                    educationLevel: user && typeof user.educationLevel === 'string' ? user.educationLevel : ''
-                  }}
+                  
                   isSubscribed={true}
                 />
               </CardContent>
@@ -95,7 +101,7 @@ const AIChatPage = () => {
             <Card className="shadow-lg border-blue-200 max-w-md mx-auto p-6">
               <h2 className="text-lg font-medium text-center mb-4">Meet May, Your Career Assistant</h2>
               <p className="text-muted-foreground text-center mb-6">
-                This AI is available to subscribed users only. Upgrade to unlock.
+                Access May's advanced career guidance with a premium subscription.
               </p>
               <div className="flex justify-center space-x-4">
                 {!user && (
@@ -113,7 +119,7 @@ const AIChatPage = () => {
         
         {/* Flo - Empathetic AI Assistant - Premium Feature */}
         <TabsContent value="flo-assistant" className="mt-0">
-          {canAccessPremiumAssistants ? (
+          {hasSubscription ? (
             <Card className="shadow-lg border-purple-200 overflow-hidden min-h-[800px]">
               <CardContent className="p-0 h-[800px]">
                 <FloChat
@@ -126,7 +132,7 @@ const AIChatPage = () => {
             <Card className="shadow-lg border-purple-200 max-w-md mx-auto p-6">
               <h2 className="text-lg font-medium text-center mb-4">Meet Flo, Your Empathetic AI</h2>
               <p className="text-muted-foreground text-center mb-6">
-                This AI is available to subscribed users only. Upgrade to unlock.
+                Get empathetic career support from Flo with a premium subscription.
               </p>
               <div className="flex justify-center space-x-4">
                 {!user && (

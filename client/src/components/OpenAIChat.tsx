@@ -32,6 +32,15 @@ interface Chat {
 
 const OpenAIChat = () => {
   const { user } = useAuth() || { user: null };
+  
+  // Check if the user is a subscriber
+  if (!user?.isSubscriber) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">This feature is available for subscribers only.</p>
+      </div>
+    );
+  }
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();

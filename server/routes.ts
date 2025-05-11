@@ -772,12 +772,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log("Chat ID:", chatId);
     const messageSchema = z.object({
       content: z.string(),
-      chatMode: z.enum(["standard", "enhanced", "magic-loops"]).optional()
+      chatMode: z.enum(["standard", "enhanced", "magic-loops"]).optional(),
+      userId: z.union([z.number(), z.string()]).nullish() // Accept string|number|null
     });
     
     try {
       const validatedData = messageSchema.parse(req.body);
-      console.log("Validated message data:", validatedData);
+      console.log("Validated message data:", {
+        ...validatedData,
+        userId: typeof validatedData.userId // Log the type for debugging
+      });
       
       // Determine which AI service to use based on chatMode and user membership
       // Default to standard mode for free users

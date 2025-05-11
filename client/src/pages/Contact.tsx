@@ -97,7 +97,7 @@ export default function Contact() {
                 <Mail className="h-5 w-5 text-blue-500 mr-3 mt-1 flex-shrink-0" />
                 <div>
                   <div className="font-medium text-gray-900 dark:text-white">Email</div>
-                  <p className="text-gray-600 dark:text-gray-300">support@pathwise.example.com</p>
+                  <p className="text-gray-600 dark:text-gray-300">pathwiseforeducation@gmail.com</p>
                 </div>
               </div>
               
@@ -105,7 +105,7 @@ export default function Contact() {
                 <Phone className="h-5 w-5 text-blue-500 mr-3 mt-1 flex-shrink-0" />
                 <div>
                   <div className="font-medium text-gray-900 dark:text-white">Phone</div>
-                  <p className="text-gray-600 dark:text-gray-300">(123) 456-7890</p>
+                  <p className="text-gray-600 dark:text-gray-300">(+64) 211 70 8141</p>
                 </div>
               </div>
               
@@ -114,8 +114,8 @@ export default function Contact() {
                 <div>
                   <div className="font-medium text-gray-900 dark:text-white">Office</div>
                   <p className="text-gray-600 dark:text-gray-300">
-                    123 Career Avenue, Suite 200<br />
-                    San Francisco, CA 94107
+                    2 Macleans Road, Eastern Beach,<br />
+                    Auckland 2012
                   </p>
                 </div>
               </div>

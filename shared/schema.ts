@@ -99,7 +99,7 @@ export const learningPaths = pgTable("learning_paths", {
 
 export const chats = pgTable("chats", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: text("user_id").notNull(),  // Change to text type for Firebase UID
   title: text("title").default("New Chat"),
   messages: jsonb("messages").$type<{ 
     role: string; 
@@ -143,10 +143,14 @@ export const insertLearningPathSchema = createInsertSchema(learningPaths).omit({
   createdAt: true
 });
 
-export const insertChatSchema = createInsertSchema(chats).omit({
-  id: true,
-  createdAt: true
-});
+export const insertChatSchema = createInsertSchema(chats)
+  .omit({
+    id: true,
+    createdAt: true
+  })
+  .extend({
+    userId: z.string().min(1)  // Override userId to be string
+  });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -168,3 +172,13 @@ export type LearningPath = typeof learningPaths.$inferSelect;
 
 export type InsertChat = z.infer<typeof insertChatSchema>;
 export type Chat = typeof chats.$inferSelect;
+
+export interface UserProfile {
+  id: number;  // Changed from string to number to match database schema
+  email: string;
+  targetCareer?: string;
+  educationLevel?: string;
+}
+
+// Use the generated User type from Drizzle ORM
+export type { User };
